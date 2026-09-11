@@ -1,0 +1,263 @@
+/* ============================================================
+   ASTD Site — Shared Stylesheet
+   ใช้ร่วมกันทุกหน้า (index.html, template.html และหน้าที่เพิ่มทีหลัง)
+   ============================================================ */
+:root{
+  --bg:#0b0e14; --panel:#121826; --panel2:#0e1420; --line:#232c40; --line2:#2e3a56;
+  --text:#e9edf6; --muted:#8b94a8; --dim:#5b6478;
+  --accent:#ff9f2e; --accent2:#ffc46b; --cyan:#3ddcff; --green:#57e39a; --red:#ff6b6b;
+  --water:#4db8ff; --dark:#b06cff; --holy:#ffd75e; --nature:#6fdd6f; --electric:#ffe23d;
+  --radius:14px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Prompt',sans-serif; font-weight:300;
+  background-image:
+    radial-gradient(900px 400px at 85% -10%, rgba(255,159,46,.07), transparent 60%),
+    radial-gradient(700px 400px at 0% 110%, rgba(61,220,255,.05), transparent 60%);
+  min-height:100vh;
+}
+h1,h2,h3,.num{font-family:'Kanit',sans-serif;}
+button{font-family:'Prompt',sans-serif; cursor:pointer;}
+input,select{font-family:'Prompt',sans-serif;}
+a{color:var(--cyan);}
+
+/* ===== Header + Nav (ใช้ทุกหน้า) ===== */
+header{
+  border-bottom:1px solid var(--line);
+  padding:18px clamp(16px,4vw,42px) 0;
+  background:linear-gradient(180deg, rgba(255,159,46,.06), transparent);
+}
+.head-top{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+
+/* --- โลโก้: วางไฟล์ชื่อ logo.png ใน assets/img/ ได้เลย ---
+   ถ้ายังไม่มีไฟล์โลโก้ ระบบจะแสดงกล่อง "DPS" สีส้มแทนอัตโนมัติ */
+.logo-slot{width:52px; height:52px; flex:none; position:relative;}
+.logo-slot img{width:100%; height:100%; object-fit:contain; display:block;}
+.logo-fallback{
+  position:absolute; inset:0; border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),#ff6b2e);
+  display:grid; place-items:center;
+  font-family:'Kanit'; font-weight:800; font-size:19px; color:#1a0e00;
+  box-shadow:0 0 22px rgba(255,159,46,.35);
+}
+header h1{font-size:clamp(18px,3vw,26px); font-weight:700; letter-spacing:.3px;}
+header h1 span{color:var(--accent);}
+.sub{color:var(--muted); font-size:13px; width:100%; margin-top:2px;}
+
+nav.mainnav{display:flex; gap:4px; margin-top:12px; flex-wrap:wrap;}
+nav.mainnav a{
+  color:var(--muted); text-decoration:none; font-size:13.5px; font-weight:400;
+  padding:9px 16px; border-radius:9px 9px 0 0; border:1px solid transparent; border-bottom:none;
+  transition:.15s;
+}
+nav.mainnav a:hover{color:var(--text); background:rgba(255,255,255,.03);}
+nav.mainnav a.active{
+  color:var(--accent); background:var(--panel);
+  border-color:var(--line);
+}
+
+/* ===== Layout ===== */
+.wrap{
+  display:grid; gap:18px;
+  grid-template-columns:300px 1fr 340px;
+  padding:20px clamp(14px,3vw,40px) 60px;
+  max-width:1500px; margin:0 auto;
+}
+@media(max-width:1150px){ .wrap{grid-template-columns:280px 1fr;} .col-final{grid-column:1/-1;} }
+@media(max-width:760px){ .wrap{grid-template-columns:1fr;} }
+.wrap.single{grid-template-columns:1fr; max-width:1000px;}
+
+.panel{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px;
+}
+.panel h2{
+  font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.panel h2::after{content:""; flex:1; height:1px; background:var(--line2);}
+
+/* ===== Unit list ===== */
+.search{
+  width:100%; background:var(--panel2); border:1px solid var(--line); border-radius:9px;
+  color:var(--text); padding:10px 12px; font-size:14px; margin-bottom:10px; outline:none;
+}
+.search:focus{border-color:var(--accent);}
+.filters{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;}
+.chip{
+  background:var(--panel2); border:1px solid var(--line); color:var(--muted);
+  border-radius:99px; padding:4px 11px; font-size:12px; transition:.15s;
+}
+.chip.on{border-color:var(--accent); color:var(--accent); background:rgba(255,159,46,.08);}
+.unit-list{max-height:62vh; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;}
+.unit-list::-webkit-scrollbar{width:8px;}
+.unit-list::-webkit-scrollbar-thumb{background:var(--line2); border-radius:8px;}
+.u-item{
+  background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+  padding:9px 11px; text-align:left; color:var(--text); transition:.15s; width:100%;
+}
+.u-item:hover{border-color:var(--line2); transform:translateX(2px);}
+.u-item.sel{border-color:var(--accent); background:rgba(255,159,46,.09); box-shadow:0 0 0 1px rgba(255,159,46,.3);}
+.u-name{font-size:13.5px; font-weight:500; display:flex; justify-content:space-between; gap:6px;}
+.u-meta{font-size:11px; color:var(--muted); margin-top:2px; display:flex; gap:8px; flex-wrap:wrap;}
+.tag{font-size:10px; padding:1px 7px; border-radius:99px; border:1px solid var(--line2); color:var(--muted); flex:none;}
+.tag.water{color:var(--water); border-color:var(--water);}
+.tag.dark{color:var(--dark); border-color:var(--dark);}
+.tag.holy{color:var(--holy); border-color:var(--holy);}
+.tag.nature{color:var(--nature); border-color:var(--nature);}
+.tag.electric{color:var(--electric); border-color:var(--electric);}
+.count{font-size:11px; color:var(--dim); margin-top:8px; text-align:center;}
+
+/* ===== Middle column ===== */
+.col-mid{display:flex; flex-direction:column; gap:18px;}
+.sel-unit-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+.sel-unit-head .name{font-family:'Kanit'; font-size:22px; font-weight:700;}
+.sel-unit-head .badges{display:flex; gap:6px; flex-wrap:wrap;}
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px;}
+.stat-box{background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:10px 12px;}
+.stat-box label{font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:5px;}
+.stat-box input{
+  width:100%; background:transparent; border:none; outline:none; color:var(--text);
+  font-family:'Kanit'; font-size:20px; font-weight:600;
+}
+.stat-box .unit-suffix{font-size:11px; color:var(--dim);}
+.hint{font-size:11.5px; color:var(--dim); margin-top:10px; line-height:1.6;}
+
+/* Buffs */
+.buff-row{display:grid; grid-template-columns:1fr 90px; align-items:center; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line);}
+.buff-row:last-of-type{border-bottom:none;}
+.buff-row .lbl{font-size:13.5px;}
+.buff-row .lbl small{display:block; color:var(--dim); font-size:11px; font-weight:300;}
+.buff-row input[type=range]{width:100%; accent-color:var(--accent);}
+.buff-val{
+  background:var(--panel2); border:1px solid var(--line); border-radius:8px;
+  padding:6px 8px; text-align:center;
+}
+.buff-val input{width:100%; background:transparent; border:none; outline:none; color:var(--cyan); text-align:center; font-family:'Kanit'; font-size:15px; font-weight:600;}
+.slider-wrap{display:flex; flex-direction:column; gap:4px;}
+.toggle-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line);}
+.switch{position:relative; width:44px; height:24px; flex:none;}
+.switch input{opacity:0; width:0; height:0;}
+.slider-t{position:absolute; inset:0; background:var(--panel2); border:1px solid var(--line2); border-radius:99px; transition:.2s;}
+.slider-t::before{content:""; position:absolute; width:16px; height:16px; left:3px; top:3px; background:var(--muted); border-radius:50%; transition:.2s;}
+.switch input:checked + .slider-t{background:rgba(255,159,46,.2); border-color:var(--accent);}
+.switch input:checked + .slider-t::before{transform:translateX(20px); background:var(--accent);}
+.btn-row{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+.btn{
+  border-radius:9px; padding:9px 16px; font-size:13px; font-weight:500; border:1px solid var(--line2);
+  background:var(--panel2); color:var(--text); transition:.15s;
+}
+.btn:hover{border-color:var(--accent); color:var(--accent);}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#ff7a2e); border:none; color:#1a0e00; font-weight:600;}
+.btn.primary:hover{filter:brightness(1.1); color:#1a0e00;}
+
+/* ===== Final stats ===== */
+.col-final{display:flex; flex-direction:column; gap:18px;}
+.dps-hero{
+  background:linear-gradient(160deg, rgba(255,159,46,.12), rgba(255,159,46,.02) 55%), var(--panel);
+  border:1px solid rgba(255,159,46,.4); border-radius:var(--radius); padding:20px; text-align:center;
+  box-shadow:0 0 40px rgba(255,159,46,.08) inset;
+}
+.dps-hero .cap{font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--accent2);}
+.dps-hero .num{font-size:clamp(34px,4vw,44px); font-weight:800; color:var(--accent); line-height:1.15; text-shadow:0 0 24px rgba(255,159,46,.4); word-break:break-all;}
+.dps-hero .delta{font-size:13px; color:var(--green); margin-top:2px; min-height:18px;}
+.fs-row{display:flex; justify-content:space-between; align-items:baseline; padding:9px 0; border-bottom:1px dashed var(--line); gap:10px;}
+.fs-row:last-child{border-bottom:none;}
+.fs-row .k{font-size:13px; color:var(--muted);}
+.fs-row .v{font-family:'Kanit'; font-size:17px; font-weight:600; text-align:right;}
+.fs-row .v small{display:block; font-family:'Prompt'; font-weight:300; font-size:11px; color:var(--dim);}
+.v.buffed{color:var(--cyan);}
+.v.up{color:var(--green);}
+.v.down{color:var(--red);}
+
+/* ===== Compare table ===== */
+.compare-sec{grid-column:1/-1;}
+.table-scroll{overflow-x:auto;}
+table{width:100%; border-collapse:collapse; font-size:13px; min-width:760px;}
+th{
+  text-align:right; padding:9px 10px; color:var(--muted); font-weight:500; font-size:11.5px;
+  letter-spacing:1px; text-transform:uppercase; border-bottom:1px solid var(--line2); white-space:nowrap; cursor:pointer;
+}
+th:first-child, td:first-child{text-align:left;}
+th:hover{color:var(--accent);}
+td{padding:9px 10px; border-bottom:1px solid var(--line); text-align:right; font-family:'Kanit'; font-weight:500;}
+td:first-child{font-family:'Prompt'; font-weight:400;}
+td .rm{color:var(--red); background:none; border:none; font-size:15px; margin-left:8px;}
+.best{color:var(--green);}
+.empty-msg{color:var(--dim); font-size:13px; text-align:center; padding:18px 0;}
+
+footer{
+  text-align:center; color:var(--dim); font-size:12px; padding:18px; border-top:1px solid var(--line); line-height:1.8;
+}
+footer a{color:var(--muted);}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+
+/* ============================================================
+   ADDITIONS v2 — logo slot ใหม่, รูปยูนิต, ปุ่ม preset, หน้า Units gallery
+   ============================================================ */
+
+/* โลโก้แบบช่องว่างรอใส่รูป (ทับไฟล์ assets/img/logo.png ขนาด 256x256) */
+.logo-slot.empty-style{border:2px dashed var(--line2); border-radius:12px; overflow:hidden; background:var(--panel2);}
+.logo-hint{
+  position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+  font-size:8.5px; line-height:1.3; color:var(--dim); padding:2px; letter-spacing:.3px;
+}
+
+/* รูปตัวละครในหน้า Calculator (ทับไฟล์ assets/img/units/ชื่อ.png ขนาด 200x200) */
+.unit-portrait{display:flex; gap:14px; align-items:center; margin-bottom:12px;}
+.unit-img-slot{
+  width:96px; height:96px; flex:none; position:relative;
+  border:2px dashed var(--line2); border-radius:12px; overflow:hidden; background:var(--panel2);
+}
+.unit-img-slot img{width:100%; height:100%; object-fit:cover; display:none;}
+.unit-img-fb{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-family:'Kanit'; font-weight:700; font-size:26px; color:var(--dim);
+}
+.unit-img-name{font-size:10.5px; color:var(--dim); margin-top:6px; word-break:break-all;}
+
+/* ปุ่ม preset บัฟดาเมจ 250% / 300% */
+.preset-row{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;}
+.preset-chip{
+  background:var(--panel2); border:1px solid var(--line2); color:var(--muted);
+  border-radius:8px; padding:5px 14px; font-size:12.5px; font-weight:500; transition:.15s;
+}
+.preset-chip:hover{color:var(--accent); border-color:var(--accent);}
+.preset-chip.on{background:rgba(255,159,46,.14); border-color:var(--accent); color:var(--accent);}
+
+/* ป้าย NEW */
+.tag.new{color:#ff7ad9; border-color:#ff7ad9;}
+
+/* ===== หน้า Units Gallery ===== */
+.gallery{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  gap:12px;
+}
+.g-card{
+  background:var(--panel2); border:1px solid var(--line); border-radius:12px;
+  padding:10px; text-align:center; color:var(--text); transition:.15s; cursor:pointer;
+  display:flex; flex-direction:column; gap:8px;
+}
+.g-card:hover{border-color:var(--accent); transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.35);}
+.g-img{
+  width:100%; aspect-ratio:1/1; position:relative; border-radius:10px; overflow:hidden;
+  border:2px dashed var(--line2); background:var(--panel);
+}
+.g-img img{width:100%; height:100%; object-fit:cover; display:none;}
+.g-img .fb{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-family:'Kanit'; font-weight:800; font-size:30px; color:var(--dim);
+}
+.g-name{font-size:13px; font-weight:500; line-height:1.35; min-height:2.6em; display:flex; align-items:center; justify-content:center;}
+.g-stats{font-size:11px; color:var(--muted);}
+.g-stats b{color:var(--accent); font-family:'Kanit';}
+.g-tags{display:flex; gap:4px; justify-content:center; flex-wrap:wrap; min-height:18px;}
+.g-file{font-size:9.5px; color:var(--dim); word-break:break-all;}
+.gallery-tools{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+.gallery-tools .search{margin:0; max-width:340px;}
+
+/* ป้ายระดับดาว */
+.tag.star7{color:#ffd75e; border-color:#ffd75e;}

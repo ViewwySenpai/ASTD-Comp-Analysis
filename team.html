@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team | ASTD Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.team-wrap{display:grid; grid-template-columns:1fr 380px; gap:18px; padding:20px clamp(14px,3vw,40px) 60px; max-width:1500px; margin:0 auto;}
+@media(max-width:1000px){ .team-wrap{grid-template-columns:1fr;} }
+.cards{display:flex; flex-direction:column; gap:12px;}
+
+/* ทีม */
+.team-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px;}
+.team-box{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:12px;}
+.team-box.off{opacity:.35; pointer-events:none;}
+.team-box h3{font-size:13px; color:var(--accent); font-family:'Kanit'; margin-bottom:8px; display:flex; justify-content:space-between;}
+.team-box h3 .cnt{color:var(--dim); font-family:'Prompt'; font-weight:300; font-size:11px;}
+.unit-rows{display:flex; flex-direction:column; gap:6px;}
+.unit-row{display:grid; grid-template-columns:1fr 64px 30px; gap:6px; align-items:center;}
+.unit-row select, .unit-row input{
+  background:var(--panel); border:1px solid var(--line); border-radius:8px;
+  color:var(--text); padding:7px 8px; font-size:12px; outline:none; width:100%;
+}
+.unit-row .rm{color:var(--red); background:none; border:1px solid var(--line); border-radius:8px; height:30px; font-size:12px;}
+.add-u{margin-top:8px; width:100%;}
+
+/* การ์ดเปิด/ปิด */
+.t-card{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+.t-card.on{border-color:var(--accent);}
+.t-card .head{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.t-card .title{font-family:'Kanit'; font-weight:600; font-size:15px;}
+.t-card .desc{font-size:12px; color:var(--muted); margin-top:2px;}
+.t-card .body{margin-top:10px; display:none;}
+.t-card.on .body{display:block;}
+.buff-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+.sec-input{display:flex; align-items:center; gap:8px; margin-top:8px; font-size:13px;}
+.sec-input input{width:90px; background:var(--panel); border:1px solid var(--line); border-radius:8px; color:var(--cyan); padding:7px 8px; font-family:'Kanit'; font-size:15px; text-align:center; outline:none;}
+
+/* ลำดับการ์ด (ลากเรียง) */
+.order-list{display:flex; flex-direction:column; gap:8px;}
+.order-item{
+  display:flex; align-items:center; gap:10px;
+  background:var(--panel2); border:1px solid var(--line2); border-radius:10px;
+  padding:10px 12px; cursor:grab; user-select:none;
+}
+.order-item.dragging{opacity:.4; border-style:dashed;}
+.order-item .grip{color:var(--dim); font-size:16px; letter-spacing:2px;}
+.order-item .o-num{
+  width:24px; height:24px; border-radius:50%; background:rgba(255,159,46,.15);
+  color:var(--accent); font-family:'Kanit'; font-weight:700; font-size:13px;
+  display:grid; place-items:center; flex:none;
+}
+.order-item .o-name{flex:1; font-size:13.5px;}
+.order-item .o-name small{display:block; color:var(--dim); font-size:11px;}
+.order-item .mv{background:none; border:1px solid var(--line); border-radius:6px; color:var(--muted); width:26px; height:26px; font-size:12px;}
+.order-item .mv:hover{color:var(--accent); border-color:var(--accent);}
+
+/* ผลลัพธ์ */
+.step-list{display:flex; flex-direction:column;}
+.step{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px dashed var(--line); font-size:13px;}
+.step:last-child{border-bottom:none;}
+.step .k{color:var(--muted);}
+.step .k .noeff{color:var(--red); font-size:11px;}
+.step .v{font-family:'Kanit'; font-weight:600; white-space:nowrap;}
+.verdict{border-radius:12px; padding:16px; text-align:center; margin-top:4px; font-family:'Kanit';}
+.verdict.pass{background:rgba(87,227,154,.1); border:1px solid var(--green); color:var(--green);}
+.verdict.fail{background:rgba(255,107,107,.1); border:1px solid var(--red); color:var(--red);}
+.verdict .big{font-size:22px; font-weight:800;}
+.verdict small{display:block; font-family:'Prompt'; font-weight:300; font-size:12px; margin-top:4px; color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-top">
+    <!-- ช่องโลโก้: เขียนทับไฟล์ assets/img/logo.png (256x256 px) -->
+    <div class="logo-slot empty-style">
+      <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Logo"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </div>
+    <div>
+      <h1>ASTD <span>Team Builder</span></h1>
+      <div class="sub">จัดทีม 1–4 คน (คนละ 6 ยูนิต) เปิดการ์ด ลากเรียงลำดับ แล้วเช็คว่าเคลียร์ได้ไหม</div>
+    </div>
+  </div>
+
+  <nav class="mainnav">
+    <a href="index.html">Calculator</a>
+    <a href="units.html">Units</a>
+    <a href="mobhp.html">Mob HP</a>
+    <a href="team.html" class="active">Team</a>
+  </nav>
+</header>
+
+<div class="team-wrap">
+
+  <!-- ===== LEFT ===== -->
+  <div class="cards">
+
+    <section class="panel">
+      <h2>เป้าหมาย</h2>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>Wave</label>
+          <input type="number" id="wave" min="1" step="1" value="95">
+        </div>
+        <div class="stat-box">
+          <label>ประเภทมอน</label>
+          <select id="etype" style="width:100%; background:transparent; border:none; outline:none; color:var(--text); font-family:'Kanit'; font-size:18px; font-weight:600;">
+            <option value="weak">Weak ×1.00</option>
+            <option value="medium">Medium ×1.30</option>
+            <option value="strong">Strong ×1.75</option>
+          </select>
+        </div>
+      </div>
+      <div class="stat-box" style="margin-top:10px;">
+        <label>จำนวนคนที่ไปเล่น (คูณ HP มอน + เปิดจำนวนทีม)</label>
+        <div class="preset-row" id="pChips" style="margin-top:6px;">
+          <button class="preset-chip on" data-p="1">1 คน ×1.0</button>
+          <button class="preset-chip" data-p="2">2 คน ×1.6</button>
+          <button class="preset-chip" data-p="3">3 คน ×2.4</button>
+          <button class="preset-chip" data-p="4">4 คน ×3.2</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>ทีม (คนละไม่เกิน 6 ยูนิต)</h2>
+      <div class="team-grid" id="teamGrid"></div>
+      <p class="hint">เลือกยูนิตจากลิสต์ (มี DPS บอกในตัวเลือก) ช่องตัวเลข = จำนวนตัวที่วาง หรือถ้าเลือก "Custom DPS" ช่องตัวเลข = ค่า DPS ที่กรอกเอง — DPS รวมของทุกทีมจะไปอยู่ในการ์ด Team DPS</p>
+    </section>
+
+    <section class="panel">
+      <h2>การ์ด (เปิดแล้วไปเรียงลำดับด้านขวา)</h2>
+      <div class="cards" style="gap:10px;">
+
+        <div class="t-card" data-card="dps">
+          <div class="head">
+            <div>
+              <div class="title">Team DPS</div>
+              <div class="desc">ทีมยิงด้วย DPS รวม ตามจำนวนวินาทีที่กำหนด</div>
+            </div>
+            <label class="switch"><input type="checkbox" class="card-sw" checked><span class="slider-t"></span></label>
+          </div>
+          <div class="body">
+            <div class="sec-input">ยิงเป็นเวลา <input type="number" id="dpsSec" min="1" step="1" value="60"> วินาที</div>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="gil">
+          <div class="head">
+            <div>
+              <div class="title">Gilgamesh</div>
+              <div class="desc">ตัดเลือดมอนลงไปที่ 25% ของเลือดเต็ม (ถ้าเลือดต่ำกว่านั้นอยู่แล้ว = ไม่มีผล)</div>
+            </div>
+            <label class="switch"><input type="checkbox" class="card-sw"><span class="slider-t"></span></label>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="mad">
+          <div class="head">
+            <div>
+              <div class="title">Madara</div>
+              <div class="desc">ตัดเลือดมอนลงไปที่ 33% ของเลือดเต็ม (ถ้ากด Gilgamesh เหลือ 25% ไปแล้ว การ์ดนี้จะไม่มีผล)</div>
+            </div>
+            <label class="switch"><input type="checkbox" class="card-sw"><span class="slider-t"></span></label>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="luf">
+          <div class="head">
+            <div>
+              <div class="title">Luffy</div>
+              <div class="desc">ตัดเลือดที่เหลืออยู่ลง 25% (บัฟเสริมเพิ่ม % การตัด)</div>
+            </div>
+            <label class="switch"><input type="checkbox" class="card-sw"><span class="slider-t"></span></label>
+          </div>
+          <div class="body">
+            <div class="desc">สถานะบัฟเสริมของ Luffy:</div>
+            <div class="buff-chips" id="lufBuffs">
+              <button class="preset-chip" data-b="15">Idol +15%</button>
+              <button class="preset-chip" data-b="8">Judgement +8%</button>
+              <button class="preset-chip" data-b="35">FV +35%</button>
+              <button class="preset-chip" data-b="12">Purify +12%</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="tboi">
+          <div class="head">
+            <div>
+              <div class="title">TBOI</div>
+              <div class="desc">ระเบิด 250B (บัฟเสริมเพิ่มดาเมจระเบิด)</div>
+            </div>
+            <label class="switch"><input type="checkbox" class="card-sw"><span class="slider-t"></span></label>
+          </div>
+          <div class="body">
+            <div class="desc">สถานะบัฟเสริมของ TBOI:</div>
+            <div class="buff-chips" id="tboiBuffs">
+              <button class="preset-chip" data-b="15">Idol +15%</button>
+              <button class="preset-chip" data-b="8">Judgement +8%</button>
+              <button class="preset-chip" data-b="35">FV +35%</button>
+              <button class="preset-chip" data-b="12">Purify +12%</button>
+              <button class="preset-chip" data-b="50">Dot Buff +50%</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== RIGHT ===== -->
+  <div class="col-final">
+    <div class="dps-hero">
+      <div class="cap">Team DPS รวม (ทุกทีม)</div>
+      <div class="num" id="teamDps">0</div>
+      <div class="delta" id="dpsNote"></div>
+    </div>
+
+    <section class="panel">
+      <h2>ลำดับการใช้การ์ด (ลากเรียงได้)</h2>
+      <div class="order-list" id="orderList"></div>
+      <p class="hint">ลากการ์ดเพื่อสลับลำดับ หรือกดปุ่ม ▲▼ — ลำดับมีผลจริง เช่น Team DPS ก่อน Gilgamesh จะยิงตอนเลือดยังเต็ม</p>
+    </section>
+
+    <section class="panel">
+      <h2>ผลการคำนวณ (ตามลำดับการ์ด)</h2>
+      <div class="step-list" id="steps"></div>
+    </section>
+
+    <div class="verdict" id="verdict" style="display:none;"></div>
+  </div>
+
+</div>
+
+<footer>
+  Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม
+</footer>
+
+<script src="assets/js/units.js"></script>
+<script src="assets/js/hpcore.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let players = 1;
+const TBOI_BASE = 250e9;
+const CARD_INFO = {
+  dps:  {name:"Team DPS",  sub:()=>`ยิง ${+$("dpsSec").value||0} วิ ด้วย DPS รวม ${formatHp(teamDps())}`},
+  gil:  {name:"Gilgamesh", sub:()=>"ตัดลงไปที่ 25% ของเลือดเต็ม"},
+  mad:  {name:"Madara",    sub:()=>"ตัดลงไปที่ 33% ของเลือดเต็ม"},
+  luf:  {name:"Luffy",     sub:()=>`ตัดเลือดที่เหลือลง ${(25*(1+buffSum("lufBuffs"))).toFixed(1)}%`},
+  tboi: {name:"TBOI",      sub:()=>`ระเบิด ${formatHp(TBOI_BASE*(1+buffSum("tboiBuffs")))}`},
+};
+let order = ["dps"]; /* การ์ดที่เปิดอยู่ เรียงตามลำดับใช้งาน */
+
+/* ---------- Teams: 4 ทีม ทีมละไม่เกิน 6 ยูนิต ---------- */
+const unitOptions = (()=> {
+  let html = `<option value="custom">— Custom DPS —</option>`;
+  UNITS.forEach((u,i)=>{
+    if(u[1] === null) return;
+    html += `<option value="${i}">${u[0]} (DPS ${formatHp(u[1]/u[2])})</option>`;
+  });
+  return html;
+})();
+
+function buildTeams(){
+  const grid = $("teamGrid");
+  for(let t=1; t<=4; t++){
+    const box = document.createElement("div");
+    box.className = "team-box";
+    box.id = "team"+t;
+    box.innerHTML = `
+      <h3>ทีม ${t} <span class="cnt" id="cnt${t}">0/6</span></h3>
+      <div class="unit-rows" id="rows${t}"></div>
+      <button class="btn add-u" data-t="${t}">+ เพิ่มยูนิต</button>`;
+    grid.appendChild(box);
+    box.querySelector(".add-u").onclick = ()=>addUnitRow(t);
+  }
+}
+
+function addUnitRow(t){
+  const rows = $("rows"+t);
+  if(rows.children.length >= 6) return;
+  const row = document.createElement("div");
+  row.className = "unit-row";
+  row.innerHTML = `
+    <select class="u-sel">${unitOptions}</select>
+    <input class="u-val" type="number" min="0" step="any" value="1" title="จำนวนตัวที่วาง (หรือ DPS ถ้าเลือก Custom)">
+    <button class="rm" title="ลบ">✕</button>`;
+  const sel = row.querySelector(".u-sel");
+  const val = row.querySelector(".u-val");
+  sel.addEventListener("change", ()=>{
+    if(sel.value === "custom"){ val.value = ""; val.placeholder = "DPS"; }
+    else { val.value = 1; }
+    calcTeam();
+  });
+  val.addEventListener("input", calcTeam);
+  row.querySelector(".rm").onclick = ()=>{ row.remove(); updateCnt(t); calcTeam(); };
+  rows.appendChild(row);
+  updateCnt(t);
+  calcTeam();
+}
+function updateCnt(t){
+  const n = $("rows"+t).children.length;
+  $("cnt"+t).textContent = n + "/6";
+  const btn = document.querySelector(`#team${t} .add-u`);
+  btn.style.display = n >= 6 ? "none" : "block";
+}
+
+function applyPlayers(){
+  for(let t=1; t<=4; t++){
+    $("team"+t).classList.toggle("off", t > players);
+  }
+}
+
+function teamDps(){
+  let total = 0;
+  for(let t=1; t<=players; t++){
+    document.querySelectorAll(`#rows${t} .unit-row`).forEach(r=>{
+      const sel = r.querySelector(".u-sel").value;
+      const v = parseFloat(r.querySelector(".u-val").value)||0;
+      if(sel === "custom") total += v;
+      else {
+        const u = UNITS[+sel];
+        total += (u[1]/u[2]) * Math.max(1, v);
+      }
+    });
+  }
+  return total;
+}
+
+/* ---------- Card toggles + buffs ---------- */
+document.querySelectorAll(".t-card .card-sw").forEach(sw=>{
+  const key = sw.closest(".t-card").dataset.card;
+  if(sw.checked){ sw.closest(".t-card").classList.add("on"); }
+  sw.addEventListener("change", ()=>{
+    sw.closest(".t-card").classList.toggle("on", sw.checked);
+    if(sw.checked){ if(!order.includes(key)) order.push(key); }
+    else { order = order.filter(k => k !== key); }
+    renderOrder(); calcTeam();
+  });
+});
+function buffSum(containerId){
+  let s = 0;
+  document.querySelectorAll(`#${containerId} .preset-chip.on`).forEach(c=> s += +c.dataset.b);
+  return s/100;
+}
+document.querySelectorAll("#lufBuffs .preset-chip, #tboiBuffs .preset-chip").forEach(c=>{
+  c.addEventListener("click", ()=>{ c.classList.toggle("on"); renderOrder(); calcTeam(); });
+});
+$("dpsSec").addEventListener("input", ()=>{ renderOrder(); calcTeam(); });
+
+/* ---------- ลำดับการ์ด: ลาก + ปุ่ม ▲▼ ---------- */
+function renderOrder(){
+  const list = $("orderList");
+  list.innerHTML = "";
+  if(!order.length){
+    list.innerHTML = `<div class="empty-msg">ยังไม่ได้เปิดการ์ด — เปิดสวิตช์การ์ดทางซ้ายก่อน</div>`;
+    return;
+  }
+  order.forEach((key, idx)=>{
+    const it = document.createElement("div");
+    it.className = "order-item";
+    it.draggable = true;
+    it.dataset.key = key;
+    it.innerHTML = `
+      <span class="grip">⋮⋮</span>
+      <span class="o-num">${idx+1}</span>
+      <span class="o-name">${CARD_INFO[key].name}<small>${CARD_INFO[key].sub()}</small></span>
+      <button class="mv" data-d="-1" title="เลื่อนขึ้น">▲</button>
+      <button class="mv" data-d="1" title="เลื่อนลง">▼</button>`;
+    it.querySelectorAll(".mv").forEach(b=>{
+      b.onclick = ()=>{
+        const d = +b.dataset.d, j = idx + d;
+        if(j < 0 || j >= order.length) return;
+        [order[idx], order[j]] = [order[j], order[idx]];
+        renderOrder(); calcTeam();
+      };
+    });
+    it.addEventListener("dragstart", ()=> it.classList.add("dragging"));
+    it.addEventListener("dragend", ()=>{
+      it.classList.remove("dragging");
+      order = [...list.querySelectorAll(".order-item")].map(x=>x.dataset.key);
+      renderOrder(); calcTeam();
+    });
+    list.appendChild(it);
+  });
+  list.addEventListener("dragover", e=>{
+    e.preventDefault();
+    const dragging = list.querySelector(".dragging");
+    if(!dragging) return;
+    const after = [...list.querySelectorAll(".order-item:not(.dragging)")]
+      .find(el => e.clientY <= el.getBoundingClientRect().top + el.offsetHeight/2);
+    if(after) list.insertBefore(dragging, after);
+    else list.appendChild(dragging);
+  }, {once:false});
+}
+
+/* ---------- Main calc: ไล่ตามลำดับการ์ด ---------- */
+function calcTeam(){
+  const wave = Math.max(1, parseInt($("wave").value)||1);
+  const emult = ENEMY_MULTS[$("etype").value];
+  const maxHp = calculateBaseHp(wave) * PLAYER_MULTS[players] * emult;
+  let hp = maxHp;
+
+  const dps = teamDps();
+  $("teamDps").textContent = formatHp(dps);
+  $("dpsNote").textContent = dps>0 ? `จาก ${players} ทีมที่ใช้งาน` : "ยังไม่ได้เพิ่มยูนิตในทีม";
+
+  const steps = [{k:`เลือดมอน Wave ${wave} (${$("etype").selectedOptions[0].text}, ${players} คน)`, v: formatHp(hp)}];
+  let killedAt = null;
+
+  order.forEach((key, idx)=>{
+    if(hp <= 0){ return; }
+    const n = idx+1;
+    if(key === "gil"){
+      const target = maxHp * 0.25;
+      if(hp > target){ hp = target; steps.push({k:`${n}. Gilgamesh → เหลือ 25% ของเลือดเต็ม`, v: formatHp(hp)}); }
+      else steps.push({k:`${n}. Gilgamesh <span class="noeff">— ไม่มีผล (เลือดต่ำกว่า 25% อยู่แล้ว)</span>`, v: formatHp(hp)});
+    }
+    else if(key === "mad"){
+      const target = maxHp * 0.33;
+      if(hp > target){ hp = target; steps.push({k:`${n}. Madara → เหลือ 33% ของเลือดเต็ม`, v: formatHp(hp)}); }
+      else steps.push({k:`${n}. Madara <span class="noeff">— ไม่มีผล (เลือดต่ำกว่า 33% อยู่แล้ว)</span>`, v: formatHp(hp)});
+    }
+    else if(key === "luf"){
+      const cut = Math.min(0.25 * (1 + buffSum("lufBuffs")), 1);
+      hp *= (1 - cut);
+      steps.push({k:`${n}. Luffy → ตัดที่เหลือลง ${(cut*100).toFixed(1)}%`, v: formatHp(hp)});
+    }
+    else if(key === "tboi"){
+      const boom = TBOI_BASE * (1 + buffSum("tboiBuffs"));
+      hp = Math.max(0, hp - boom);
+      steps.push({k:`${n}. TBOI → ระเบิด ${formatHp(boom)}`, v: formatHp(hp)});
+    }
+    else if(key === "dps"){
+      const sec = Math.max(0, parseFloat($("dpsSec").value)||0);
+      const dmg = dps * sec;
+      const before = hp;
+      hp = Math.max(0, hp - dmg);
+      steps.push({k:`${n}. Team DPS → ยิง ${sec} วิ (${formatHp(dmg)})`, v: formatHp(hp)});
+      if(hp <= 0 && before > 0 && dps > 0) killedAt = {key:"dps", secUsed: before/dps};
+    }
+    if(hp <= 0 && !killedAt) killedAt = {key};
+  });
+
+  $("steps").innerHTML = steps.map(s=>`<div class="step"><span class="k">${s.k}</span><span class="v">${s.v}</span></div>`).join("");
+
+  const verdict = $("verdict");
+  verdict.style.display = "block";
+  if(hp <= 0){
+    verdict.className = "verdict pass";
+    let extra = "";
+    if(killedAt && killedAt.key === "dps") extra = `ใช้เวลายิงจริง ≈ ${killedAt.secUsed < 1 ? killedAt.secUsed.toFixed(2) : killedAt.secUsed.toFixed(1)} วินาที`;
+    verdict.innerHTML = `<div class="big">✔ เคลียร์ได้</div><small>${extra}</small>`;
+  } else {
+    verdict.className = "verdict fail";
+    const need = dps > 0 ? ` — ต้องยิงเพิ่มอีก ≈ ${(hp/dps).toFixed(1)} วิ หรือเพิ่ม DPS/การ์ด` : " — ทีมยังไม่มี DPS";
+    verdict.innerHTML = `<div class="big">✖ ยังเคลียร์ไม่ได้</div><small>เหลือเลือด ${formatHp(hp)}${need}</small>`;
+  }
+}
+
+/* ---------- Player chips ---------- */
+document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
+  c.onclick = ()=>{
+    document.querySelectorAll("#pChips .preset-chip").forEach(x=>x.classList.remove("on"));
+    c.classList.add("on");
+    players = +c.dataset.p;
+    applyPlayers();
+    calcTeam();
+  };
+});
+["wave","etype"].forEach(id => $(id).addEventListener("input", calcTeam));
+
+/* ---------- Init ---------- */
+buildTeams();
+addUnitRow(1);
+applyPlayers();
+renderOrder();
+calcTeam();
+</script>
+</body>
+</html>

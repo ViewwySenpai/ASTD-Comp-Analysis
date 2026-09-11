@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mob HP | ASTD Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.p-chips{display:flex; gap:6px; flex-wrap:wrap;}
+.row-real td:first-child{border-left:3px solid var(--green);}
+.row-est td:first-child{border-left:3px solid var(--line2);}
+.hp-weak{color:var(--green);}
+.hp-med{color:#ffd75e;}
+.hp-strong{color:var(--red);}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:10px;}
+.legend span::before{content:"■ "; }
+.legend .lg-real::before{color:var(--green);}
+.legend .lg-est::before{color:var(--line2);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-top">
+    <!-- ช่องโลโก้: เขียนทับไฟล์ assets/img/logo.png (256x256 px) -->
+    <div class="logo-slot empty-style">
+      <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Logo"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </div>
+    <div>
+      <h1>ASTD <span>Mob HP Table</span></h1>
+      <div class="sub">เช็คเลือดมอนได้ทุกเวฟ — Anchor Table Edition (Wave 1 เริ่มที่ HP 41)</div>
+    </div>
+  </div>
+
+  <nav class="mainnav">
+    <a href="index.html">Calculator</a>
+    <a href="units.html">Units</a>
+    <a href="mobhp.html" class="active">Mob HP</a>
+    <a href="team.html">Team</a>
+  </nav>
+</header>
+
+<div class="wrap single">
+
+  <section class="panel">
+    <h2>ตั้งค่าตาราง</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <label>เวฟเริ่ม</label>
+        <input type="number" id="wFrom" min="1" step="1" value="1">
+      </div>
+      <div class="stat-box">
+        <label>เวฟสุดท้าย</label>
+        <input type="number" id="wTo" min="1" step="1" value="100">
+      </div>
+      <div class="stat-box" style="grid-column:span 2;">
+        <label>จำนวนผู้เล่น (ตัวคูณ HP)</label>
+        <div class="p-chips" id="pChips">
+          <button class="preset-chip on" data-p="1">1 คน ×1.0</button>
+          <button class="preset-chip" data-p="2">2 คน ×1.6</button>
+          <button class="preset-chip" data-p="3">3 คน ×2.4</button>
+          <button class="preset-chip" data-p="4">4 คน ×3.2</button>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" id="btnGen">สร้างตาราง</button>
+      <button class="btn" id="btnClear">ล้างตาราง</button>
+    </div>
+    <p class="hint">
+      สูตร Anchor Table: Wave 1–30 ใช้ค่าจริงตรงจากเกม, ระหว่างจุดยึดคำนวณแบบ
+      Exponential Interpolation, เกินจุดยึดสุดท้ายลากต่อด้วยอัตราโตของช่วงท้าย<br>
+      จุดยึดตอนนี้: <b id="anchorList"></b> — เห็นค่าจริงเวฟไหนเพิ่ม เอาไปใส่ใน <b>ANCHORS</b>
+      ในไฟล์นี้ได้เลย ยิ่งเพิ่ม ยิ่งแม่น
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>ตารางเลือดมอน</h2>
+    <div class="table-scroll">
+      <table id="hpTable" style="display:none;">
+        <thead>
+          <tr>
+            <th style="text-align:left;">เวฟ</th>
+            <th>Base HP</th>
+            <th>Weak ×1.00</th>
+            <th>Medium ×1.30</th>
+            <th>Strong ×1.75</th>
+          </tr>
+        </thead>
+        <tbody id="hpBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-msg" id="hpEmpty">กำหนดช่วงเวฟด้านบน แล้วกด "สร้างตาราง"</div>
+    <div class="legend">
+      <span class="lg-real">ค่าจริงจากตาราง (Wave 1–30 / จุดยึด)</span>
+      <span class="lg-est">ค่าประมาณจากสูตร</span>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม
+</footer>
+
+<script src="assets/js/hpcore.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let players = 1;
+
+function genTable(){
+  let from = Math.max(1, parseInt($("wFrom").value)||1);
+  let to   = Math.max(from, parseInt($("wTo").value)||from);
+  if(to - from > 2000) to = from + 2000; /* กันตารางยาวเกิน */
+  const pm = PLAYER_MULTS[players];
+
+  const rows = [];
+  for(let w = from; w <= to; w++){
+    const base = calculateBaseHp(w) * pm;
+    const isReal = (w <= 30 || ANCHORS[w] !== undefined);
+    rows.push(`<tr class="${isReal?"row-real":"row-est"}" title="${isReal?"ค่าจริงจากตาราง":"ค่าประมาณจากสูตร"}">
+      <td style="text-align:left;">${w}</td>
+      <td>${formatHp(base)}</td>
+      <td class="hp-weak">${formatHp(base*1.00)}</td>
+      <td class="hp-med">${formatHp(base*1.30)}</td>
+      <td class="hp-strong">${formatHp(base*1.75)}</td>
+    </tr>`);
+  }
+  $("hpBody").innerHTML = rows.join("");
+  $("hpTable").style.display = "table";
+  $("hpEmpty").style.display = "none";
+}
+
+$("btnGen").onclick = genTable;
+$("btnClear").onclick = ()=>{
+  $("hpBody").innerHTML = "";
+  $("hpTable").style.display = "none";
+  $("hpEmpty").style.display = "block";
+};
+document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
+  c.onclick = ()=>{
+    document.querySelectorAll("#pChips .preset-chip").forEach(x=>x.classList.remove("on"));
+    c.classList.add("on");
+    players = +c.dataset.p;
+    if($("hpTable").style.display === "table") genTable();
+  };
+});
+["wFrom","wTo"].forEach(id=>{
+  $(id).addEventListener("keydown", e=>{ if(e.key==="Enter") genTable(); });
+});
+$("anchorList").textContent = "Wave " + Object.keys(ANCHORS).map(Number).sort((a,b)=>a-b).join(", ");
+</script>
+</body>
+</html>
