@@ -1,9 +1,6 @@
 /* ============================================================
-   ASTD DPS Calculator — Logic
-   ต้องโหลด units.js ก่อนไฟล์นี้ (ดูลำดับ <script> ใน index.html)
+   ASTD DPS Calculator — Logic (ต้องโหลด units.js ก่อนไฟล์นี้)
    ============================================================ */
-
-/* ================= State ================= */
 let selIdx = -1;
 let typeFilter = "all";
 let compare = [];
@@ -18,7 +15,6 @@ const fmt = (n, d=2) => {
 };
 const fmtFull = n => isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—";
 
-/* ================= Unit list render ================= */
 function renderList(){
   const q = $("search").value.trim().toLowerCase();
   const list = $("unitList");
@@ -26,6 +22,7 @@ function renderList(){
   let shown = 0;
   UNITS.forEach((u,i)=>{
     if(typeFilter === "new"){ if(!u[8]) return; }
+    else if(typeFilter === "7star"){ if(u[9] !== 7) return; }
     else if(typeFilter !== "all" && u[5] !== typeFilter) return;
     if(q && !u[0].toLowerCase().includes(q)) return;
     shown++;
@@ -69,7 +66,7 @@ function selectUnit(i){
     (u[6]?`<span class="tag">AoE: ${u[6]}</span>`:"") +
     (u[7]?`<span class="tag ${u[7].toLowerCase()}">${u[7]} Enchant</span>`:"") +
     (u[8]?`<span class="tag new">NEW — กรอกสถิติเอง</span>`:"") +
-    (u[9]?`<span class="tag star7">${u[9]}★</span>`:"");
+    (u[9]?`<span class="tag star7">${u[9]}★ — กรอกสถิติเอง</span>`:"");
   $("inDmg").value = u[1] ?? "";
   $("inSpa").value = u[2] ?? "";
   $("inRng").value = u[3] ?? "";
@@ -79,13 +76,11 @@ function selectUnit(i){
   calc();
 }
 
-/* ================= Buff sync (range <-> number) ================= */
 function bindPair(rangeId, numId){
   $(rangeId).addEventListener("input", ()=>{ $(numId).value = $(rangeId).value; calc(); });
   $(numId).addEventListener("input", ()=>{ $(rangeId).value = $(numId).value; calc(); });
 }
 
-/* ================= Core calculation ================= */
 function getBuild(){
   const baseDmg = parseFloat($("inDmg").value)||0;
   const baseSpa = Math.max(parseFloat($("inSpa").value)||1, 0.05);
@@ -96,10 +91,8 @@ function getBuild(){
   const elem = $("tgElem").checked ? 1.5 : 1;
 
   const fDmg = baseDmg * (1+dmgB) * elem;
-  const fSpa = baseSpa;
-  const fRng = baseRng;
-  return {baseDmg, baseSpa, baseRng, cost, fDmg, fSpa, fRng,
-          dps: fDmg/fSpa, baseDps: baseDmg/baseSpa};
+  return {baseDmg, baseSpa, baseRng, cost, fDmg, fSpa:baseSpa, fRng:baseRng,
+          dps: fDmg/baseSpa, baseDps: baseDmg/baseSpa};
 }
 
 function calc(){
@@ -107,8 +100,7 @@ function calc(){
   $("outDps").textContent = fmt(b.dps);
   const gain = b.baseDps>0 ? (b.dps/b.baseDps - 1)*100 : 0;
   $("outDpsDelta").textContent = Math.abs(gain)>0.05
-    ? `${gain>0?"▲":"▼"} ${Math.abs(gain).toFixed(1)}% จากค่าพื้นฐาน (${fmt(b.baseDps)})` : "";
-  $("outDpsDelta").style.color = gain>=0 ? "var(--green)":"var(--red)";
+    ? `▲ ${gain.toFixed(1)}% จากค่าพื้นฐาน (${fmt(b.baseDps)})` : "";
 
   setOut("outDmg","outDmgBase", b.fDmg, b.baseDmg, false);
   setOut("outSpa","outSpaBase", b.fSpa, b.baseSpa, true);
@@ -124,14 +116,12 @@ function setOut(vId, bId, val, base, lowerBetter){
   $(bId).textContent = Math.abs(diff)>1e-9 ? `พื้นฐาน ${fmt(base)}` : "";
 }
 
-/* ================= Damage buff presets (0 / 250 / 300) ================= */
 function setDmgBuff(v){
   $("vDmg").value = v; $("rgDmg").value = v;
   document.querySelectorAll(".preset-chip").forEach(c=>c.classList.toggle("on", +c.dataset.v === v));
   calc();
 }
 
-/* ================= Compare table ================= */
 function addToCompare(){
   const b = getBuild();
   if(b.baseDmg<=0){ alert("เลือกยูนิตหรือใส่ค่า Damage ก่อนครับ"); return; }
@@ -151,46 +141,35 @@ function renderCompare(){
   $("cmpTable").style.display = compare.length ? "table":"none";
   $("cmpEmpty").style.display = compare.length ? "none":"block";
   if(!compare.length) return;
-
   const sorted = [...compare].sort((a,b)=>{
     if(sortKey==="name") return sortDir * a.name.localeCompare(b.name);
-    return (a[sortKey]-b[sortKey]) * sortDir; // sortDir -1 = มาก→น้อย
+    return (a[sortKey]-b[sortKey]) * sortDir;
   });
   const bestDps = Math.max(...compare.map(c=>c.dps));
   tb.innerHTML = sorted.map(c=>{
     const idx = compare.indexOf(c);
     return `<tr>
-      <td>${c.name}</td>
-      <td>${fmt(c.dmg)}</td>
-      <td>${fmt(c.spa)}</td>
-      <td>${fmt(c.rng,1)}</td>
+      <td>${c.name}</td><td>${fmt(c.dmg)}</td><td>${fmt(c.spa)}</td><td>${fmt(c.rng,1)}</td>
       <td class="${c.dps===bestDps?"best":""}">${fmt(c.dps)}</td>
-      <td>${c.cost?fmtFull(c.cost):"—"}</td>
-      <td>${c.eff?fmt(c.eff):"—"}</td>
+      <td>${c.cost?fmtFull(c.cost):"—"}</td><td>${c.eff?fmt(c.eff):"—"}</td>
       <td><button class="rm" title="ลบ" onclick="rmCmp(${idx})">✕</button></td>
     </tr>`;
   }).join("");
 }
 window.rmCmp = i => { compare.splice(i,1); renderCompare(); };
 
-/* ================= Init ================= */
 document.addEventListener("DOMContentLoaded", ()=>{
   bindPair("rgDmg","vDmg");
   ["inDmg","inSpa","inRng","inCost"].forEach(id => $(id).addEventListener("input", calc));
   $("tgElem").addEventListener("change", calc);
-
-  document.querySelectorAll(".preset-chip").forEach(c=>{
-    c.addEventListener("click", ()=>setDmgBuff(+c.dataset.v));
-  });
-
+  document.querySelectorAll(".preset-chip").forEach(c=> c.addEventListener("click", ()=>setDmgBuff(+c.dataset.v)));
   $("btnReset").onclick = ()=>{
-    [["rgDmg","vDmg",0]].forEach(([r,v,d])=>{ $(r).value=d; $(v).value=d; });
+    $("rgDmg").value = 0; $("vDmg").value = 0;
     $("tgElem").checked = false;
     document.querySelectorAll(".preset-chip").forEach(c=>c.classList.remove("on"));
     calc();
   };
   $("btnAdd").onclick = addToCompare;
-
   document.querySelectorAll("#cmpTable th[data-k]").forEach(th=>{
     th.onclick = ()=>{
       const k = th.dataset.k;
@@ -198,7 +177,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
       renderCompare();
     };
   });
-
   document.querySelectorAll("#typeFilters .chip").forEach(ch=>{
     ch.onclick = ()=>{
       document.querySelectorAll("#typeFilters .chip").forEach(c=>c.classList.remove("on"));
@@ -208,10 +186,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     };
   });
   $("search").addEventListener("input", renderList);
-
   renderList();
-
-  /* เปิดจากหน้า Units ด้วยลิงก์ index.html?unit=XX */
   const p = new URLSearchParams(location.search);
   const uIdx = parseInt(p.get("unit"));
   selectUnit(Number.isInteger(uIdx) && UNITS[uIdx] ? uIdx : 7);

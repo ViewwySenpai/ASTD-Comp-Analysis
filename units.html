@@ -24,7 +24,6 @@
       <div class="sub">เลือกยูนิตเพื่อไปคำนวณ DPS — รูปยูนิตใส่เองได้ที่ assets/img/units/ (200×200 px)</div>
     </div>
   </div>
-
   <nav class="mainnav">
     <a href="index.html">Calculator</a>
     <a href="units.html" class="active">Units</a>
@@ -34,10 +33,8 @@
 </header>
 
 <div class="wrap single">
-
   <section class="panel">
     <h2>ยูนิตทั้งหมด</h2>
-
     <div class="gallery-tools">
       <input class="search" id="gSearch" type="text" placeholder="ค้นหาชื่อยูนิต…">
       <div class="filters" id="gFilters" style="margin:0;">
@@ -46,14 +43,13 @@
         <button class="chip" data-f="Air">Air</button>
         <button class="chip" data-f="Hybrid">Hybrid</button>
         <button class="chip" data-f="new">NEW</button>
+        <button class="chip" data-f="7star">7★</button>
       </div>
     </div>
-
     <div class="gallery" id="gallery"></div>
     <div class="count" id="gCount" style="margin-top:14px;"></div>
-    <p class="hint">คลิกการ์ดเพื่อเปิดยูนิตนั้นในหน้า Calculator ทันที • วิธีใส่รูป: เอาไฟล์ PNG ขนาด <b>200×200 px</b> ไปวางใน <b>assets/img/units/</b> โดยตั้งชื่อไฟล์ตามที่เขียนไว้ใต้การ์ดแต่ละใบ (เขียนทับได้เลย รีเฟรชแล้วรูปขึ้นอัตโนมัติ)</p>
+    <p class="hint">คลิกการ์ดเพื่อเปิดยูนิตนั้นในหน้า Calculator ทันที • วิธีใส่รูป: PNG ขนาด <b>200×200 px</b> วางใน <b>assets/img/units/</b> ตั้งชื่อไฟล์ตามที่เขียนใต้การ์ดแต่ละใบ</p>
   </section>
-
 </div>
 
 <footer>
@@ -71,10 +67,7 @@ const gfmt = n => {
   return (+n.toFixed(2)).toLocaleString("en-US");
 };
 let gFilter = "all";
-
-function initials(name){
-  return name.replace(/[^A-Za-z0-9ก-๙ ]/g,"").trim().slice(0,2).toUpperCase() || "?";
-}
+function initials(name){ return name.replace(/[^A-Za-z0-9ก-๙ ]/g,"").trim().slice(0,2).toUpperCase() || "?"; }
 
 function renderGallery(){
   const q = $g("gSearch").value.trim().toLowerCase();
@@ -83,6 +76,7 @@ function renderGallery(){
   let shown = 0;
   UNITS.forEach((u,i)=>{
     if(gFilter === "new"){ if(!u[8]) return; }
+    else if(gFilter === "7star"){ if(u[9] !== 7) return; }
     else if(gFilter !== "all" && u[5] !== gFilter) return;
     if(q && !u[0].toLowerCase().includes(q)) return;
     shown++;
@@ -91,7 +85,6 @@ function renderGallery(){
     const card = document.createElement("a");
     card.className = "g-card";
     card.href = "index.html?unit=" + i;
-    card.style.textDecoration = "none";
     card.innerHTML = `
       <div class="g-img">
         <div class="fb">${initials(u[0])}</div>
@@ -112,7 +105,6 @@ function renderGallery(){
   });
   $g("gCount").textContent = `แสดง ${shown} จาก ${UNITS.length} ยูนิต`;
 }
-
 document.querySelectorAll("#gFilters .chip").forEach(ch=>{
   ch.onclick = ()=>{
     document.querySelectorAll("#gFilters .chip").forEach(c=>c.classList.remove("on"));

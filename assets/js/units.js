@@ -4,12 +4,11 @@
    Damage/DPS รวมดาเมจจาก Bleed / Burn / Poison แล้ว (ตามหมายเหตุของ Wiki)
 
    รูปแบบ:
-   ["ชื่อ", Damage, SPA, Range, TotalCost, "Ground/Air/Hybrid", "AtkType", "Enchant", isNew]
-   - ยูนิตที่ยังไม่มีสถิติใน Wiki ให้ใส่ null (เลือกในเว็บแล้วกรอกเองได้)
-   - isNew ใส่ 1 = ยูนิตใหม่ (ขึ้นป้าย NEW), ไม่ใส่ = ยูนิตปกติ
+   ["ชื่อ", Damage, SPA, Range, TotalCost, "Ground/Air/Hybrid", "AtkType", "Enchant", isNew, star]
+   - ยูนิตที่ยังไม่มีสถิติใน Wiki ใส่ null (เลือกในเว็บแล้วกรอกเองได้)
+   - isNew ใส่ 1 = ขึ้นป้าย NEW / star ใส่ 7 = ขึ้นป้าย 7★
 
-   รูปยูนิต: วางไฟล์ PNG สี่เหลี่ยมจัตุรัส "200x200 px" ใน assets/img/units/
-   ตั้งชื่อไฟล์ตามที่แสดงใต้การ์ดในหน้า Units เช่น koku.png
+   รูปยูนิต: PNG 200x200 px วางใน assets/img/units/ ตั้งชื่อตามที่แสดงใต้การ์ดหน้า Units
    ============================================================ */
 const UNITS = [
 ["Koku",154.22,5,53,3350,"Air","Single",""],
@@ -95,10 +94,8 @@ const UNITS = [
 ["Cauli",1842.12,16,52,12494,"Air","Full",""],
 ["Godus",2249100,10,90,1600000,"Ground","Circle","Dark"],
 
-/* ===== ยูนิตใหม่จากหน้า New Units ของ Wiki (ก.ค. 2026) =====
-   Wiki ยังไม่ลงสถิติในตาราง Statistics — เลือกในเว็บแล้วกรอกค่าเองได้
-   พอรู้ค่าจริงแล้ว มาแทน null ในไฟล์นี้ได้เลย */
-// New Featured Units
+/* ===== ยูนิตใหม่จากหน้า New Units ของ Wiki =====
+   Wiki ยังไม่ลงสถิติในตาราง Statistics — เลือกแล้วกรอกค่าเองได้ */
 ["TBOI (Rebirth)",null,null,null,null,"","","",1],
 ["Second Trumpet: Salt King",null,null,null,null,"","","",1],
 ["TBOI Jr.",null,null,null,null,"","","",1],
@@ -107,7 +104,6 @@ const UNITS = [
 ["TBOI",null,null,null,null,"","","",1],
 ["Vampire Slayer",null,null,null,null,"","","",1],
 ["Glenn",null,null,null,null,"","","",1],
-// New Units
 ["Adult Skullgirl",null,null,null,null,"","","",1],
 ["Tiger Marksman",null,null,null,null,"","","",1],
 ["Kizuki",null,null,null,null,"","","",1],
@@ -122,7 +118,6 @@ const UNITS = [
 ["The Visionary",null,null,null,null,"","","",1],
 ["Tuca Donka",null,null,null,null,"","","",1],
 ["Skullgirl",null,null,null,null,"","","",1],
-// New Shiny Units
 ["TBOI (Angel)",null,null,null,null,"","","",1],
 ["Vampire Slayer (Final)",null,null,null,null,"","","",1],
 ["IBOver",null,null,null,null,"","","",1],
@@ -139,9 +134,9 @@ const UNITS = [
 ["Vampire Slayer (Perfect Aura)",null,null,null,null,"","","",1],
 ["Glenn (13th Progenitor)",null,null,null,null,"","","",1],
 ["Skullgirl (Under Night)",null,null,null,null,"","","",1],
+["Sky God (Balrog)",null,null,null,null,"","","",1],
 
-/* ===== 7 Star Units (รายชื่อจากหน้า 7 Star Units ของ Wiki) =====
-   Wiki ไม่ลงสถิติของกลุ่มนี้ในตาราง Statistics — เลือกแล้วกรอกค่าเองได้ */
+/* ===== 7 Star Units (รายชื่อจากหน้า 7 Star Units ของ Wiki) ===== */
 ["Airren (Doomsday)",null,null,null,null,"","","",0,7],
 ["Alien Boss (Final)",null,null,null,null,"","","",0,7],
 ["Ant King (Awakened)",null,null,null,null,"","","",0,7],
@@ -186,9 +181,6 @@ const UNITS = [
 ["Worl (Vigilante)",null,null,null,null,"","","",0,7],
 ["Wrathdioas (Demon King)",null,null,null,null,"","","",0,7],
 ["Zaruto (SS)",null,null,null,null,"","","",0,7],
-
-// New Code Units
-["Sky God (Balrog)",null,null,null,null,"","","",1],
 ];
 
 /* ชื่อไฟล์รูปของยูนิต (ใช้ทั้งหน้า Units และหน้า Calculator) */

@@ -13,9 +13,7 @@
 <header>
   <div class="head-top">
     <!-- ===== ช่องโลโก้ =====
-         เอาไฟล์โลโก้ ASTD ไปเขียนทับที่:  assets/img/logo.png
-         ขนาดที่ต้องใช้: 256 x 256 px (สี่เหลี่ยมจัตุรัส, PNG พื้นหลังโปร่งใสจะสวยสุด)
-         พอมีไฟล์แล้ว รูปจะขึ้นแทนช่องว่างนี้อัตโนมัติ -->
+         เอาไฟล์โลโก้ไปเขียนทับที่: assets/img/logo.png  ขนาด 256 x 256 px -->
     <div class="logo-slot empty-style">
       <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
       <img src="assets/img/logo.png" alt="ASTD Logo"
@@ -27,7 +25,6 @@
       <div class="sub">สถิติ Level 175 (Max Upgrade) อ้างอิงจาก All Star Tower Defense Wiki</div>
     </div>
   </div>
-
   <nav class="mainnav">
     <a href="index.html" class="active">Calculator</a>
     <a href="units.html">Units</a>
@@ -38,7 +35,6 @@
 
 <div class="wrap">
 
-  <!-- ===== LEFT : Unit picker ===== -->
   <section class="panel">
     <h2>เลือกยูนิต</h2>
     <input class="search" id="search" type="text" placeholder="ค้นหาชื่อยูนิต… (เช่น Koku, Freezer)">
@@ -48,18 +44,16 @@
       <button class="chip" data-f="Air">Air</button>
       <button class="chip" data-f="Hybrid">Hybrid</button>
       <button class="chip" data-f="new">NEW</button>
+      <button class="chip" data-f="7star">7★</button>
     </div>
     <div class="unit-list" id="unitList"></div>
     <div class="count" id="unitCount"></div>
   </section>
 
-  <!-- ===== MIDDLE : Base stats + buffs ===== -->
   <div class="col-mid">
     <section class="panel">
       <h2>Base Stats (Lv.175 Max)</h2>
-
-      <!-- รูปตัวละคร: เอาไฟล์ไปเขียนทับที่ assets/img/units/ชื่อไฟล์.png (ขนาด 200x200 px)
-           ชื่อไฟล์ของยูนิตที่เลือกอยู่ จะแสดงใต้รูปตรงนี้เลย copy ไปตั้งชื่อได้ทันที -->
+      <!-- รูปตัวละคร: PNG 200x200 px วางที่ assets/img/units/<ชื่อไฟล์>.png -->
       <div class="unit-portrait">
         <div class="unit-img-slot">
           <div class="unit-img-fb" id="unitImgFallback">?</div>
@@ -75,29 +69,16 @@
       </div>
 
       <div class="stat-grid">
-        <div class="stat-box">
-          <label>Damage</label>
-          <input type="number" id="inDmg" min="0" step="any" value="0">
-        </div>
-        <div class="stat-box">
-          <label>SPA <span class="unit-suffix">(วินาที/ครั้ง)</span></label>
-          <input type="number" id="inSpa" min="0.1" step="any" value="1">
-        </div>
-        <div class="stat-box">
-          <label>Range</label>
-          <input type="number" id="inRng" min="0" step="any" value="0">
-        </div>
-        <div class="stat-box">
-          <label>Total Cost <span class="unit-suffix">(¢ในเกม)</span></label>
-          <input type="number" id="inCost" min="0" step="any" value="0">
-        </div>
+        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>SPA <span class="unit-suffix">(วินาที/ครั้ง)</span></label><input type="number" id="inSpa" min="0.1" step="any" value="1"></div>
+        <div class="stat-box"><label>Range</label><input type="number" id="inRng" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>Total Cost <span class="unit-suffix">(¢ในเกม)</span></label><input type="number" id="inCost" min="0" step="any" value="0"></div>
       </div>
-      <p class="hint">แก้ตัวเลขเองได้ทุกช่อง — ยูนิตป้าย NEW ยังไม่มีสถิติใน Wiki ให้กรอกค่าเอง (เพิ่ม/แก้ยูนิตถาวรได้ที่ไฟล์ <b>assets/js/units.js</b>)</p>
+      <p class="hint">แก้ตัวเลขเองได้ทุกช่อง — ยูนิตป้าย NEW / 7★ ยังไม่มีสถิติใน Wiki ให้กรอกค่าเอง (เพิ่ม/แก้ยูนิตถาวรได้ที่ <b>assets/js/units.js</b>)</p>
     </section>
 
     <section class="panel">
       <h2>Buffs & Modifiers</h2>
-
       <div class="buff-row">
         <div class="slider-wrap">
           <div class="lbl">Damage Buff <small>บัฟดาเมจจากซัพพอร์ต / Leader Skill (%)</small></div>
@@ -110,12 +91,10 @@
         </div>
         <div class="buff-val"><input type="number" id="vDmg" min="0" max="999" value="0">%</div>
       </div>
-
       <div class="toggle-row">
         <div class="lbl">Elemental Weakness <small>ศัตรูแพ้ธาตุของยูนิต (Enchant) ×1.5</small></div>
         <label class="switch"><input type="checkbox" id="tgElem"><span class="slider-t"></span></label>
       </div>
-
       <div class="btn-row">
         <button class="btn" id="btnReset">ล้างบัฟทั้งหมด</button>
         <button class="btn primary" id="btnAdd">+ เพิ่มลงตารางเปรียบเทียบ</button>
@@ -123,14 +102,12 @@
     </section>
   </div>
 
-  <!-- ===== RIGHT : Final stats ===== -->
   <div class="col-final">
     <div class="dps-hero">
       <div class="cap">Final DPS</div>
       <div class="num" id="outDps">0</div>
       <div class="delta" id="outDpsDelta"></div>
     </div>
-
     <section class="panel">
       <h2>Final Stats</h2>
       <div class="fs-row"><span class="k">Damage / Hit</span><span class="v" id="outDmg">0<small id="outDmgBase"></small></span></div>
@@ -141,34 +118,26 @@
     </section>
   </div>
 
-  <!-- ===== Compare table ===== -->
   <section class="panel compare-sec">
     <h2>ตารางเปรียบเทียบ</h2>
     <div class="table-scroll">
       <table id="cmpTable" style="display:none">
-        <thead>
-          <tr>
-            <th data-k="name">ยูนิต / บิลด์</th>
-            <th data-k="dmg">Damage</th>
-            <th data-k="spa">SPA</th>
-            <th data-k="rng">Range</th>
-            <th data-k="dps">DPS</th>
-            <th data-k="cost">Cost</th>
-            <th data-k="eff">DPS/1k¢</th>
-            <th></th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th data-k="name">ยูนิต / บิลด์</th><th data-k="dmg">Damage</th><th data-k="spa">SPA</th>
+          <th data-k="rng">Range</th><th data-k="dps">DPS</th><th data-k="cost">Cost</th>
+          <th data-k="eff">DPS/1k¢</th><th></th>
+        </tr></thead>
         <tbody id="cmpBody"></tbody>
       </table>
     </div>
-    <div class="empty-msg" id="cmpEmpty">ยังไม่มีบิลด์ในตาราง — ตั้งค่าบัฟแล้วกด "เพิ่มลงตารางเปรียบเทียบ" เพื่อเทียบหลายยูนิต/หลายบิลด์พร้อมกัน</div>
+    <div class="empty-msg" id="cmpEmpty">ยังไม่มีบิลด์ในตาราง — ตั้งค่าบัฟแล้วกด "เพิ่มลงตารางเปรียบเทียบ"</div>
   </section>
 
 </div>
 
 <footer>
   Fan-made calculator สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม<br>
-  ข้อมูลสถิติจาก allstartd.fandom.com (อาจเปลี่ยนตามแพตช์ — แก้ได้ที่ assets/js/units.js)
+  ข้อมูลสถิติจาก allstartd.fandom.com (แก้ได้ที่ assets/js/units.js)
 </footer>
 
 <script src="assets/js/units.js"></script>
