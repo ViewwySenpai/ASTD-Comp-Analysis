@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <!-- logo slot: overwrite assets/img/logo.png (256x256) -->
+    <a class="logo-slot empty-style" href="index-en.html" title="Home">
+      <div class="logo-hint" id="logoHint">LOGO<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Logo"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Team Builder</span></h1>
+      <div class="sub">Build 1–4 teams (6 units each), pick units from the grid, add cards to the order, then see if you clear</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator-en.html">Calculator</a>
+    <a href="units-en.html">Units</a>
+    <a href="compare-en.html">Compare</a>
+    <a href="mobhp-en.html">Mob HP</a>
+    <a href="team-en.html" class="active">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>English</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="team.html">ไทย</a>
+        <a href="team-en.html" class="on">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="team-wrap">
+  <div class="cards">
+
+    <section class="panel">
+      <h2>Target</h2>
+      <div class="stat-grid">
+        <div class="stat-box"><label>Wave</label><input type="number" id="wave" min="1" step="1" value="95"></div>
+        <div class="stat-box">
+          <label>Enemy type</label>
+          <select id="etype" style="width:100%; background:transparent; border:none; outline:none; color:var(--ink); font-family:'Fredoka','Prompt'; font-size:18px; font-weight:600;">
+            <option value="weak">Weak ×1.00</option>
+            <option value="medium">Medium ×1.30</option>
+            <option value="strong">Strong ×1.75</option>
+          </select>
+        </div>
+      </div>
+      <div class="stat-box" style="margin-top:10px;">
+        <label>Players in the run (HP multiplier + teams unlocked)</label>
+        <div class="preset-row" id="pChips" style="margin-top:6px;">
+          <button class="preset-chip on" data-p="1">1 player ×1.0</button>
+          <button class="preset-chip" data-p="2">2 players ×1.9</button>
+          <button class="preset-chip" data-p="3">3 players ×2.8</button>
+          <button class="preset-chip" data-p="4">4 players ×3.7</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Teams (up to 6 units each)</h2>
+      <div class="team-grid" id="teamGrid"></div>
+      <p class="hint">Tap a unit's portrait or name to pick it from the grid — upgrade stage and damage buff sit in the same row. The right-hand field is how many copies you place (for a unit with no stats yet it becomes a raw DPS field). The first unit in each team is the Leader — its skill buffs teammates that belong to the category the skill names.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Cards (add them to the card order on the right)</h2>
+      <p class="hint" style="margin:0 0 10px;">Press a button again to add another copy — each Team DPS card gets its own duration in the card order on the right</p>
+      <div class="cards" style="gap:10px;">
+        <div class="t-card" data-card="dps">
+          <div class="head">
+            <div><div class="title">Team DPS</div><div class="desc">Your teams fire at their combined DPS for a set number of seconds</div></div>
+            <button class="card-add"></button>
+          </div>
+          <div class="body">
+            <div class="desc">Team DPS support buffs:</div>
+            <div class="buff-chips" id="dpsBuffs">
+              <button class="preset-chip" data-b="15">Idol +15%</button>
+              <button class="preset-chip" data-b="8">Judgement +8%</button>
+              <button class="preset-chip" data-b="35">FV +35%</button>
+              <button class="preset-chip" data-b="12">Purify +12%</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="gil">
+          <div class="head">
+            <div><div class="title">Gilgamesh</div><div class="desc">Cuts enemy HP down to 25% of full HP (no effect if HP is already below that)</div></div>
+            <button class="card-add"></button>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="mad">
+          <div class="head">
+            <div><div class="title">Madara</div><div class="desc">Cuts enemy HP down to 33% of full HP (no effect once Gilgamesh has taken it to 25%)</div></div>
+            <button class="card-add"></button>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="luf">
+          <div class="head">
+            <div><div class="title">Luffy</div><div class="desc">Cuts the remaining HP by 25% (support buffs raise the cut)</div></div>
+            <button class="card-add"></button>
+          </div>
+          <div class="body">
+            <div class="desc">Luffy's support buffs:</div>
+            <div class="buff-chips" id="lufBuffs">
+              <button class="preset-chip" data-b="15">Idol +15%</button>
+              <button class="preset-chip" data-b="8">Judgement +8%</button>
+              <button class="preset-chip" data-b="35">FV +35%</button>
+              <button class="preset-chip" data-b="12">Purify +12%</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="tboi">
+          <div class="head">
+            <div><div class="title">TBOI</div><div class="desc">Detonates for 250B (support buffs raise the damage)</div></div>
+            <button class="card-add"></button>
+          </div>
+          <div class="body">
+            <div class="desc">TBOI's support buffs:</div>
+            <div class="buff-chips" id="tboiBuffs">
+              <button class="preset-chip" data-b="15">Idol +15%</button>
+              <button class="preset-chip" data-b="8">Judgement +8%</button>
+              <button class="preset-chip" data-b="35">FV +35%</button>
+              <button class="preset-chip" data-b="12">Purify +12%</button>
+              <button class="preset-chip" data-b="50">Dot Buff +50%</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="col-final">
+    <div class="dps-hero">
+      <div class="cap">Total team DPS</div>
+      <div class="num" id="teamDpsOut">0</div>
+      <div class="delta" id="dpsNote"></div>
+    </div>
+
+    <section class="panel">
+      <h2>Card order (drag to rearrange)</h2>
+      <div class="order-list" id="orderList"></div>
+      <p class="hint">Drag a card or use ▲▼ — under each card name you can see how much of the enemy's full HP is left after it.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Result (following the card order)</h2>
+      <div class="step-list" id="steps"></div>
+    </section>
+
+    <div class="verdict" id="verdict" style="display:none;"></div>
+  </div>
+</div>
+
+<footer>Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers</footer>
+
+<script>window.TEAM_LANG = "en";</script>
+<script src="assets/js/units.js"></script>
+<script src="assets/js/upgrades.js"></script>
+<script src="assets/js/categories.js"></script>
+<script src="assets/js/hpcore.js"></script>
+<script src="assets/js/team.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

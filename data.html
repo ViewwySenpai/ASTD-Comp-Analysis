@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>อัปเดตข้อมูลจากวิกิ | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .paste-box{
+    width:100%; min-height:220px; resize:vertical;
+    background:var(--deck-2); border:1px solid var(--edge); border-radius:var(--r-md);
+    color:var(--ink); padding:12px 14px; font-size:13px; line-height:1.6;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; outline:none;
+  }
+  .paste-box:focus{border-color:var(--brass-dim);}
+  .opt-row{display:flex; gap:18px; flex-wrap:wrap; align-items:center; margin-top:14px; font-size:13.5px; color:var(--ink-2);}
+  .opt-row label{display:flex; gap:7px; align-items:center; cursor:pointer;}
+  .opt-row input{accent-color:var(--brass);}
+  .msg{font-size:13px; color:var(--ink-2); line-height:1.8; margin-top:12px; min-height:20px;}
+  .msg b{color:var(--brass);}
+  .steps{font-size:13.5px; line-height:2; color:var(--ink-2); padding-left:20px; margin:0;}
+  .steps b{color:var(--ink);}
+  .btn:disabled{opacity:.38; cursor:not-allowed;}
+  .btn:disabled:hover{border-color:var(--edge-hi); color:var(--ink);}
+  .status-line{font-size:13px; color:var(--brass); margin-bottom:4px;}
+</style>
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <a class="logo-slot empty-style" href="index.html" title="Home">
+      <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Logo"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Comp</span></h1>
+      <div class="sub">All Star Tower Defense — Fan-made Tools &amp; Guides</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator.html">Calculator</a>
+    <a href="units.html">Units</a>
+    <a href="compare.html">Compare</a>
+    <a href="mobhp.html">Mob HP</a>
+    <a href="team.html">Team</a>
+    <a href="data.html" class="active">อัปเดตข้อมูล</a>
+  </nav>
+</header>
+
+<div class="wrap single">
+
+  <section class="panel">
+    <h2>ดึงข้อมูลจากตาราง Statistics ของวิกิ</h2>
+    <div class="status-line" id="dbStatus">—</div>
+    <p class="hint" style="margin-top:10px">
+      วิกิบล็อกไม่ให้โปรแกรมภายนอกดึงหน้าโดยตรง (ตอบกลับ error 402) เว็บจึงดึงเองอัตโนมัติไม่ได้
+      แต่เบราว์เซอร์ของคุณเปิดหน้านั้นได้ปกติ — ก๊อปตารางมาวางตรงนี้ เว็บจะแปลงเป็นฐานข้อมูลให้เอง
+      ตัวเลขทุกตัวมาจากตารางที่คุณวางล้วนๆ ไม่มีการเดาหรือปัดค่า
+    </p>
+    <ol class="steps" style="margin-top:14px">
+      <li>เปิด <a href="https://allstartd.fandom.com/wiki/Statistics" target="_blank" rel="noopener">allstartd.fandom.com/wiki/Statistics</a></li>
+      <li>เลื่อนไปที่ตาราง ลากคลุม<b>ตั้งแต่แถวหัวข้อ</b> (Damage / SPA / Range …) ยาวไปจนจบตาราง แล้วกด Ctrl+C</li>
+      <li>คลิกในช่องข้างล่าง กด Ctrl+V แล้วกด <b>อ่านข้อมูล</b></li>
+      <li>ดูตัวอย่างแล้วกด <b>ใช้ข้อมูลชุดนี้</b> (มีผลทันทีทุกหน้าในเครื่องนี้)</li>
+      <li>อยากให้ติดถาวรทุกเครื่อง กด <b>ดาวน์โหลด units.js</b> แล้วเอาไปทับไฟล์ <code>assets/js/units.js</code></li>
+    </ol>
+  </section>
+
+  <section class="panel">
+    <h2>วางตารางที่นี่</h2>
+    <textarea class="paste-box" id="pasteBox"
+      placeholder="วางตาราง Statistics ทั้งก้อนตรงนี้ (ต้องมีแถวหัวข้อที่มีคำว่า Damage และ SPA หรือ Range ติดมาด้วย)"></textarea>
+
+    <div class="opt-row">
+      <label><input type="radio" name="mode" value="replace" checked> แทนที่ทั้งหมด — ยึดตามตารางวิกิเป๊ะ</label>
+      <label><input type="radio" name="mode" value="merge"> เติม/อัปเดต — เก็บของเดิมไว้ด้วย</label>
+    </div>
+    <div class="opt-row">
+      <label><input type="checkbox" id="keepExtra" checked>
+        เก็บยูนิตเดิมที่ไม่มีในตารางไว้ (รายชื่อ 7★ ที่วิกิยังไม่ลงสถิติ)</label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" id="btnRead">อ่านข้อมูล</button>
+      <button class="btn" id="btnApply">ใช้ข้อมูลชุดนี้</button>
+      <button class="btn" id="btnDownload">ดาวน์โหลด units.js</button>
+      <button class="btn" id="btnCopy">คัดลอกเป็นโค้ด</button>
+      <button class="btn" id="btnRevert" style="display:none">คืนค่าเดิม</button>
+    </div>
+
+    <div class="msg" id="readMsg"></div>
+    <div class="msg" id="applyMsg" style="color:var(--go)"></div>
+    <div id="sumWrap"></div>
+  </section>
+
+  <section class="panel">
+    <h2>ผลลัพธ์</h2>
+    <div id="previewWrap"><p class="empty-msg">ยังไม่มีข้อมูล — วางตารางแล้วกดอ่านข้อมูล</p></div>
+  </section>
+
+  <section class="panel">
+    <h2>อ่านอย่างไร</h2>
+    <p class="hint" style="margin-top:0">
+      เว็บอ่านชื่อคอลัมน์จากแถวหัวข้อ ไม่ได้นับตำแหน่งตายตัว วิกิสลับคอลัมน์เมื่อไหร่ก็ยังอ่านได้
+      คอลัมน์ที่รู้จัก: Damage, SPA, Range, DPS, Total Cost, Tower Type, Attack Type, Enchant
+      <br>• ค่าที่เขียนเป็นช่วง เช่น 5,000 - 1,120,000 จะใช้ค่ากลาง
+      <br>• ตัวย่อ K / M / B แปลงเป็นตัวเลขเต็มให้
+      <br>• คอลัมน์ที่ตารางไม่มี จะคงค่าเดิมของยูนิตนั้นไว้ ไม่ล้างทิ้ง
+      <br>• ป้าย 7★ ไม่มีในตารางวิกิ เว็บจะเก็บของเดิมไว้ให้
+      <br>• ตารางวิกิไม่ลงยูนิตสายซัพพอร์ตที่ไม่ทำดาเมจ จึงไม่มียูนิตพวกนั้นเข้ามา
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  Fan-made site สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม
+  <br>ข้อมูลสถิติมาจาก Roblox: All Star Tower Defense Wiki (Fandom) เผยแพร่ภายใต้ CC BY-SA 3.0
+</footer>
+
+<script src="assets/js/units.js"></script>
+<script src="assets/js/dbimport.js"></script>
+<script src="assets/js/datapage.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

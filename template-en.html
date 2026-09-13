@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- TEMPLATE for new pages: Save As → edit <title> → edit nav (move class="active") → fill in CONTENT -->
+<title>New page | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <!-- LOGO SLOT: overwrite assets/img/logo.png (256x256 px) -->
+    <a class="logo-slot empty-style" href="index-en.html" title="Home">
+      <div class="logo-hint" id="logoHint">LOGO<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Logo"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Comp</span></h1>
+      <div class="sub">All Star Tower Defense — fan-made tools & guides</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator-en.html">Calculator</a>
+    <a href="units-en.html">Units</a>
+    <a href="compare-en.html">Compare</a>
+    <a href="mobhp-en.html">Mob HP</a>
+    <a href="team-en.html">Team</a>
+    <a href="#" class="active">This page</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>English</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="template.html">ไทย</a>
+        <a href="template-en.html" class="on">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap single">
+  <!-- ================= CONTENT ================= -->
+  <section class="panel">
+    <h2>Page heading</h2>
+    <p style="font-size:14px; line-height:1.9;">
+      Put your content here. All existing classes work: <b>.panel</b> (box), <b>.btn</b> / <b>.btn.primary</b> (buttons),
+      <b>.tag</b> (badges), <b>.chip</b> / <b>.preset-chip</b> (filters & toggles), <b>.stat-box</b> (input boxes), and <b>table</b>.
+    </p>
+  </section>
+  <!-- =============== END CONTENT =============== -->
+</div>
+
+<footer>Fan-made site for All Star Tower Defense (Roblox) — not affiliated with the game's developers</footer>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

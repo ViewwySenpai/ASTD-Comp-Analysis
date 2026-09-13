@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mob HP | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.row-real td:first-child{border-left:3px solid var(--go);}
+.row-est td:first-child{border-left:3px solid var(--edge-hi);}
+.hp-weak{color:var(--go);} .hp-med{color:#ffd75e;} .hp-strong{color:var(--stop);}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-2); margin-top:10px;}
+.legend span::before{content:"■ ";}
+.legend .lg-real::before{color:var(--go);}
+.legend .lg-est::before{color:var(--edge-hi);}
+</style>
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <!-- LOGO SLOT: overwrite assets/img/logo.png (256x256 px) -->
+    <a class="logo-slot empty-style" href="index-en.html" title="Home">
+      <div class="logo-hint" id="logoHint">LOGO<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Logo"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Mob HP Table</span></h1>
+      <div class="sub">Check enemy HP on any wave — Anchor Table edition (wave 1 starts at 41 HP)</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator-en.html">Calculator</a>
+    <a href="units-en.html">Units</a>
+    <a href="compare-en.html">Compare</a>
+    <a href="mobhp-en.html" class="active">Mob HP</a>
+    <a href="team-en.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>English</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="mobhp.html">ไทย</a>
+        <a href="mobhp-en.html" class="on">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap single">
+
+  <section class="panel">
+    <h2>Table settings</h2>
+    <div class="stat-grid">
+      <div class="stat-box"><label>From wave</label><input type="number" id="wFrom" min="1" step="1" value="1"></div>
+      <div class="stat-box"><label>To wave</label><input type="number" id="wTo" min="1" step="1" value="100"></div>
+    </div>
+    <div class="stat-box" style="margin-top:10px;">
+      <label>Player count (HP multiplier)</label>
+      <div class="preset-row" id="pChips" style="margin-top:6px;">
+        <button class="preset-chip on" data-p="1">1 player ×1.0</button>
+        <button class="preset-chip" data-p="2">2 players ×1.9</button>
+        <button class="preset-chip" data-p="3">3 players ×2.8</button>
+        <button class="preset-chip" data-p="4">4 players ×3.7</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" id="btnGen">Build table</button>
+      <button class="btn" id="btnClear">Clear</button>
+    </div>
+    <p class="hint">
+      Anchor Table method: waves 1–30 use exact in-game values, waves between anchors use exponential
+      interpolation, and waves past the last anchor extend using the final segment's growth rate.<br>
+      Current anchors: <b id="anchorList"></b> — spot a real value in game? Add it to <b>ANCHORS</b> in
+      <b>assets/js/hpcore.js</b> (shared with the Team page). More anchors, better accuracy.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Enemy HP table</h2>
+    <div class="table-scroll">
+      <table id="hpTable" style="display:none;">
+        <thead><tr>
+          <th style="text-align:left;">Wave</th><th>Base HP</th>
+          <th>Weak ×1.00</th><th>Medium ×1.30</th><th>Strong ×1.75</th>
+        </tr></thead>
+        <tbody id="hpBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-msg" id="hpEmpty">Set a wave range above, then hit "Build table"</div>
+    <div class="legend">
+      <span class="lg-real">Exact values (waves 1–30 / anchors)</span>
+      <span class="lg-est">Estimated from the formula</span>
+    </div>
+  </section>
+
+</div>
+
+<footer>Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers</footer>
+
+<script>window.SITE_LANG = "en";</script>
+<script src="assets/js/hpcore.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let players = 1;
+
+function genTable(){
+  let from = Math.max(1, parseInt($("wFrom").value)||1);
+  let to   = Math.max(from, parseInt($("wTo").value)||from);
+  if(to - from > 2000) to = from + 2000;
+  const pm = PLAYER_MULTS[players];
+  const rows = [];
+  for(let w = from; w <= to; w++){
+    const base = calculateBaseHp(w) * pm;
+    const isReal = (w <= 30 || ANCHORS[w] !== undefined);
+    rows.push(`<tr class="${isReal?"row-real":"row-est"}" title="${isReal?"Exact value":"Estimated"}">
+      <td style="text-align:left;">${w}</td>
+      <td>${formatHp(base)}</td>
+      <td class="hp-weak">${formatHp(base*ENEMY_MULTS.weak)}</td>
+      <td class="hp-med">${formatHp(base*ENEMY_MULTS.medium)}</td>
+      <td class="hp-strong">${formatHp(base*ENEMY_MULTS.strong)}</td>
+    </tr>`);
+  }
+  $("hpBody").innerHTML = rows.join("");
+  $("hpTable").style.display = "table";
+  $("hpEmpty").style.display = "none";
+}
+$("btnGen").onclick = genTable;
+$("btnClear").onclick = ()=>{
+  $("hpBody").innerHTML = ""; $("hpTable").style.display = "none"; $("hpEmpty").style.display = "block";
+};
+document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
+  c.onclick = ()=>{
+    document.querySelectorAll("#pChips .preset-chip").forEach(x=>x.classList.remove("on"));
+    c.classList.add("on");
+    players = +c.dataset.p;
+    if($("hpTable").style.display === "table") genTable();
+  };
+});
+["wFrom","wTo"].forEach(id=> $(id).addEventListener("keydown", e=>{ if(e.key==="Enter") genTable(); }));
+$("anchorList").textContent = "Wave " + Object.keys(ANCHORS).map(Number).sort((a,b)=>a-b).join(", ");
+</script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

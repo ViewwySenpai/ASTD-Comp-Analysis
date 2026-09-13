@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เทียบยูนิต | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <a class="logo-slot empty-style" href="index.html" title="Home">
+      <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Comp"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Compare</span></h1>
+      <div class="sub">เทียบ DPS ระหว่างยูนิต 2 ตัว</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator.html">Calculator</a>
+    <a href="units.html">Units</a>
+    <a href="compare.html" class="active">Compare</a>
+    <a href="mobhp.html">Mob HP</a>
+    <a href="team.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="compare.html" class="on">ไทย</a>
+        <a href="compare-en.html">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap single">
+  <div class="col-mid">
+
+    <section class="panel">
+      <h2>เลือกยูนิต 2 ตัว</h2>
+      <div class="cp-slots">
+        <div class="cp-slot" id="slot0"></div>
+        <button class="btn" id="cpSwap" title="สลับข้าง">⇄</button>
+        <div class="cp-slot" id="slot1"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>ผลการเทียบ</h2>
+      <div class="cp-head">
+        <span id="cpNameA">—</span><span class="cp-vs">VS</span><span id="cpNameB">—</span>
+      </div>
+      <div id="cpRows"></div>
+      <div class="cp-verdict" id="cpVerdict" style="display:none;"></div>
+    </section>
+
+  </div>
+</div>
+
+<footer>Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
+
+<script>window.SITE_LANG = "th";</script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/units.js"></script>
+<script src="assets/js/upgrades.js"></script>
+<script src="assets/js/orbs.js"></script>
+<script src="assets/js/hpcore.js"></script>
+<script src="assets/js/compare.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

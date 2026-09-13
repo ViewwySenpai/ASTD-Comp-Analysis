@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Units | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <!-- LOGO — overwrite assets/img/logo.png, 256x256 px -->
+    <a class="logo-slot empty-style" href="index-en.html" title="Home">
+      <div class="logo-hint" id="logoHint">LOGO<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt=""
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Units</span></h1>
+      <div class="sub">Every unit in the database. Click one to send it to the calculator.</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator-en.html">Calculator</a>
+    <a href="units-en.html" class="active">Units</a>
+    <a href="compare-en.html">Compare</a>
+    <a href="mobhp-en.html">Mob HP</a>
+    <a href="team-en.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>English</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="units.html">ไทย</a>
+        <a href="units-en.html" class="on">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap single">
+  <section class="panel">
+    <h2>All units</h2>
+    <div class="gallery-tools">
+      <input class="search" id="gSearch" type="text" placeholder="Search units">
+      <div class="filters" id="gFilters" style="margin:0;">
+        <button class="chip on" data-f="all">All</button>
+        <button class="chip" data-f="Ground">Ground</button>
+        <button class="chip" data-f="Air">Air</button>
+        <button class="chip" data-f="Hybrid">Hybrid</button>
+        <button class="chip" data-f="6star">6★</button>
+        <button class="chip" data-f="7star">7★</button>
+      </div>
+    </div>
+    <div class="gallery" id="gallery"></div>
+    <div class="count" id="gCount" style="margin-top:16px;"></div>
+    <p class="hint">Click a card to open that unit in the calculator. To add artwork, drop a 200×200 PNG into assets/img/units/ using the filename shown on the card, or paste an image URL on the calculator page.</p>
+  </section>
+</div>
+
+<footer>
+  Fan-made tool for All Star Tower Defense (Roblox). Not affiliated with the game's developers.
+</footer>
+<script>window.SITE_LANG = "en";</script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/units.js"></script>
+<script src="assets/js/upgrades.js"></script>
+<script>
+const $g = id => document.getElementById(id);
+const gfmt = n => {
+  if(n===null || !isFinite(n)) return "—";
+  if(n >= 1e6) return (n/1e6).toFixed(2)+"M";
+  if(n >= 1e4) return Math.round(n).toLocaleString("en-US");
+  return (+n.toFixed(2)).toLocaleString("en-US");
+};
+let gFilter = "all";
+
+function renderGallery(){
+  const q = $g("gSearch").value.trim().toLowerCase();
+  const wrap = $g("gallery");
+  wrap.innerHTML = "";
+  let shown = 0;
+  UNITS.forEach((u,i)=>{
+    if(gFilter === "6star"){ if(u[9] !== 6) return; }
+    else if(gFilter === "7star"){ if(u[9] !== 7) return; }
+    else if(gFilter !== "all" && u[5] !== gFilter) return;
+    if(q && !u[0].toLowerCase().includes(q)) return;
+    shown++;
+    const slug = unitSlug(u[0]);
+    const card = document.createElement("a");
+    card.className = "g-card";
+    card.href = "calculator-en.html?unit=" + i;
+    card.innerHTML = `
+      <div class="g-img">
+        <div class="fb">${unitInitials(u[0])}</div>
+        <img decoding="async" src="${unitImgSrc(u[0])}" alt=""
+             onload="this.style.display='block';this.previousElementSibling.style.display='none'"
+             onerror="this.remove()">
+      </div>
+      <div class="g-name">${u[0]}</div>
+      <div class="g-tags">
+                ${u[9]?`<span class="tag star${u[9]}">${u[9]}★</span>`:""}
+        ${u[5]?`<span class="tag">${u[5]}</span>`:""}
+        ${u[7]?`<span class="tag ${u[7].toLowerCase()}">${u[7]}</span>`:""}
+      </div>
+      <div class="g-stats">${u[1] !== null
+        ? `DPS <b>${gfmt(u[1]/u[2])}</b> · DMG ${gfmt(u[1])} · SPA ${u[2]}`
+        : "No stats yet"}</div>
+      <div class="g-file">${slug}.png${(getUpgrades(u[0])||[]).length ? " · " + getUpgrades(u[0]).length + " levels" : ""}</div>`;
+    wrap.appendChild(card);
+  });
+  $g("gCount").textContent = T.showing(shown, UNITS.length);
+}
+document.querySelectorAll("#gFilters .chip").forEach(ch=>{
+  ch.onclick = ()=>{
+    document.querySelectorAll("#gFilters .chip").forEach(c=>c.classList.remove("on"));
+    ch.classList.add("on");
+    gFilter = ch.dataset.f;
+    renderGallery();
+  };
+});
+$g("gSearch").addEventListener("input", renderGallery);
+renderGallery();
+</script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

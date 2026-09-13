@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASTD Comp — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+
+<header>
+  <div class="head-top">
+    <a class="logo-slot empty-style" href="index-en.html" title="Home">
+      <div class="logo-hint" id="logoHint">LOGO<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt="ASTD Comp"
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>Comp</span></h1>
+      <div class="sub">Calculators for All Star Tower Defense</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator-en.html">Calculator</a>
+    <a href="units-en.html">Units</a>
+    <a href="compare-en.html">Compare</a>
+    <a href="mobhp-en.html">Mob HP</a>
+    <a href="team-en.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>English</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="index.html">ไทย</a>
+        <a href="index-en.html" class="on">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="home">
+
+  <section class="hero">
+    <div class="hero-banner" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <h1>ASTD <span>Comp</span></h1>
+      <p>Every data had been given = Every player to be smarter</p>
+      <div class="hero-cta">
+        <a class="cta primary" href="calculator-en.html">Calculate DPS</a>
+        <a class="cta" href="team-en.html">Build a team</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="home-facts">
+    <div><b id="nAll">0</b><span>units in the database</span></div>
+    <div><b id="n6">0</b><span>6-star units</span></div>
+    <div><b id="n7">0</b><span>7-star units</span></div>
+    <div><b id="nStats">0</b><span>units with full stats</span></div>
+  </div>
+
+  <h2>Pick a tool</h2>
+  <div class="tool-main">
+    <a class="tool" href="calculator-en.html"><h3>Calculator</h3><p>Type Damage and SPA, get DPS straight away — plus buffs, upgrade levels and value per 1,000¢.</p></a>
+    <a class="tool" href="team-en.html"><h3>Team</h3><p>Up to 4 teams of 6 units, per-unit upgrade stage and buff, then order your cards and watch the enemy HP drop.</p></a>
+  </div>
+  <div class="tool-sub">
+    <a class="tool" href="compare-en.html"><h3>Compare</h3><p>Put two units side by side on DPS, damage, range, cost and value for money.</p></a>
+    <a class="tool" href="units-en.html"><h3>Units</h3><p>Browse every unit, search, filter by type or star tier, and sort by DPS.</p></a>
+    <a class="tool" href="mobhp-en.html"><h3>Mob HP</h3><p>Enemy HP for any wave, by enemy type and how many players are in the run.</p></a>
+  </div>
+
+  <section class="credit">
+    <div class="credit-face">
+      <img src="assets/img/logo.png" alt="Viewwy_Senpai">
+    </div>
+    <div class="credit-body">
+      <h2>Viewwy_Senpai</h2>
+      <div class="credit-role">All Star Tower Defense content creator — and the person behind this site</div>
+      <div class="credit-quote">Your only limit is you.</div>
+      <div class="credit-links">
+        <a href="https://www.youtube.com/@viewtheone" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://www.instagram.com/sumkimerwoll/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://discord.gg/4Ascvg9MUG" target="_blank" rel="noopener">Discord</a>
+        <span class="credit-tag">viewtheone</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="home-note">A fan-made tool, not affiliated with the developers of All Star Tower Defense. Unit stats are sourced from the All Star Tower Defense Wiki.</p>
+</main>
+
+<footer>Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers</footer>
+
+<script src="assets/js/units.js"></script>
+<script src="assets/js/home.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

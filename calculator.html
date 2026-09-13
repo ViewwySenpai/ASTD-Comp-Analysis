@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPS Calculator | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+<header>
+  <div class="head-top">
+    <!-- โลโก้ / LOGO — overwrite assets/img/logo.png, 256x256 px -->
+    <a class="logo-slot empty-style" href="index.html" title="Home">
+      <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt=""
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>DPS Calculator</span></h1>
+      <div class="sub">สถิติ Level 175 อัปเกรดเต็ม อ้างอิงจาก All Star Tower Defense Wiki</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator.html" class="active">Calculator</a>
+    <a href="units.html">Units</a>
+    <a href="compare.html">Compare</a>
+    <a href="mobhp.html">Mob HP</a>
+    <a href="team.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="calculator.html" class="on">ไทย</a>
+        <a href="calculator-en.html">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <section class="panel">
+    <h2>เลือกยูนิต</h2>
+    <input class="search" id="search" type="text" placeholder="ค้นหายูนิต">
+    <div class="filters" id="typeFilters">
+      <button class="chip on" data-f="all">ทั้งหมด</button>
+      <button class="chip" data-f="Ground">Ground</button>
+      <button class="chip" data-f="Air">Air</button>
+      <button class="chip" data-f="Hybrid">Hybrid</button>
+      <button class="chip" data-f="6star">6★</button>
+      <button class="chip" data-f="7star">7★</button>
+    </div>
+    <div class="unit-grid" id="unitList"></div>
+    <div class="count" id="unitCount"></div>
+  </section>
+
+  <div class="col-mid" style="display:flex; flex-direction:column; gap:16px;">
+    <section class="panel">
+      <h2>ค่าพื้นฐาน</h2>
+
+      <div class="unit-plate">
+        <div class="unit-img-slot">
+          <div class="unit-img-fb" id="unitImgFallback">?</div>
+          <img id="unitImg" alt="">
+        </div>
+        <div class="plate-body">
+          <div class="name" id="selName">เลือกยูนิตเพื่อเริ่ม</div>
+          <div class="badges" id="selBadges"></div>
+          <div class="img-note" id="unitImgName"></div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>SPA <span class="unit-suffix">วินาทีต่อการโจมตี</span></label><input type="number" id="inSpa" min="0.1" step="any" value="1"></div>
+        <div class="stat-box"><label>ระยะ</label><input type="number" id="inRng" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>ราคารวม <span class="unit-suffix">in-game ¢</span></label><input type="number" id="inCost" min="0" step="any" value="0"></div>
+      </div>
+      <p class="hint">ทุกช่องแก้เองได้ ยูนิตที่ยังไม่มีสถิติบนวิกิ กรอกเองได้เลย ถ้าอยากแก้ถาวรให้แก้ที่ assets/js/units.js</p>
+    </section>
+
+    <section class="panel">
+      <h2>บัฟ</h2>
+      <div class="buff-row">
+        <div class="slider-wrap">
+          <div class="lbl">บัฟดาเมจ <small>จากยูนิตซัพพอร์ต</small></div>
+          <div class="preset-row" id="dmgChips">
+            <button class="preset-chip" data-v="250">250%</button>
+            <button class="preset-chip" data-v="300">300%</button>
+          </div>
+          <div class="lbl" style="margin-top:14px;">บัฟ Leader <small>จาก Leader Skill</small></div>
+          <div class="preset-row" id="leaderChips">
+            <button class="preset-chip" data-v="15">15%</button>
+            <button class="preset-chip" data-v="20">20%</button>
+          </div>
+          <div class="lbl" style="margin-top:14px;">บัฟเสริม <small>เลือกได้หลายอัน ทุกอันคูณกัน</small></div>
+          <div class="preset-row" id="supportChips">
+            <button class="preset-chip" data-v="15">Idol +15%</button>
+            <button class="preset-chip" data-v="8">Judgement +8%</button>
+            <button class="preset-chip" data-v="35">FV +35%</button>
+            <button class="preset-chip" data-v="12">Purify +12%</button>
+          </div>
+          <div class="lbl" style="margin-top:14px;">Orb <small>ใส่ได้ทีละลูก กดซ้ำเพื่อถอด</small></div>
+          <div class="preset-row" id="orbChips"></div>
+          <div class="hint" id="orbNote" style="margin-top:8px; display:none;"></div>
+          <p class="hint" style="margin-top:12px;">บัฟทุกอันซ้อนกันแบบคูณ เช่น Idol กับ Judgement = ×1.15 × ×1.08 = ×1.242</p>
+        </div>
+        <div class="buff-val"><input type="number" id="vDmg" min="0" max="9999" step="any" value="0">%</div>
+      </div>
+      <div class="toggle-row">
+        <div class="lbl">ธาตุที่ศัตรูแพ้ <small>ศัตรูแพ้ธาตุของยูนิตนี้ ×1.5</small></div>
+        <label class="switch"><input type="checkbox" id="tgElem"><span class="slider-t"></span></label>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnReset">ล้างบัฟ</button>
+        <button class="btn primary" id="btnAdd">เพิ่มลงตารางเทียบ</button>
+      </div>
+    </section>
+
+    <section class="panel" id="upgBox">
+      <h2>ขั้นอัปเกรด</h2>
+      <div class="hint" id="upgBuffNote" style="margin:0 0 10px; display:none;"></div>
+      <p class="hint" style="margin:0 0 12px;">กดขั้นไหนก็ได้ ค่าสถิติกับราคาสะสมจะเด้งขึ้นช่องด้านบนให้ทันที</p>
+      <p class="hint" style="margin-top:10px;">ตัวเลขในตารางขึ้นกับว่าตอนก๊อปจากวิกิเลือกแท็บไหน — ถ้าอยากให้ตรงกับช่องด้านบน (Level 175) ให้กดปุ่ม Level 175 บนวิกิก่อนค่อยก๊อป</p>
+      <div id="upgTable" style="margin-top:14px;"></div>
+      <div class="empty-msg" id="upgNone"></div>
+
+      <details style="margin-top:14px;">
+        <summary style="cursor:pointer; color:var(--ink-2); font-size:13.5px;">นำเข้าตารางอัปเกรด</summary>
+        <textarea id="upgPaste" rows="5" placeholder="วางข้อความจากหน้ายูนิตบนวิกิที่นี่ (ตั้งแต่ Deployment ถึง Upgrade สุดท้าย)"
+          style="width:100%; margin-top:10px; background:var(--deck-2); border:1px solid var(--edge); border-radius:var(--r-md); color:var(--ink); padding:10px; font-size:12.5px; outline:none; resize:vertical;"></textarea>
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn primary" id="upgRead">อ่านข้อมูล</button>
+          <button class="btn" id="upgCode">คัดลอกเป็นโค้ด</button>
+          <button class="btn" id="upgWipe" style="display:none;">ลบตารางนี้</button>
+        </div>
+        <div class="img-note" id="upgMsg"></div>
+        <p class="hint">วิธีเติมข้อมูล: เปิดหน้ายูนิตบนวิกิ ลากคลุมบล็อก Stats Overview ทั้งก้อน ก๊อปมาวางในช่องนี้ แล้วกดอ่านข้อมูล เว็บจะแปลงเป็นตารางให้เอง ข้อมูลจะถูกจำไว้ในเบราว์เซอร์ ถ้าอยากเก็บถาวรให้ทุกคนเห็น กดคัดลอกเป็นโค้ด แล้วเอาไปวางใน assets/js/upgrades.js</p>
+      </details>
+    </section>
+
+    <section class="panel" id="abilBox" style="display:none;">
+      <h2>สกิลพิเศษ</h2>
+      <div id="abilList"></div>
+    </section>
+
+    <section class="panel cat-panel" id="catBox" style="display:none;">
+      <h2>หมวดหมู่ยูนิต</h2>
+      <div id="catBody"></div>
+    </section>
+
+
+  </div>
+
+  <div class="col-final">
+    <div class="readout">
+      <div class="cap">ดาเมจต่อวินาที</div>
+      <div class="num" id="outDps">0</div>
+      <div class="delta" id="outDpsDelta"></div>
+      <div class="meter"><i id="dpsMeter"></i></div>
+    </div>
+    <section class="panel">
+      <h2>รายละเอียดต่อการตี</h2>
+      <div class="fs-row"><span class="k">ดาเมจต่อครั้ง</span><span class="v" id="outDmg">0<small id="outDmgBase"></small></span></div>
+      <div class="fs-row"><span class="k">SPA</span><span class="v" id="outSpa">0<small id="outSpaBase"></small></span></div>
+      <div class="fs-row"><span class="k">ระยะ</span><span class="v" id="outRng">0<small id="outRngBase"></small></span></div>
+      <div class="fs-row" id="outJdgRow" style="display:none;"><span class="k">Judgement DPS<br><small style="color:var(--ink-3)">รวมอยู่ใน DPS ด้านบนแล้ว</small></span><span class="v" id="outJdg">0</span></div>
+      <div class="fs-row"><span class="k">โจมตีต่อนาที</span><span class="v" id="outApm">0</span></div>
+      <div class="fs-row"><span class="k">DPS ต่อ 1,000¢<br><small style="color:var(--ink-3)">ความคุ้มค่าต่อราคา</small></span><span class="v" id="outEff">0</span></div>
+    </section>
+  </div>
+
+  <section class="panel compare-sec">
+    <h2>ตารางเทียบ</h2>
+    <div class="table-scroll">
+      <table id="cmpTable" style="display:none">
+        <thead><tr>
+          <th data-k="name">ยูนิตและบิลด์</th><th data-k="dmg">Damage</th><th data-k="spa">SPA</th>
+          <th data-k="rng">ระยะ</th><th data-k="dps">DPS</th><th data-k="cost">ราคารวม</th>
+          <th data-k="eff">DPS/1k¢</th><th></th>
+        </tr></thead>
+        <tbody id="cmpBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-msg" id="cmpEmpty">ยังว่างอยู่ ตั้งบัฟที่ต้องการแล้วกดเพิ่มบิลด์</div>
+  </section>
+
+</div>
+
+<footer>
+  เครื่องมือที่แฟนเกมทำขึ้นสำหรับ All Star Tower Defense (Roblox) ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม<br>
+  ข้อมูลสถิติจาก allstartd.fandom.com — แก้ได้ที่ assets/js/units.js
+</footer>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/units.js"></script>
+<script src="assets/js/upgrades.js"></script>
+<script src="assets/js/orbs.js"></script>
+<script src="assets/js/abilities.js"></script>
+<script src="assets/js/categories.js"></script>
+<script src="assets/js/calculator.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>

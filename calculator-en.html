@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPS Calculator | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+<header>
+  <div class="head-top">
+    <!-- LOGO — overwrite assets/img/logo.png, 256x256 px -->
+    <a class="logo-slot empty-style" href="index-en.html" title="Home">
+      <div class="logo-hint" id="logoHint">LOGO<br>256×256<br>logo.png</div>
+      <img src="assets/img/logo.png" alt=""
+           onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
+           onerror="this.style.display='none'">
+    </a>
+    <div>
+      <h1>ASTD <span>DPS Calculator</span></h1>
+      <div class="sub">Level 175 stats at max upgrade, from the All Star Tower Defense Wiki</div>
+    </div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator-en.html" class="active">Calculator</a>
+    <a href="units-en.html">Units</a>
+    <a href="compare-en.html">Compare</a>
+    <a href="mobhp-en.html">Mob HP</a>
+    <a href="team-en.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>English</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="calculator.html">ไทย</a>
+        <a href="calculator-en.html" class="on">English</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <section class="panel">
+    <h2>Pick a unit</h2>
+    <input class="search" id="search" type="text" placeholder="Search units">
+    <div class="filters" id="typeFilters">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="Ground">Ground</button>
+      <button class="chip" data-f="Air">Air</button>
+      <button class="chip" data-f="Hybrid">Hybrid</button>
+      <button class="chip" data-f="6star">6★</button>
+      <button class="chip" data-f="7star">7★</button>
+    </div>
+    <div class="unit-grid" id="unitList"></div>
+    <div class="count" id="unitCount"></div>
+  </section>
+
+  <div class="col-mid" style="display:flex; flex-direction:column; gap:16px;">
+    <section class="panel">
+      <h2>Base stats</h2>
+
+      <div class="unit-plate">
+        <div class="unit-img-slot">
+          <div class="unit-img-fb" id="unitImgFallback">?</div>
+          <img id="unitImg" alt="">
+        </div>
+        <div class="plate-body">
+          <div class="name" id="selName">Pick a unit to start</div>
+          <div class="badges" id="selBadges"></div>
+          <div class="img-note" id="unitImgName"></div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>SPA <span class="unit-suffix">seconds per attack</span></label><input type="number" id="inSpa" min="0.1" step="any" value="1"></div>
+        <div class="stat-box"><label>Range</label><input type="number" id="inRng" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>Total cost <span class="unit-suffix">in-game ¢</span></label><input type="number" id="inCost" min="0" step="any" value="0"></div>
+      </div>
+      <p class="hint">Every field is editable. Units with no stats on the wiki yet can be typed in by hand. To change them permanently, edit assets/js/units.js.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Buffs</h2>
+      <div class="buff-row">
+        <div class="slider-wrap">
+          <div class="lbl">Damage buff <small>from support units</small></div>
+          <div class="preset-row" id="dmgChips">
+            <button class="preset-chip" data-v="250">250%</button>
+            <button class="preset-chip" data-v="300">300%</button>
+          </div>
+          <div class="lbl" style="margin-top:14px;">Leader buff <small>from a Leader Skill</small></div>
+          <div class="preset-row" id="leaderChips">
+            <button class="preset-chip" data-v="15">15%</button>
+            <button class="preset-chip" data-v="20">20%</button>
+          </div>
+          <div class="lbl" style="margin-top:14px;">Support buffs <small>pick any number — they all multiply</small></div>
+          <div class="preset-row" id="supportChips">
+            <button class="preset-chip" data-v="15">Idol +15%</button>
+            <button class="preset-chip" data-v="8">Judgement +8%</button>
+            <button class="preset-chip" data-v="35">FV +35%</button>
+            <button class="preset-chip" data-v="12">Purify +12%</button>
+          </div>
+          <div class="lbl" style="margin-top:14px;">Orb <small>one orb at a time — click again to remove</small></div>
+          <div class="preset-row" id="orbChips"></div>
+          <div class="hint" id="orbNote" style="margin-top:8px; display:none;"></div>
+          <p class="hint" style="margin-top:12px;">Every buff stacks by multiplying: Idol with Judgement = ×1.15 × ×1.08 = ×1.242</p>
+        </div>
+        <div class="buff-val"><input type="number" id="vDmg" min="0" max="9999" step="any" value="0">%</div>
+      </div>
+      <div class="toggle-row">
+        <div class="lbl">Elemental weakness <small>enemy is weak to this unit's enchant, ×1.5</small></div>
+        <label class="switch"><input type="checkbox" id="tgElem"><span class="slider-t"></span></label>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnReset">Reset buffs</button>
+        <button class="btn primary" id="btnAdd">Add to comparison</button>
+      </div>
+    </section>
+
+    <section class="panel" id="upgBox">
+      <h2>Upgrade levels</h2>
+      <div class="hint" id="upgBuffNote" style="margin:0 0 10px; display:none;"></div>
+      <p class="hint" style="margin:0 0 12px;">Click any level and its stats and running cost drop into the fields above.</p>
+      <p class="hint" style="margin-top:10px;">These numbers depend on which tab you copied from the wiki. For figures that match the fields above (Level 175), switch the wiki to Level 175 before copying.</p>
+      <div id="upgTable" style="margin-top:14px;"></div>
+      <div class="empty-msg" id="upgNone"></div>
+
+      <details style="margin-top:14px;">
+        <summary style="cursor:pointer; color:var(--ink-2); font-size:13.5px;">Import an upgrade table</summary>
+        <textarea id="upgPaste" rows="5" placeholder="Paste the text from the unit's wiki page (Deployment through the last upgrade)"
+          style="width:100%; margin-top:10px; background:var(--deck-2); border:1px solid var(--edge); border-radius:var(--r-md); color:var(--ink); padding:10px; font-size:12.5px; outline:none; resize:vertical;"></textarea>
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn primary" id="upgRead">Read it</button>
+          <button class="btn" id="upgCode">Copy as code</button>
+          <button class="btn" id="upgWipe" style="display:none;">Delete this table</button>
+        </div>
+        <div class="img-note" id="upgMsg"></div>
+        <p class="hint">How to fill this in: open the unit's wiki page, select the whole Stats Overview block, copy it, paste it here and press Read it. The site parses it into a table and remembers it in your browser. To keep it permanently for everyone, press Copy as code and paste that into assets/js/upgrades.js.</p>
+      </details>
+    </section>
+
+    <section class="panel" id="abilBox" style="display:none;">
+      <h2>Special abilities</h2>
+      <div id="abilList"></div>
+    </section>
+
+    <section class="panel cat-panel" id="catBox" style="display:none;">
+      <h2>Unit categories</h2>
+      <div id="catBody"></div>
+    </section>
+
+
+  </div>
+
+  <div class="col-final">
+    <div class="readout">
+      <div class="cap">Damage per second</div>
+      <div class="num" id="outDps">0</div>
+      <div class="delta" id="outDpsDelta"></div>
+      <div class="meter"><i id="dpsMeter"></i></div>
+    </div>
+    <section class="panel">
+      <h2>Per-hit breakdown</h2>
+      <div class="fs-row"><span class="k">Damage per hit</span><span class="v" id="outDmg">0<small id="outDmgBase"></small></span></div>
+      <div class="fs-row"><span class="k">SPA</span><span class="v" id="outSpa">0<small id="outSpaBase"></small></span></div>
+      <div class="fs-row"><span class="k">Range</span><span class="v" id="outRng">0<small id="outRngBase"></small></span></div>
+      <div class="fs-row" id="outJdgRow" style="display:none;"><span class="k">Judgement DPS<br><small style="color:var(--ink-3)">already counted in the DPS above</small></span><span class="v" id="outJdg">0</span></div>
+      <div class="fs-row"><span class="k">Attacks per minute</span><span class="v" id="outApm">0</span></div>
+      <div class="fs-row"><span class="k">DPS per 1,000¢<br><small style="color:var(--ink-3)">value for money</small></span><span class="v" id="outEff">0</span></div>
+    </section>
+  </div>
+
+  <section class="panel compare-sec">
+    <h2>Comparison</h2>
+    <div class="table-scroll">
+      <table id="cmpTable" style="display:none">
+        <thead><tr>
+          <th data-k="name">Unit and build</th><th data-k="dmg">Damage</th><th data-k="spa">SPA</th>
+          <th data-k="rng">Range</th><th data-k="dps">DPS</th><th data-k="cost">Total cost</th>
+          <th data-k="eff">DPS/1k¢</th><th></th>
+        </tr></thead>
+        <tbody id="cmpBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-msg" id="cmpEmpty">Nothing here yet. Set your buffs, then add a build.</div>
+  </section>
+
+</div>
+
+<footer>
+  Fan-made tool for All Star Tower Defense (Roblox). Not affiliated with the game's developers.<br>
+  Stats from allstartd.fandom.com — edit them in assets/js/units.js
+</footer>
+<script>window.SITE_LANG = "en";</script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/units.js"></script>
+<script src="assets/js/upgrades.js"></script>
+<script src="assets/js/orbs.js"></script>
+<script src="assets/js/abilities.js"></script>
+<script src="assets/js/categories.js"></script>
+<script src="assets/js/calculator.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
+</body>
+</html>
