@@ -1,6 +1,6 @@
 /* ============================================================
-   ASTD HP CORE — สูตรเลือดมอน (Anchor Table Edition)
-   ใช้ร่วมกันทั้งหน้า Mob HP และหน้า Team
+   ASTD HP CORE — Mob HP formula (Anchor Table Edition)
+   ใช้ร่วมกันทั้งหน้า Mob HP และหน้า Team / shared by Mob HP + Team pages (TH & EN)
    ============================================================ */
 
 /* ==================================================================
@@ -21,7 +21,7 @@ const EARLY_HP = [
   231, 258, 290, 329, 375, 432, 501, 586, 690, 817
 ];
 
-/* ⭐ ตัวคูณจำนวนผู้เล่น — แก้ตรงนี้ถ้าเกมปรับ */
+/* ⭐ ตัวคูณจำนวนผู้เล่น / Player-count multipliers — edit here */
 const PLAYER_MULTS = {1: 1.0, 2: 1.9, 3: 2.8, 4: 3.7};
 
 /* ตัวคูณประเภทมอน */
@@ -29,7 +29,7 @@ const ENEMY_MULTS = {weak: 1.00, medium: 1.30, strong: 1.75};
 
 /* จัดฟอร์แมตตัวเลข (K, M, B, T, Qa, Qi, ...) */
 function formatHp(num){
-  if(!isFinite(num)) return "เกินช่วงคำนวณ";
+  if(!isFinite(num)) return "—";
   if(num <= 0) return "0";
   if(num < 1000) return (+num.toFixed(2)).toString();
   const suf = ['','K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc'];

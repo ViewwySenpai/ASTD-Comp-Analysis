@@ -4,33 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- TEMPLATE สร้างหน้าใหม่: Save As → แก้ <title> → แก้ nav (ย้าย class="active") → ใส่เนื้อหาใน CONTENT -->
-<title>หน้าใหม่ | ASTD Hub</title>
+<title>หน้าใหม่ | ASTD Comp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
 </head>
-<body>
+<body class="page-fade">
 
 <header>
   <div class="head-top">
     <!-- ช่องโลโก้: เขียนทับไฟล์ assets/img/logo.png (256x256 px) -->
-    <div class="logo-slot empty-style">
+    <a class="logo-slot empty-style" href="index.html" title="Home">
       <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
       <img src="assets/img/logo.png" alt="ASTD Logo"
            onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
            onerror="this.style.display='none'">
-    </div>
+    </a>
     <div>
-      <h1>ASTD <span>Hub</span></h1>
+      <h1>ASTD <span>Comp</span></h1>
       <div class="sub">All Star Tower Defense — Fan-made Tools & Guides</div>
     </div>
   </div>
   <nav class="mainnav">
-    <a href="index.html">Calculator</a>
+    <a href="calculator.html">Calculator</a>
     <a href="units.html">Units</a>
+    <a href="compare.html">Compare</a>
     <a href="mobhp.html">Mob HP</a>
     <a href="team.html">Team</a>
     <a href="#" class="active">หน้านี้</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="template.html" class="on">ไทย</a>
+        <a href="template-en.html">English</a>
+      </div>
+    </div>
   </nav>
 </header>
 
@@ -47,5 +57,7 @@
 </div>
 
 <footer>Fan-made site สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
 </body>
 </html>

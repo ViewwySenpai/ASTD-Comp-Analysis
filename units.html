@@ -3,32 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Units | ASTD Hub</title>
+<title>Units | ASTD Comp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
 </head>
-<body>
+<body class="page-fade">
 
 <header>
   <div class="head-top">
-    <!-- ช่องโลโก้: เขียนทับไฟล์ assets/img/logo.png (256x256 px) -->
-    <div class="logo-slot empty-style">
+    <!-- โลโก้ / LOGO — overwrite assets/img/logo.png, 256x256 px -->
+    <a class="logo-slot empty-style" href="index.html" title="Home">
       <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
-      <img src="assets/img/logo.png" alt="ASTD Logo"
+      <img src="assets/img/logo.png" alt=""
            onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
            onerror="this.style.display='none'">
-    </div>
+    </a>
     <div>
       <h1>ASTD <span>Units</span></h1>
-      <div class="sub">เลือกยูนิตเพื่อไปคำนวณ DPS — รูปยูนิตใส่เองได้ที่ assets/img/units/ (200×200 px)</div>
+      <div class="sub">ยูนิตทั้งหมดในฐานข้อมูล คลิกเพื่อส่งไปหน้าคำนวณ</div>
     </div>
   </div>
   <nav class="mainnav">
-    <a href="index.html">Calculator</a>
+    <a href="calculator.html">Calculator</a>
     <a href="units.html" class="active">Units</a>
+    <a href="compare.html">Compare</a>
     <a href="mobhp.html">Mob HP</a>
     <a href="team.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="units.html" class="on">ไทย</a>
+        <a href="units-en.html">English</a>
+      </div>
+    </div>
   </nav>
 </header>
 
@@ -36,28 +46,28 @@
   <section class="panel">
     <h2>ยูนิตทั้งหมด</h2>
     <div class="gallery-tools">
-      <input class="search" id="gSearch" type="text" placeholder="ค้นหาชื่อยูนิต…">
+      <input class="search" id="gSearch" type="text" placeholder="ค้นหายูนิต">
       <div class="filters" id="gFilters" style="margin:0;">
         <button class="chip on" data-f="all">ทั้งหมด</button>
         <button class="chip" data-f="Ground">Ground</button>
         <button class="chip" data-f="Air">Air</button>
         <button class="chip" data-f="Hybrid">Hybrid</button>
-        <button class="chip" data-f="new">NEW</button>
+        <button class="chip" data-f="6star">6★</button>
         <button class="chip" data-f="7star">7★</button>
       </div>
     </div>
     <div class="gallery" id="gallery"></div>
-    <div class="count" id="gCount" style="margin-top:14px;"></div>
-    <p class="hint">คลิกการ์ดเพื่อเปิดยูนิตนั้นในหน้า Calculator ทันที • วิธีใส่รูป: PNG ขนาด <b>200×200 px</b> วางใน <b>assets/img/units/</b> ตั้งชื่อไฟล์ตามที่เขียนใต้การ์ดแต่ละใบ</p>
+    <div class="count" id="gCount" style="margin-top:16px;"></div>
+    <p class="hint">คลิกการ์ดเพื่อเปิดยูนิตนั้นในหน้า Calculator ถ้าจะใส่รูป ให้วางไฟล์ PNG ขนาด 200×200 ใน assets/img/units/ ตั้งชื่อตามที่เขียนบนการ์ด หรือวางลิงก์รูปในหน้า Calculator ก็ได้</p>
   </section>
 </div>
 
 <footer>
-  Fan-made site สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม<br>
-  รายชื่อยูนิตจาก allstartd.fandom.com
+  เครื่องมือที่แฟนเกมทำขึ้นสำหรับ All Star Tower Defense (Roblox) ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม
 </footer>
-
+<script src="assets/js/i18n.js"></script>
 <script src="assets/js/units.js"></script>
+<script src="assets/js/upgrades.js"></script>
 <script>
 const $g = id => document.getElementById(id);
 const gfmt = n => {
@@ -67,7 +77,6 @@ const gfmt = n => {
   return (+n.toFixed(2)).toLocaleString("en-US");
 };
 let gFilter = "all";
-function initials(name){ return name.replace(/[^A-Za-z0-9ก-๙ ]/g,"").trim().slice(0,2).toUpperCase() || "?"; }
 
 function renderGallery(){
   const q = $g("gSearch").value.trim().toLowerCase();
@@ -75,35 +84,35 @@ function renderGallery(){
   wrap.innerHTML = "";
   let shown = 0;
   UNITS.forEach((u,i)=>{
-    if(gFilter === "new"){ if(!u[8]) return; }
+    if(gFilter === "6star"){ if(u[9] !== 6) return; }
     else if(gFilter === "7star"){ if(u[9] !== 7) return; }
     else if(gFilter !== "all" && u[5] !== gFilter) return;
     if(q && !u[0].toLowerCase().includes(q)) return;
     shown++;
     const slug = unitSlug(u[0]);
-    const hasStats = u[1] !== null;
     const card = document.createElement("a");
     card.className = "g-card";
-    card.href = "index.html?unit=" + i;
+    card.href = "calculator.html?unit=" + i;
     card.innerHTML = `
       <div class="g-img">
-        <div class="fb">${initials(u[0])}</div>
-        <img loading="lazy" src="assets/img/units/${slug}.png" alt="${u[0]}"
+        <div class="fb">${unitInitials(u[0])}</div>
+        <img decoding="async" src="${unitImgSrc(u[0])}" alt=""
              onload="this.style.display='block';this.previousElementSibling.style.display='none'"
-             onerror="this.style.display='none'">
+             onerror="this.remove()">
       </div>
       <div class="g-name">${u[0]}</div>
       <div class="g-tags">
-        ${u[8]?`<span class="tag new">NEW</span>`:""}
-        ${u[9]?`<span class="tag star7">${u[9]}★</span>`:""}
+                ${u[9]?`<span class="tag star${u[9]}">${u[9]}★</span>`:""}
         ${u[5]?`<span class="tag">${u[5]}</span>`:""}
         ${u[7]?`<span class="tag ${u[7].toLowerCase()}">${u[7]}</span>`:""}
       </div>
-      <div class="g-stats">${hasStats ? `DPS <b>${gfmt(u[1]/u[2])}</b> • DMG ${gfmt(u[1])} • SPA ${u[2]}` : "ยังไม่มีสถิติ — กรอกในหน้า Calculator"}</div>
-      <div class="g-file">${slug}.png</div>`;
+      <div class="g-stats">${u[1] !== null
+        ? `DPS <b>${gfmt(u[1]/u[2])}</b> · DMG ${gfmt(u[1])} · SPA ${u[2]}`
+        : "ยังไม่มีสถิติ"}</div>
+      <div class="g-file">${slug}.png${(getUpgrades(u[0])||[]).length ? " · " + getUpgrades(u[0]).length + " ขั้น" : ""}</div>`;
     wrap.appendChild(card);
   });
-  $g("gCount").textContent = `แสดง ${shown} จาก ${UNITS.length} ยูนิต`;
+  $g("gCount").textContent = T.showing(shown, UNITS.length);
 }
 document.querySelectorAll("#gFilters .chip").forEach(ch=>{
   ch.onclick = ()=>{
@@ -116,5 +125,7 @@ document.querySelectorAll("#gFilters .chip").forEach(ch=>{
 $g("gSearch").addEventListener("input", renderGallery);
 renderGallery();
 </script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
 </body>
 </html>

@@ -3,144 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPS Calculator | ASTD Hub</title>
+<title>ASTD Comp — หน้าแรก</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
 </head>
-<body>
+<body class="page-fade">
 
 <header>
   <div class="head-top">
-    <!-- ===== ช่องโลโก้ =====
-         เอาไฟล์โลโก้ไปเขียนทับที่: assets/img/logo.png  ขนาด 256 x 256 px -->
-    <div class="logo-slot empty-style">
+    <a class="logo-slot empty-style" href="index.html" title="Home">
       <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
-      <img src="assets/img/logo.png" alt="ASTD Logo"
+      <img src="assets/img/logo.png" alt="ASTD Comp"
            onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
            onerror="this.style.display='none'">
-    </div>
+    </a>
     <div>
-      <h1>ASTD <span>DPS & Stat Calculator</span></h1>
-      <div class="sub">สถิติ Level 175 (Max Upgrade) อ้างอิงจาก All Star Tower Defense Wiki</div>
+      <h1>ASTD <span>Comp</span></h1>
+      <div class="sub">เครื่องมือคำนวณสำหรับ All Star Tower Defense</div>
     </div>
   </div>
   <nav class="mainnav">
-    <a href="index.html" class="active">Calculator</a>
+    <a href="calculator.html">Calculator</a>
     <a href="units.html">Units</a>
+    <a href="compare.html">Compare</a>
     <a href="mobhp.html">Mob HP</a>
     <a href="team.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="index.html" class="on">ไทย</a>
+        <a href="index-en.html">English</a>
+      </div>
+    </div>
   </nav>
 </header>
 
-<div class="wrap">
+<main class="home">
 
-  <section class="panel">
-    <h2>เลือกยูนิต</h2>
-    <input class="search" id="search" type="text" placeholder="ค้นหาชื่อยูนิต… (เช่น Koku, Freezer)">
-    <div class="filters" id="typeFilters">
-      <button class="chip on" data-f="all">ทั้งหมด</button>
-      <button class="chip" data-f="Ground">Ground</button>
-      <button class="chip" data-f="Air">Air</button>
-      <button class="chip" data-f="Hybrid">Hybrid</button>
-      <button class="chip" data-f="new">NEW</button>
-      <button class="chip" data-f="7star">7★</button>
+  <section class="hero">
+    <div class="hero-banner" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <h1>ASTD <span>Comp</span></h1>
+      <p>Every data had been given = Every player to be smarter</p>
+      <div class="hero-cta">
+        <a class="cta primary" href="calculator.html">คำนวณ DPS</a>
+        <a class="cta" href="team.html">จัดทีมเช็คเคลียร์</a>
+      </div>
     </div>
-    <div class="unit-list" id="unitList"></div>
-    <div class="count" id="unitCount"></div>
   </section>
 
-  <div class="col-mid">
-    <section class="panel">
-      <h2>Base Stats (Lv.175 Max)</h2>
-      <!-- รูปตัวละคร: PNG 200x200 px วางที่ assets/img/units/<ชื่อไฟล์>.png -->
-      <div class="unit-portrait">
-        <div class="unit-img-slot">
-          <div class="unit-img-fb" id="unitImgFallback">?</div>
-          <img id="unitImg" alt="Unit image">
-        </div>
-        <div style="flex:1; min-width:0;">
-          <div class="sel-unit-head" style="margin-bottom:6px;">
-            <div class="name" id="selName">— เลือกยูนิตก่อน —</div>
-          </div>
-          <div class="badges" id="selBadges" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
-          <div class="unit-img-name" id="unitImgName"></div>
-        </div>
-      </div>
-
-      <div class="stat-grid">
-        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" min="0" step="any" value="0"></div>
-        <div class="stat-box"><label>SPA <span class="unit-suffix">(วินาที/ครั้ง)</span></label><input type="number" id="inSpa" min="0.1" step="any" value="1"></div>
-        <div class="stat-box"><label>Range</label><input type="number" id="inRng" min="0" step="any" value="0"></div>
-        <div class="stat-box"><label>Total Cost <span class="unit-suffix">(¢ในเกม)</span></label><input type="number" id="inCost" min="0" step="any" value="0"></div>
-      </div>
-      <p class="hint">แก้ตัวเลขเองได้ทุกช่อง — ยูนิตป้าย NEW / 7★ ยังไม่มีสถิติใน Wiki ให้กรอกค่าเอง (เพิ่ม/แก้ยูนิตถาวรได้ที่ <b>assets/js/units.js</b>)</p>
-    </section>
-
-    <section class="panel">
-      <h2>Buffs & Modifiers</h2>
-      <div class="buff-row">
-        <div class="slider-wrap">
-          <div class="lbl">Damage Buff <small>บัฟดาเมจจากซัพพอร์ต / Leader Skill (%)</small></div>
-          <input type="range" id="rgDmg" min="0" max="300" step="5" value="0">
-          <div class="preset-row">
-            <button class="preset-chip" data-v="0">ไม่มีบัฟ</button>
-            <button class="preset-chip" data-v="250">บัฟ 250%</button>
-            <button class="preset-chip" data-v="300">บัฟ 300%</button>
-          </div>
-        </div>
-        <div class="buff-val"><input type="number" id="vDmg" min="0" max="999" value="0">%</div>
-      </div>
-      <div class="toggle-row">
-        <div class="lbl">Elemental Weakness <small>ศัตรูแพ้ธาตุของยูนิต (Enchant) ×1.5</small></div>
-        <label class="switch"><input type="checkbox" id="tgElem"><span class="slider-t"></span></label>
-      </div>
-      <div class="btn-row">
-        <button class="btn" id="btnReset">ล้างบัฟทั้งหมด</button>
-        <button class="btn primary" id="btnAdd">+ เพิ่มลงตารางเปรียบเทียบ</button>
-      </div>
-    </section>
+  <div class="home-facts">
+    <div><b id="nAll">0</b><span>ยูนิตในฐานข้อมูล</span></div>
+    <div><b id="n6">0</b><span>ยูนิต 6 ดาว</span></div>
+    <div><b id="n7">0</b><span>ยูนิต 7 ดาว</span></div>
+    <div><b id="nStats">0</b><span>ตัวที่มีสถิติครบ</span></div>
   </div>
 
-  <div class="col-final">
-    <div class="dps-hero">
-      <div class="cap">Final DPS</div>
-      <div class="num" id="outDps">0</div>
-      <div class="delta" id="outDpsDelta"></div>
-    </div>
-    <section class="panel">
-      <h2>Final Stats</h2>
-      <div class="fs-row"><span class="k">Damage / Hit</span><span class="v" id="outDmg">0<small id="outDmgBase"></small></span></div>
-      <div class="fs-row"><span class="k">SPA</span><span class="v" id="outSpa">0<small id="outSpaBase"></small></span></div>
-      <div class="fs-row"><span class="k">Range</span><span class="v" id="outRng">0<small id="outRngBase"></small></span></div>
-      <div class="fs-row"><span class="k">โจมตี / นาที</span><span class="v" id="outApm">0</span></div>
-      <div class="fs-row"><span class="k">DPS ต่อ 1,000¢ <br><small style="color:var(--dim)">ความคุ้มค่าต่อราคา</small></span><span class="v" id="outEff">0</span></div>
-    </section>
+  <h2>เลือกเครื่องมือ</h2>
+  <div class="tool-main">
+    <a class="tool" href="calculator.html"><h3>Calculator</h3><p>ใส่ Damage กับ SPA แล้วได้ DPS ทันที พร้อมบัฟ ขั้นอัปเกรด และค่าความคุ้มต่อเงิน 1,000¢</p></a>
+    <a class="tool" href="team.html"><h3>Team</h3><p>จัดได้ถึง 4 ทีม ทีมละ 6 ยูนิต เลือกขั้นอัปเกรดและบัฟรายตัว แล้วเรียงการ์ดดูว่าเลือดมอนเหลือกี่ %</p></a>
+  </div>
+  <div class="tool-sub">
+    <a class="tool" href="compare.html"><h3>Compare</h3><p>วางยูนิต 2 ตัวเทียบกันตรง ๆ ทั้ง DPS ดาเมจ ระยะ ราคา และความคุ้มต่อเงิน</p></a>
+    <a class="tool" href="units.html"><h3>Units</h3><p>เปิดดูยูนิตทั้งหมด ค้นหา กรองตามธาตุหรือระดับดาว เรียงตาม DPS ได้</p></a>
+    <a class="tool" href="mobhp.html"><h3>Mob HP</h3><p>ดูเลือดมอนแต่ละเวฟ แยกตามชนิดมอนและจำนวนคนที่ลงเล่น</p></a>
   </div>
 
-  <section class="panel compare-sec">
-    <h2>ตารางเปรียบเทียบ</h2>
-    <div class="table-scroll">
-      <table id="cmpTable" style="display:none">
-        <thead><tr>
-          <th data-k="name">ยูนิต / บิลด์</th><th data-k="dmg">Damage</th><th data-k="spa">SPA</th>
-          <th data-k="rng">Range</th><th data-k="dps">DPS</th><th data-k="cost">Cost</th>
-          <th data-k="eff">DPS/1k¢</th><th></th>
-        </tr></thead>
-        <tbody id="cmpBody"></tbody>
-      </table>
+  <section class="credit">
+    <div class="credit-face">
+      <img src="assets/img/logo.png" alt="Viewwy_Senpai">
     </div>
-    <div class="empty-msg" id="cmpEmpty">ยังไม่มีบิลด์ในตาราง — ตั้งค่าบัฟแล้วกด "เพิ่มลงตารางเปรียบเทียบ"</div>
+    <div class="credit-body">
+      <h2>Viewwy_Senpai</h2>
+      <div class="credit-role">ผู้ทำคอนเทนต์ All Star Tower Defense — เจ้าของเว็บนี้</div>
+      <div class="credit-quote">Your only limit is you.</div>
+      <div class="credit-links">
+        <a href="https://www.youtube.com/@viewtheone" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://www.instagram.com/sumkimerwoll/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://discord.gg/4Ascvg9MUG" target="_blank" rel="noopener">Discord</a>
+        <span class="credit-tag">viewtheone</span>
+      </div>
+    </div>
   </section>
 
-</div>
+  <p class="home-note">เว็บนี้เป็นเครื่องมือที่แฟนเกมทำขึ้น ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนา All Star Tower Defense ข้อมูลสถิติยูนิตอ้างอิงจาก All Star Tower Defense Wiki</p>
+</main>
 
-<footer>
-  Fan-made calculator สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม<br>
-  ข้อมูลสถิติจาก allstartd.fandom.com (แก้ได้ที่ assets/js/units.js)
-</footer>
+<footer>Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
 
 <script src="assets/js/units.js"></script>
-<script src="assets/js/calculator.js"></script>
+<script src="assets/js/home.js"></script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
 </body>
 </html>

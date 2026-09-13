@@ -3,41 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mob HP | ASTD Hub</title>
+<title>Mob HP | ASTD Comp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-.row-real td:first-child{border-left:3px solid var(--green);}
-.row-est td:first-child{border-left:3px solid var(--line2);}
-.hp-weak{color:var(--green);} .hp-med{color:#ffd75e;} .hp-strong{color:var(--red);}
-.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:10px;}
+.row-real td:first-child{border-left:3px solid var(--go);}
+.row-est td:first-child{border-left:3px solid var(--edge-hi);}
+.hp-weak{color:var(--go);} .hp-med{color:#ffd75e;} .hp-strong{color:var(--stop);}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-2); margin-top:10px;}
 .legend span::before{content:"■ ";}
-.legend .lg-real::before{color:var(--green);}
-.legend .lg-est::before{color:var(--line2);}
+.legend .lg-real::before{color:var(--go);}
+.legend .lg-est::before{color:var(--edge-hi);}
 </style>
+<noscript><style>body.page-fade .wrap,body.page-fade .team-wrap,body.page-fade .home{opacity:1 !important;}</style></noscript>
 </head>
-<body>
+<body class="page-fade">
 
 <header>
   <div class="head-top">
     <!-- ช่องโลโก้: เขียนทับไฟล์ assets/img/logo.png (256x256 px) -->
-    <div class="logo-slot empty-style">
+    <a class="logo-slot empty-style" href="index.html" title="Home">
       <div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div>
       <img src="assets/img/logo.png" alt="ASTD Logo"
            onload="this.style.display='block';document.getElementById('logoHint').style.display='none'"
            onerror="this.style.display='none'">
-    </div>
+    </a>
     <div>
       <h1>ASTD <span>Mob HP Table</span></h1>
       <div class="sub">เช็คเลือดมอนได้ทุกเวฟ — Anchor Table Edition (Wave 1 เริ่มที่ HP 41)</div>
     </div>
   </div>
   <nav class="mainnav">
-    <a href="index.html">Calculator</a>
+    <a href="calculator.html">Calculator</a>
     <a href="units.html">Units</a>
+    <a href="compare.html">Compare</a>
     <a href="mobhp.html" class="active">Mob HP</a>
     <a href="team.html">Team</a>
+    <div class="lang-pick">
+      <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button>
+      <div class="lang-menu">
+        <a href="mobhp.html" class="on">ไทย</a>
+        <a href="mobhp-en.html">English</a>
+      </div>
+    </div>
   </nav>
 </header>
 
@@ -133,5 +143,7 @@ document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
 ["wFrom","wTo"].forEach(id=> $(id).addEventListener("keydown", e=>{ if(e.key==="Enter") genTable(); }));
 $("anchorList").textContent = "Wave " + Object.keys(ANCHORS).map(Number).sort((a,b)=>a-b).join(", ");
 </script>
+<script src="assets/js/bg.js"></script>
+<script src="assets/js/analytics.js"></script>
 </body>
 </html>
