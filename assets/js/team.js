@@ -25,6 +25,10 @@ const TEAM_STRINGS = {
     orderAdd:   "+ ใส่ในลำดับการ์ด",
     orderDrop:  "✓ อยู่ในลำดับแล้ว",
     orderMore:  n => `+ ใส่อีกใบ (ตอนนี้ ${n} ใบ)`,
+    orderFull:  n => `ใส่ครบแล้ว (${n} ใบ)`,
+    cardBuffs:  "บัฟของใบนี้",
+    dotCount:   n => `นับ ${n} รวมใน DPS`,
+    dotSec:     "ระยะเวลา",
     dpsNo:      n => `Team DPS #${n}`,
     secShort:   "ยิง",
     secUnit:    "วิ",
@@ -43,6 +47,9 @@ const TEAM_STRINGS = {
     cMad:       "Madara",     cMadSub: "ตัดลงไปที่ 33% ของเลือดเต็ม",
     cLuf:       "Luffy",      cLufSub: p => `ตัดเลือดที่เหลือลง ${p}%`,
     cTboi:      "TBOI",       cTboiSub: d => `ระเบิด ${formatHp(d)}`,
+    cKfg:       "Kung Fu Galaxy",
+    cKfgSub:    p => `ยิง ${p.sec} วิ — ปกติ ${formatHp(p.normal)} + พิษ ${formatHp(p.poison)} = ${formatHp(p.total)}`,
+    stKfg:      p => `→ ยิง ${p.sec} วิ — ปกติ ${formatHp(p.normal)} + พิษ ${formatHp(p.poison)}`,
     stHp:       (w,e,p,m) => `เลือดมอน Wave ${w} (${e}, ${p} คน ×${m})`,
     stGil:      "→ เหลือ 25% ของเลือดเต็ม",
     stMad:      "→ เหลือ 33% ของเลือดเต็ม",
@@ -85,6 +92,10 @@ const TEAM_STRINGS = {
     orderAdd:   "+ Add to card order",
     orderDrop:  "✓ In card order",
     orderMore:  n => `+ Add another (${n} in order)`,
+    orderFull:  n => `Limit reached (${n})`,
+    cardBuffs:  "buffs for this card",
+    dotCount:   n => `Count ${n} in DPS`,
+    dotSec:     "Duration",
     dpsNo:      n => `Team DPS #${n}`,
     secShort:   "Fire",
     secUnit:    "s",
@@ -103,6 +114,9 @@ const TEAM_STRINGS = {
     cMad:       "Madara",     cMadSub: "cuts down to 33% of full HP",
     cLuf:       "Luffy",      cLufSub: p => `cuts remaining HP by ${p}%`,
     cTboi:      "TBOI",       cTboiSub: d => `detonates for ${formatHp(d)}`,
+    cKfg:       "Kung Fu Galaxy",
+    cKfgSub:    p => `fires ${p.sec}s — ${formatHp(p.normal)} normal + ${formatHp(p.poison)} poison = ${formatHp(p.total)}`,
+    stKfg:      p => `→ ${p.sec}s of fire — ${formatHp(p.normal)} normal + ${formatHp(p.poison)} poison`,
     stHp:       (w,e,p,m) => `Enemy HP, wave ${w} (${e}, ${p}p ×${m})`,
     stGil:      "→ down to 25% of full HP",
     stMad:      "→ down to 33% of full HP",
@@ -132,8 +146,61 @@ let players = 1;
 let uidSeq = 0;
 let order = [newCard("dps")];
 /* การ์ดหนึ่งใบ = {k:ชนิด, uid:ไอดีไว้ลบ/ลากสลับ, sec:วินาที (เฉพาะ Team DPS)} */
-function newCard(k){ return k === "dps" ? {k, uid:++uidSeq, sec:60} : {k, uid:++uidSeq}; }
-function cardDps(c){ return teamDps() * Math.max(0, c.sec || 0); }   /* teamDps() รวมบัฟให้แล้ว */
+/* ใส่ได้สูงสุดกี่ใบต่อชนิดการ์ด (null = ไม่จำกัด) */
+const CARD_MAX = { dps:null, gil:1, mad:1, luf:3, tboi:1, kfg:1 };
+
+/* การ์ด Kung Fu Galaxy — ดาเมจ 200B ต่อครั้ง ยังอยู่ขั้นอัปเกรด 8 (SPA 10)
+   ตีปกติ  : วินาที / SPA  ครั้ง
+   พิษ     : 7 ครั้งต่อ 30 วินาที  ครั้งละเท่ากับดาเมจต่อครั้ง
+   บัฟทุกอันคูณกัน ส่วน Falcon6 คูณเฉพาะดาเมจพิษ */
+const KFG_DMG = 200e9, KFG_SPA = 10, KFG_SEC = 60;
+const KFG_POISON_HITS = 7, KFG_POISON_WINDOW = 30;
+const KFG_BUFFS = [
+  {id:"b250",    label:"250%",          v:250},
+  {id:"b300",    label:"300%",          v:300},
+  {id:"idol",    label:"Idol +15%",     v:15},
+  {id:"judge",   label:"Judgement +8%", v:8},
+  {id:"fv",      label:"FV +35%",       v:35},
+  {id:"purify",  label:"Purify +12%",   v:12},
+  {id:"falcon6", label:"Falcon6 +30%",  v:30, poisonOnly:true},
+];
+function kfgMults(c){
+  let all = 1, poison = 1;
+  if(c && c.b) KFG_BUFFS.forEach(x =>{
+    if(!c.b.has(x.id)) return;
+    if(x.poisonOnly) poison *= (1 + x.v/100);
+    else             all    *= (1 + x.v/100);
+  });
+  return {all, poison};
+}
+function kfgParts(c){
+  const sec = Math.max(0, (c && c.sec != null) ? c.sec : KFG_SEC);
+  const m   = kfgMults(c);
+  const hit = KFG_DMG * m.all;
+  const normal = hit * (sec / KFG_SPA);                                    /* ตีปกติตาม SPA */
+  const poison = hit * m.poison * (sec * KFG_POISON_HITS / KFG_POISON_WINDOW); /* พิษ 7 ครั้ง/30 วิ */
+  return {sec, normal, poison, total: normal + poison};
+}
+function kfgTotal(c){ return kfgParts(c).total; }
+
+/* บัฟเสริมที่ติดมากับการ์ดแต่ละใบ (Team DPS ปรับแยกใบได้) */
+const CARD_BUFFS = [
+  {id:"idol",   label:"Idol +15%",     v:15},
+  {id:"judge",  label:"Judgement +8%", v:8},
+  {id:"fv",     label:"FV +35%",       v:35},
+  {id:"purify", label:"Purify +12%",   v:12},
+];
+function cardBuffMult(c){
+  let m = 1;
+  if(c && c.b) CARD_BUFFS.forEach(x => { if(c.b.has(x.id)) m *= (1 + x.v/100); });
+  return m;
+}
+function newCard(k){
+  if(k === "dps") return {k, uid:++uidSeq, sec:60, b:new Set()};
+  if(k === "kfg") return {k, uid:++uidSeq, sec:KFG_SEC, b:new Set()};
+  return {k, uid:++uidSeq};
+}
+function cardDps(c){ return teamDps() * Math.max(0, c.sec || 0) * cardBuffMult(c); }
 const TBOI_BASE = 250e9;
 const BUFF_CHOICES = [100, 250, 300];
 
@@ -153,6 +220,11 @@ function stageRatio(slug, stage){
   return top > 0 ? dpsOf(s) / top : 1;
 }
 /* ---------- Leader: ยูนิตแถวแรกของทีม ---------- */
+/* passive ของยูนิตที่คูณดาเมจได้ */
+function unitMults(name){
+  const list = (typeof ABILITIES !== "undefined") ? ABILITIES[unitSlug(name)] : null;
+  return list ? list.filter(a => a.mult) : [];
+}
 function unitTags(name){
   const d = (typeof CATEGORIES !== "undefined") ? CATEGORIES[unitSlug(name)] : null;
   return (d && d.tags) ? d.tags : null;
@@ -184,7 +256,20 @@ function rowDps(row, boost){
   const stage = d.stage === "" ? null : +d.stage;
   const copies= Math.max(1, parseFloat(d.count) || 1);
   const lead = 1 + boostedBy(boost, row)/100;
-  return base * stageRatio(unitSlug(u[0]), stage) * ((+d.buff || 100) / 100) * lead * copies;
+  /* passive ที่เปิดสวิตช์ไว้ (เช่น Vampirism ของ TBOI) */
+  let pMult = 1;
+  const on = (d.abil || "").split("|").filter(Boolean);
+  unitMults(u[0]).forEach(a => { if(on.includes(a.name)) pMult *= a.mult; });
+  const mult = stageRatio(unitSlug(u[0]), stage) * ((+d.buff || 100) / 100) * lead * pMult;
+
+  /* สกิลยิงต่อเนื่อง (เช่น The Final March) นับรวมเมื่อเปิดสวิตช์ */
+  const ab = dotAbility(u[0]);
+  let extra = 0;
+  if(ab && d.dotOn === "1"){
+    const fDmg = u[1] * mult;                       /* ดาเมจหลังบัฟของตัวนี้ */
+    extra = dotAvg(ab, fDmg, parseFloat(d.dotSec) || ab.dot.def);
+  }
+  return (base * mult + extra) * copies;
 }
 /* อัปเดตตัวเลข DPS ใต้ชื่อยูนิตทุกแถว + ยอดรวมของแต่ละทีม */
 function refreshTeamNumbers(){
@@ -231,7 +316,7 @@ function teamDps(){
     const boost = teamBoost(t);
     document.querySelectorAll(`#rows${t} .u-item`).forEach(r => total += rowDps(r, boost));
   }
-  return total * buffMult("dpsBuffs");   /* Idol / Judgement / FV / Purify */
+  return total;   /* บัฟเสริมย้ายไปอยู่กับการ์ด Team DPS แต่ละใบแล้ว */
 }
 
 /* ============================================================
@@ -305,6 +390,7 @@ function applyPick(val){
   if(!pickTarget) return;
   pickTarget.dataset.unit  = val;
   pickTarget.dataset.stage = "";
+  pickTarget.dataset.dotOn = "0"; pickTarget.dataset.dotSec = ""; pickTarget.dataset.abil = "";
   if(val === "custom"){ pickTarget.dataset.val = pickTarget.dataset.val || ""; }
   paintRow(pickTarget);
   calcTeam();
@@ -318,7 +404,7 @@ function addUnitRow(t){
   if(rows.children.length >= 6) return;
   const row = document.createElement("div");
   row.className = "u-item";
-  Object.assign(row.dataset, {unit:"", stage:"", buff:"100", count:"1", val:""});
+  Object.assign(row.dataset, {unit:"", stage:"", buff:"100", count:"1", val:"", dotOn:"0", dotSec:"", abil:""});
   rows.appendChild(row);
   paintRow(row);
   updateCnt(t); calcTeam();
@@ -373,7 +459,23 @@ function paintRow(row){
         <span class="ui-boost" style="display:none;"></span></button>
       <button class="ui-rm" title="✕">✕</button>
     </div>
-    <div class="ui-ctl">${stageSel}${buffSel}${numField}</div>`;
+    <div class="ui-ctl">${stageSel}${buffSel}${numField}</div>
+    ${(()=>{ const ms = u ? unitMults(u[0]) : []; if(!ms.length) return "";
+      const on = (d.abil || "").split("|").filter(Boolean);
+      return `<div class="ui-abil"><div class="preset-row">${ms.map(a =>
+        `<button class="preset-chip${on.includes(a.name)?" on":""}" data-ab="${a.name}">${a.name} x${a.mult}</button>`
+      ).join("")}</div></div>`; })()}
+    ${(()=>{ const ab = u ? dotAbility(u[0]) : null; if(!ab) return "";
+      const sec = d.dotSec || ab.dot.def;
+      return `<div class="ui-dot">
+        <label class="abil-sw"><span>${TT.dotCount(ab.name)}</span>
+          <input type="checkbox" class="u-doton"${d.dotOn === "1" ? " checked" : ""}><i></i></label>
+        <div class="dot-row">
+          <span>${TT.dotSec}</span>
+          <input type="range" class="u-dotsec" min="${ab.dot.min}" max="${ab.dot.max}" step="1" value="${sec}">
+          <b class="u-dotsecv">${sec}s</b>
+        </div>
+      </div>`; })()}`;
 
   const open = ()=> openPicker(row);
   row.querySelector(".ui-face").onclick = open;
@@ -385,6 +487,23 @@ function paintRow(row){
   const st = row.querySelector(".u-stage");
   if(!st.disabled) st.onchange = ()=>{ d.stage = st.value; calcTeam(); };
   row.querySelector(".u-buff").onchange = e =>{ d.buff = e.target.value; calcTeam(); };
+  row.querySelectorAll(".ui-abil .preset-chip").forEach(ch => ch.onclick = ()=>{
+    const on = (d.abil || "").split("|").filter(Boolean);
+    const nm = ch.dataset.ab;
+    const i  = on.indexOf(nm);
+    if(i >= 0) on.splice(i,1); else on.push(nm);
+    d.abil = on.join("|");
+    ch.classList.toggle("on");
+    calcTeam();
+  });
+
+  const dOn = row.querySelector(".u-doton"), dSec = row.querySelector(".u-dotsec");
+  if(dOn)  dOn.onchange = e =>{ d.dotOn = e.target.checked ? "1" : "0"; calcTeam(); };
+  if(dSec) dSec.addEventListener("input", ()=>{
+    d.dotSec = dSec.value;
+    row.querySelector(".u-dotsecv").textContent = dSec.value + "s";
+    calcTeam();
+  });
   row.querySelector(".u-num").addEventListener("input", e =>{
     if(isCustom || (u && !hasStats)) d.val = e.target.value; else d.count = e.target.value;
     calcTeam();
@@ -417,20 +536,25 @@ function applyPlayers(){
    การ์ด — กดปุ่มเพื่อใส่/เอาออกจากลำดับการ์ด (เดิมเป็นสวิตช์)
    ============================================================ */
 const CARD_INFO = {
-  dps:  {name: TT.cDps,  sub: c => TT.cDpsSub(c.sec, teamDps())},
+  dps:  {name: TT.cDps,  sub: c => TT.cDpsSub(c.sec, teamDps() * cardBuffMult(c))},
   gil:  {name: TT.cGil,  sub: () => TT.cGilSub},
   mad:  {name: TT.cMad,  sub: () => TT.cMadSub},
   luf:  {name: TT.cLuf,  sub: () => TT.cLufSub((25*buffMult("lufBuffs")).toFixed(1))},
   tboi: {name: TT.cTboi, sub: () => TT.cTboiSub(TBOI_BASE*buffMult("tboiBuffs"))},
+  kfg:  {name: TT.cKfg,  sub: c => TT.cKfgSub(kfgParts(c))},
 };
 function paintCardBtns(){
   document.querySelectorAll(".t-card").forEach(card=>{
     const key = card.dataset.card;
     const n = order.filter(c => c.k === key).length;
     card.classList.toggle("on", n > 0);
+    const max = CARD_MAX[key];
+    const full = max != null && n >= max;
     const b = card.querySelector(".card-add");
-    b.textContent = n ? TT.orderMore(n) : TT.orderAdd;
+    b.textContent = full ? TT.orderFull(n) : (n ? TT.orderMore(n) : TT.orderAdd);
     b.classList.toggle("added", n > 0);
+    b.classList.toggle("full", full);
+    b.disabled = full;
   });
 }
 /* บัฟเสริมหลายอันซ้อนกัน = คูณกัน เช่น Idol +15% กับ FV +35% -> x1.15 * x1.35 = x1.5525 */
@@ -451,8 +575,14 @@ function renderOrder(){
     const it = document.createElement("div");
     it.className = "order-item"; it.draggable = true;
     it.dataset.key = o.k; it.dataset.uid = o.uid;
-    const secBox = o.k === "dps"
-      ? `<label class="o-sec">${TT.fireSec}<input type="number" min="0" step="1" value="${o.sec}"></label>`
+    const secBox = (o.k === "dps" || o.k === "kfg")
+      ? `<label class="o-sec">${TT.fireSec}<input type="number" min="0" step="1" value="${o.sec}"></label>
+         ${(()=>{ const list = o.k === "dps" ? CARD_BUFFS : (o.k === "kfg" ? KFG_BUFFS : null);
+           if(!list) return "";
+           return `<div class="o-buffs">
+           <span class="o-buffs-lbl">${TT.cardBuffs}</span>
+           ${list.map(x => `<button class="preset-chip${o.b && o.b.has(x.id) ? " on" : ""}" data-b="${x.id}">${x.label}</button>`).join("")}
+         </div>`; })()}`
       : "";
     it.innerHTML = `<span class="grip">⋮⋮</span><span class="o-num">${idx+1}</span>
       <span class="o-name">${CARD_INFO[o.k].name}<small>${CARD_INFO[o.k].sub(o)}</small>
@@ -472,6 +602,17 @@ function renderOrder(){
       order = order.filter(x => x.uid !== o.uid);
       paintCardBtns(); renderOrder(); calcTeam();
     };
+    it.querySelectorAll(".o-buffs .preset-chip").forEach(ch =>{
+      ch.addEventListener("mousedown", e => e.stopPropagation());
+      ch.onclick = ()=>{
+        const id = ch.dataset.b;
+        if(o.b.has(id)) o.b.delete(id); else o.b.add(id);
+        ch.classList.toggle("on");
+        it.querySelector(".o-name small").textContent = CARD_INFO[o.k].sub(o);
+        calcTeam();
+      };
+    });
+
     const sec = it.querySelector(".o-sec input");
     if(sec){
       /* ลากการ์ดไม่ให้ขวางการพิมพ์ในช่องวินาที */
@@ -480,7 +621,7 @@ function renderOrder(){
       sec.addEventListener("blur",  ()=> it.draggable = true);
       sec.addEventListener("input", ()=>{
         o.sec = Math.max(0, parseFloat(sec.value) || 0);
-        it.querySelector(".o-name small").textContent = CARD_INFO.dps.sub(o);
+        it.querySelector(".o-name small").textContent = CARD_INFO[o.k].sub(o);
         calcTeam();
       });
     }
@@ -504,10 +645,7 @@ function calcTeam(){
   refreshTeamNumbers();
   const dps = teamDps();
   $("teamDpsOut").textContent = formatHp(dps);
-  const bp = (buffMult("dpsBuffs") - 1) * 100;
-  $("dpsNote").textContent = dps > 0
-    ? TT.dpsTotal(players) + (bp > 0 ? TT.dpsBuffed(bp.toFixed(0)) : "")
-    : TT.dpsNone;
+  $("dpsNote").textContent = dps > 0 ? TT.dpsTotal(players) : TT.dpsNone;
 
   const steps = [{k: TT.stHp(wave, $("etype").selectedOptions[0].text, players, PLAYER_MULTS[players]),
                   v: formatHp(hp)}];
@@ -536,6 +674,11 @@ function calcTeam(){
       const boom = TBOI_BASE * buffMult("tboiBuffs");
       hp = Math.max(0, hp - boom);
       steps.push({k:`${n}. ${TT.cTboi} ${TT.stTboi(boom)}`, v: formatHp(hp)});
+    }
+    else if(key === "kfg"){
+      const p = kfgParts(card);
+      hp = Math.max(0, hp - p.total);
+      steps.push({k:`${n}. ${TT.cKfg} ${TT.stKfg(p)}`, v: formatHp(hp)});
     }
     else if(key === "dps"){
       const dealt = cardDps(card);
@@ -592,11 +735,14 @@ $("orderList").addEventListener("dragover", e=>{
 });
 document.querySelectorAll(".t-card .card-add").forEach(b=>{
   b.onclick = ()=>{
-    order.push(newCard(b.closest(".t-card").dataset.card));  /* กดซ้ำ = ใส่อีกใบ */
+    const key = b.closest(".t-card").dataset.card;
+    const max = CARD_MAX[key];
+    if(max != null && order.filter(c => c.k === key).length >= max) return;   /* ครบโควตาแล้ว */
+    order.push(newCard(key));
     paintCardBtns(); renderOrder(); calcTeam();
   };
 });
-document.querySelectorAll("#dpsBuffs .preset-chip, #lufBuffs .preset-chip, #tboiBuffs .preset-chip").forEach(c=>{
+document.querySelectorAll("#lufBuffs .preset-chip, #tboiBuffs .preset-chip").forEach(c=>{
   c.onclick = ()=>{ c.classList.toggle("on"); renderOrder(); calcTeam(); };
 });
 document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
@@ -617,3 +763,55 @@ applyPlayers();
 paintCardBtns();
 renderOrder();
 calcTeam();
+
+
+/* สถานะของหน้านี้ — ใช้ตอนสลับภาษา */
+window.PAGE_STATE = {
+  get(){
+    const teams = [];
+    for(let i = 1; i <= 4; i++)
+      teams.push([...document.querySelectorAll(`#rows${i} .u-item`)].map(r => ({...r.dataset})));
+    const buffsOf = id => [...document.querySelectorAll(`#${id} .preset-chip.on`)].map(c => c.dataset.b);
+    return {
+      p: players, w: $("wave").value, e: $("etype").value,
+      t: teams,
+      o: order.map(c => ({k:c.k, sec:c.sec, b:c.b ? [...c.b] : null})),
+      lb: buffsOf("lufBuffs"), tb: buffsOf("tboiBuffs"),
+    };
+  },
+  set(st){
+    if(st.p){
+      document.querySelectorAll("#pChips .preset-chip").forEach(c =>{ if(+c.dataset.p === st.p) c.click(); });
+    }
+    if(st.w != null) $("wave").value  = st.w;
+    if(st.e != null) $("etype").value = st.e;
+
+    (st.t || []).forEach((rows, i) =>{
+      const t = i + 1;
+      $("rows"+t).innerHTML = "";
+      rows.forEach(ds =>{
+        const row = document.createElement("div");
+        row.className = "u-item";
+        Object.assign(row.dataset, ds);
+        $("rows"+t).appendChild(row);
+        paintRow(row);
+      });
+      updateCnt(t);
+    });
+
+    if(st.o){
+      order = st.o.map(c =>{
+        const n = newCard(c.k);
+        if(c.sec != null) n.sec = c.sec;
+        if(c.b) n.b = new Set(c.b);
+        return n;
+      });
+    }
+    ["lufBuffs","tboiBuffs"].forEach((id, k) =>{
+      const want = (k === 0 ? st.lb : st.tb) || [];
+      document.querySelectorAll(`#${id} .preset-chip`).forEach(c =>
+        c.classList.toggle("on", want.includes(c.dataset.b)));
+    });
+    applyPlayers(); paintCardBtns(); renderOrder(); calcTeam();
+  }
+};

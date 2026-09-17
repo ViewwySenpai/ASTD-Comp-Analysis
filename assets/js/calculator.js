@@ -65,12 +65,13 @@ function selectUnit(i){
     (u[6]?`<span class="tag">AoE: ${u[6]}</span>`:"") +
     (u[7]?`<span class="tag ${u[7].toLowerCase()}">${u[7]}</span>`:"") +
     (u[9]?`<span class="tag star${u[9]}">${u[9]}★${u[1]==null?" — "+T.needStats:""}</span>`:"");
-  flatDmg = 0;
+  flatDmg = 0; flatSkipOf = null;
   $("inDmg").value = u[1] ?? "";
   $("inSpa").value = u[2] ?? "";
   $("inRng").value = u[3] ?? "";
   $("inCost").value = u[4] ?? "";
   setUnitImage(u[0]);
+  syncCountUI(u[0]);
   renderUpgrades(u[0]);
   renderAbilities(u[0]);
   renderCategories(u[0]);
@@ -90,12 +91,19 @@ function getBuild(){
   const baseRng = parseFloat($("inRng").value)||0;
   const cost    = parseFloat($("inCost").value)||0;
   const mA = multA(), mB = multB(true);
-  const fDmg = baseDmg * mA * mB + flatDmg * mB;
+  const nm0    = selIdx >= 0 ? UNITS[selIdx][0] : "";
+  const copies = clampCount(nm0);
+  /* dmg1 = ดาเมจของตัวเดียวหลังบัฟ ส่วน fDmg คือรวมทุกตัวที่วาง */
+  const dmg1 = baseDmg * mA * mB + flatDmg * flatMultA(flatSkipOf) * mB;
+  const fDmg = dmg1 * copies;
   const fRng = orbRange(baseRng, deployRange(), orbRangePct());
   const nm   = selIdx >= 0 ? UNITS[selIdx][0] : "";
-  return {baseDmg, baseSpa, baseRng, cost, fDmg, fSpa:baseSpa, fRng,
-          dps: unitTotalDps(nm, fDmg, baseSpa),        /* รวม Judgement ให้แล้ว */
-          baseDps: unitTotalDps(nm, baseDmg, baseSpa)};
+  const rowSkip = flatSkipOf;
+  const ab   = nm ? dotAbility(nm) : null;
+  const mDps = (ab && dotCounted()) ? dotAvg(ab, fDmg, dotSeconds()) : 0;
+  return {baseDmg, baseSpa, baseRng, cost, fDmg, fSpa:baseSpa, fRng, ab, mDps,
+          dps: unitTotalDps(nm, dmg1, baseSpa, copies) + mDps,   /* พิษไม่คูณตามจำนวนตัว */
+          baseDps: unitTotalDps(nm, baseDmg, baseSpa, 1)};
 }
 
 function calc(){
@@ -109,6 +117,14 @@ function calc(){
   setOut("outSpa","outSpaBase", b.fSpa, b.baseSpa, true);
   setOut("outRng","outRngBase", b.fRng, b.baseRng, false);
   $("outApm").textContent = b.fSpa>0 ? fmt(60/b.fSpa,1) : "—";
+  if(b.ab){
+    const sec = dotSeconds();
+    const set = (cls, v) => { const e = document.querySelector("#abilList ." + cls); if(e) e.textContent = fmt(v); };
+    set("dot-burst", dotBurst(b.ab, b.fDmg));
+    set("dot-total", dotTotal(b.ab, b.fDmg, sec));
+    set("dot-avg",   dotAvg(b.ab, b.fDmg, sec));
+  }
+
   const jr = $("outJdgRow");
   if(jr){
     const nm  = selIdx >= 0 ? UNITS[selIdx][0] : "";
@@ -118,7 +134,8 @@ function calc(){
   }
   paintUpgradeNumbers();
   const orb = orbPick();
-  const netCost = b.cost * (1 - (orb ? orb.cost : 0)/100);     /* Orb ลดราคารวม */
+  const copies  = Math.max(1, parseInt($("inCount").value) || 1);
+  const netCost = b.cost * copies * (1 - (orb ? orb.cost : 0)/100);     /* Orb ลดราคารวม */
   $("outEff").textContent = netCost>0 ? fmt(b.dps/(netCost/1000)) : "—";
 }
 function setOut(vId, bId, val, base, lowerBetter){
@@ -184,9 +201,13 @@ function supportMult(){
 /* บัฟแบ่งเป็นสองกลุ่ม เพราะดาเมจตายตัวจากสกิลบางอันไม่โดน Leader กับ Orb คูณ
    multA = Leader + Orb        -> คูณเฉพาะดาเมจพื้นฐาน
    multB = 250/300% + Support + ธาตุคัดแพ้ -> คูณทั้งดาเมจพื้นฐานและดาเมจตายตัว */
-function multA(){
-  const o = orbPick();
-  return (1 + buffLead/100) * (1 + (o ? o.dmg : 0)/100);
+function multLead(){ return 1 + buffLead/100; }
+function multOrb(){ const o = orbPick(); return 1 + (o ? o.dmg : 0)/100; }
+function multA(){ return multLead() * multOrb(); }
+/* ดาเมจตายตัวบางอันโดนบัฟไม่ครบ — flatSkip บอกว่ากลุ่มไหนคูณไม่ได้ */
+function flatMultA(skip){
+  const s = skip || ["lead","orb"];
+  return (s.includes("lead") ? 1 : multLead()) * (s.includes("orb") ? 1 : multOrb());
 }
 function multB(includeElem){
   const e = (includeElem && $("tgElem") && $("tgElem").checked) ? 1.5 : 1;
@@ -195,7 +216,15 @@ function multB(includeElem){
 function buffMult(){ return multA() * multB(false); }
 
 /* ดาเมจตายตัวของขั้นอัปเกรดที่เลือกอยู่ (0 ถ้าไม่มี) */
-let flatDmg = 0;
+let flatDmg = 0, flatSkipOf = null;
+
+/* อ่านค่าช่องจำนวนตัว โดยไม่ให้เกินเพดานของยูนิตนั้น */
+function clampCount(name){
+  const el = $("inCount");
+  if(!el) return 1;
+  const max = (name && typeof placeMax === "function") ? placeMax(name) : PLACE_DEFAULT;
+  return Math.min(max, Math.max(1, parseInt(el.value) || 1));
+}
 function syncBuff(){
   paintOrbNote();
   $("vDmg").value = Math.round((buffMult() - 1) * 10000) / 100;
@@ -248,7 +277,21 @@ window.rmCmp = i => { compare.splice(i,1); renderCompare(); };
 /* ---------- upgrade levels ---------- */
 let upgRows = null, upgPick = -1;
 
+/* หลอดจำนวนตัว: ปรับเพดานตามยูนิต ตัวที่วางได้ตัวเดียวจะถูกล็อก */
+function syncCountUI(name){
+  const el = $("inCount"), out = $("countVal"), box = el ? el.closest(".stat-box") : null;
+  if(!el) return;
+  const max = placeMax(name);
+  el.max = max;
+  if(+el.value > max) el.value = max;
+  if(+el.value < 1)   el.value = 1;
+  el.disabled = (max <= 1);
+  if(box) box.classList.toggle("locked", max <= 1);
+  if(out) out.textContent = el.value + (max > 1 ? " / " + max : "");
+}
+
 function renderUpgrades(name){
+  const dotAb = (typeof dotAbility === "function") ? dotAbility(name) : null;
   const box = $("upgBox");
   if(!box) return;
   upgRows = getUpgrades(name);
@@ -259,11 +302,9 @@ function renderUpgrades(name){
     table.innerHTML = "";
     none.textContent = T.upgNone;
     none.style.display = "block";
-    if($("upgWipe")) $("upgWipe").style.display = "none";
     return;
   }
   none.style.display = "none";
-  if($("upgWipe")) $("upgWipe").style.display = loadUpgStore()[unitSlug(name)] ? "inline-block" : "none";
 
   table.innerHTML = upgRows.map((r,i)=>{
     const bullets = [];
@@ -280,6 +321,11 @@ function renderUpgrades(name){
     ];
     /* Judgement ติดนาน 20 วิ ตัวหารคือรอบยิงที่ครอบ 20 วิ พอดี = SPA คูณขึ้นไปจนถึง 20
        (SPA 5->20, 7->21, 9->27, 14->28) */
+    if(r.pois && r.spa){
+      const pBase = poisonDps(r.dmg, r.spa), pFlat = poisonDps(fl, r.spa);
+      stats.push([T.poisonDps, fmt(pBase + pFlat), "pdps", pBase, pFlat]);
+      stats.push([T.totalDps, fmt(r.dmg/r.spa + fl/r.spa + pBase + pFlat), "ptot", r.dmg/r.spa, fl/r.spa]);
+    }
     if(r.jdg && r.spa){
       const window20 = Math.ceil(20 / r.spa) * r.spa;
       const jdBase = r.dmg * 0.25 * 10 / window20, jdFlat = fl * 0.25 * 10 / window20;
@@ -287,7 +333,14 @@ function renderUpgrades(name){
       const tdBase = r.dmg / r.spa + jdBase, tdFlat = fl / r.spa + jdFlat;
       stats.push([T.totalDps, fmt(tdBase + tdFlat), "tdps", tdBase, tdFlat]);
     }
-    return `<div class="upg-card" data-i="${i}">
+    /* ขั้นสุดท้าย + ยูนิตมีสกิลยิงต่อเนื่อง -> โชว์ Ability's DPS แยก แล้วรวมเป็น Total DPS */
+    const isLast = i === upgRows.length - 1;
+    if(isLast && dotAb && r.spa){
+      stats.push([T.abilDps,  "—", "adps", r.dmg, fl]);
+      if(!r.jdg) stats.push([T.totalDps, "—", "atot", r.dmg, fl]);
+    }
+    return `<div class="upg-card" data-i="${i}"${r.flatSkip ? ` data-flatskip="${r.flatSkip.join(",")}"` : ""}${
+      isLast && dotAb ? ` data-last="1" data-spa="${r.spa}"` : ""}>
       <div class="upg-head">
         <span class="upg-name">★ ${r.name ? r.name : (r.lv === 0 ? T.upgDeploy : T.upgLv(r.lv))}</span>
         <span class="upg-cost">${r.cost ? fmtFull(r.cost) : "—"}</span>
@@ -311,9 +364,45 @@ function renderUpgrades(name){
    (ดาเมจ / DPS / Judgement DPS คูณบัฟ ส่วน Range กับ SPA ไม่เกี่ยว) */
 function paintUpgradeNumbers(){
   const note = $("upgBuffNote");
-  const mA = multA(), mB = multB(true), m = mA * mB;
+  const copies = clampCount(selIdx >= 0 ? UNITS[selIdx][0] : "");   /* วางหลายตัว = ตัวเลขในการ์ดรวมกันด้วย */
+  const mA = multA(), mB = multB(true), m = mA * mB * copies;
   const rPct = orbRangePct(), dep = deployRange();
+  const ab = (selIdx >= 0) ? dotAbility(UNITS[selIdx][0]) : null;
+  const sec = dotSeconds(), counted = dotCounted();
+
+  document.querySelectorAll("#upgTable .upg-card[data-last]").forEach(card=>{
+    const spa  = parseFloat(card.dataset.spa) || 1;
+    const bEl  = card.querySelector('b[data-k="adps"]'), tEl = card.querySelector('b[data-k="atot"]');
+    const base = bEl ? parseFloat(bEl.dataset.base) : 0;
+    const flat = bEl ? parseFloat(bEl.dataset.flat) || 0 : 0;
+    const dmg  = (base * mA * mB + flat * mB) * copies;
+    const aDps = counted ? dotAvg(ab, dmg, sec) : 0;
+    if(bEl){
+      bEl.textContent = fmt(aDps);
+      bEl.closest("li").style.display = counted ? "" : "none";
+      bEl.classList.toggle("buffed", m !== 1);
+    }
+    if(tEl){
+      tEl.textContent = fmt(dmg / spa + aDps);
+      tEl.closest("li").style.display = counted ? "" : "none";
+      tEl.classList.toggle("buffed", m !== 1);
+    }
+  });
   document.querySelectorAll("#upgTable .upg-card b[data-k]").forEach(el=>{
+    if(el.dataset.k === "adps" || el.dataset.k === "atot") return;   /* คิดแยกไว้ข้างบนแล้ว */
+    if(el.dataset.k === "pdps" || el.dataset.k === "ptot"){          /* พิษไม่คูณตามจำนวนตัว */
+      const pEl = el.closest(".upg-card").querySelector('b[data-k="pdps"]');
+      const pB = parseFloat(pEl.dataset.base) || 0, pF = parseFloat(pEl.dataset.flat) || 0;
+      const poison = pB * mA * mB + pF * mB;
+      if(el.dataset.k === "pdps"){
+        el.textContent = fmt(poison);
+      } else {
+        const nB = parseFloat(el.dataset.base) || 0, nF = parseFloat(el.dataset.flat) || 0;
+        el.textContent = fmt((nB * mA * mB + nF * mB) * copies + poison);
+      }
+      el.classList.toggle("buffed", m !== 1);
+      return;
+    }
     const base = parseFloat(el.dataset.base);
     if(!isFinite(base)) return;
     if(el.dataset.k === "rng"){                       /* ระยะไม่เกี่ยวกับบัฟดาเมจ */
@@ -323,7 +412,8 @@ function paintUpgradeNumbers(){
       return;
     }
     const flat = parseFloat(el.dataset.flat) || 0;
-    const v = base * mA * mB + flat * mB;          /* ส่วนตายตัวโดนแค่ mB */
+    const skip = (el.closest(".upg-card").dataset.flatskip || "").split(",").filter(Boolean);
+    const v = (base * mA * mB + flat * flatMultA(skip.length ? skip : null) * mB) * copies;
     el.textContent = el.dataset.k === "dmg" ? fmtFull(v) : fmt(v);
     el.classList.toggle("buffed", m !== 1);
   });
@@ -351,11 +441,38 @@ function renderAbilities(name){
             <input type="checkbox" data-mult="${a.mult}"><i></i></label>` : ""}
       </div>
       <ul class="abil-notes">${(a[lang] || []).map(t => `<li>${t}</li>`).join("")}</ul>
+      ${a.dot ? `<div class="abil-dot">
+        <label class="abil-sw"><span>${T.dotCount}</span><input type="checkbox" class="dot-on"><i></i></label>
+        <div class="dot-row">
+          <span>${T.dotSec}</span>
+          <input type="range" class="dot-sec" min="${a.dot.min}" max="${a.dot.max}" step="1" value="${a.dot.def}">
+          <b class="dot-secv">${a.dot.def}s</b>
+        </div>
+        <ul class="dot-out">
+          <li><span>${T.dotBurst}</span><b class="dot-burst">—</b></li>
+          <li><span>${T.dotTotal}</span><b class="dot-total">—</b></li>
+          <li><span>${T.dotAvg(a.dot.cd)}</span><b class="dot-avg">—</b></li>
+        </ul>
+      </div>` : ""}
       ${a.cd ? `<div class="abil-cd">${a.passive ? "" : T.abilCd + " "}${a.cd[lang] || a.cd.en}${
         a.global ? ` <span class="abil-tag">GLOBAL — ${T.abilGlobal}</span>` : ""}</div>` : ""}
     </div>`).join("");
 
   list.querySelectorAll(".abil-sw input").forEach(el => el.addEventListener("change", calc));
+  list.querySelectorAll(".dot-sec").forEach(el => el.addEventListener("input", ()=>{
+    el.parentElement.querySelector(".dot-secv").textContent = el.value + "s";
+    calc();
+  }));
+}
+
+/* วินาทีที่ตั้งไว้บนหลอดของสกิลยิงต่อเนื่อง */
+function dotSeconds(){
+  const el = document.querySelector("#abilList .dot-sec");
+  return el ? (parseFloat(el.value) || 0) : 0;
+}
+function dotCounted(){
+  const el = document.querySelector("#abilList .abil-dot .dot-on");
+  return !!(el && el.checked);
 }
 
 /* ผลคูณจาก passive ที่เปิดสวิตช์ไว้ */
@@ -387,6 +504,7 @@ function applyUpgrade(i){
   const r = upgRows[i];
   $("inDmg").value  = r.dmg;
   flatDmg = rowFlat(r);
+  flatSkipOf = r.flatSkip || null;
   if(r.spa) $("inSpa").value = r.spa;
   if(r.rng) $("inRng").value = r.rng;
   $("inCost").value = upgradeCumCost(upgRows, i);
@@ -395,36 +513,14 @@ function applyUpgrade(i){
   calc();
 }
 
-function initUpgradeTools(){
-  if(!$("upgRead")) return;
-  $("upgRead").onclick = ()=>{
-    if(selIdx < 0) return;
-    const rows = parseUpgradeText($("upgPaste").value);
-    const msg = $("upgMsg");
-    if(!rows.length){ msg.textContent = T.upgFail; return; }
-    saveUpgTable(UNITS[selIdx][0], rows);
-    renderUpgrades(UNITS[selIdx][0]);
-    msg.textContent = T.upgOk(rows.length);
-    $("upgPaste").value = "";
-  };
-  $("upgCode").onclick = ()=>{
-    if(selIdx < 0 || !upgRows) return;
-    const code = upgradesToCode(UNITS[selIdx][0], upgRows);
-    navigator.clipboard?.writeText(code);
-    $("upgPaste").value = code;
-    $("upgMsg").textContent = T.upgCopied;
-  };
-  $("upgWipe").onclick = ()=>{
-    if(selIdx < 0) return;
-    saveUpgTable(UNITS[selIdx][0], null);
-    renderUpgrades(UNITS[selIdx][0]);
-    $("upgMsg").textContent = "";
-  };
-}
 
 /* ---------- init ---------- */
 document.addEventListener("DOMContentLoaded", ()=>{
-  $("inDmg").addEventListener("input", ()=>{ flatDmg = 0; calc(); });   /* พิมพ์เอง = ไม่มีดาเมจตายตัวแล้ว */
+  $("inDmg").addEventListener("input", ()=>{ flatDmg = 0; flatSkipOf = null; calc(); });
+  $("inCount").addEventListener("input", ()=>{
+    if(selIdx >= 0) syncCountUI(UNITS[selIdx][0]);
+    calc();
+  });
   ["inSpa","inRng","inCost"].forEach(id => $(id).addEventListener("input", calc));
   $("tgElem").addEventListener("change", calc);
   document.querySelectorAll("#dmgChips .preset-chip").forEach(c=>
@@ -467,9 +563,54 @@ document.addEventListener("DOMContentLoaded", ()=>{
   $("search").addEventListener("input", renderList);
 
   renderOrbs();
-  initUpgradeTools();
   renderList();
   const p = new URLSearchParams(location.search);
   const uIdx = parseInt(p.get("unit"));
   selectUnit(Number.isInteger(uIdx) && UNITS[uIdx] ? uIdx : 7);
 });
+
+
+/* ============================================================
+   สถานะของหน้านี้ ใช้ตอนสลับภาษาเพื่อไม่ให้ข้อมูลที่ดูอยู่หาย
+   ============================================================ */
+window.PAGE_STATE = {
+  get(){
+    const orbOn = document.querySelector("#orbChips .preset-chip.on");
+    const dsec  = document.querySelector("#abilList .dot-sec");
+    return {
+      u:  selIdx,
+      d:  $("inDmg").value, s: $("inSpa").value, r: $("inRng").value, c: $("inCost").value,
+      fd: flatDmg,
+      bd: buffDmg, bl: buffLead,
+      sup: [...document.querySelectorAll("#supportChips .preset-chip.on")].map(x => x.dataset.v),
+      orb: orbOn ? +orbOn.dataset.i : null,
+      el:  $("tgElem").checked,
+      ab:  [...document.querySelectorAll("#abilList .abil-sw input")].map(x => x.checked),
+      ds:  dsec ? dsec.value : null,
+    };
+  },
+  set(st){
+    if(st.u != null && UNITS[st.u]) selectUnit(st.u);   /* วาดสกิล/ขั้นอัปเกรดใหม่ก่อน */
+    if(st.d != null) $("inDmg").value  = st.d;
+    if(st.s != null) $("inSpa").value  = st.s;
+    if(st.r != null) $("inRng").value  = st.r;
+    if(st.c != null) $("inCost").value = st.c;
+    flatDmg  = st.fd || 0;
+    buffDmg  = st.bd || 0;
+    buffLead = st.bl || 0;
+    document.querySelectorAll("#supportChips .preset-chip").forEach(x =>
+      x.classList.toggle("on", (st.sup || []).includes(x.dataset.v)));
+    document.querySelectorAll("#orbChips .preset-chip").forEach(x =>
+      x.classList.toggle("on", st.orb != null && +x.dataset.i === st.orb));
+    $("tgElem").checked = !!st.el;
+    const sw = [...document.querySelectorAll("#abilList .abil-sw input")];
+    (st.ab || []).forEach((v,i) => { if(sw[i]) sw[i].checked = !!v; });
+    const dsec = document.querySelector("#abilList .dot-sec");
+    if(dsec && st.ds != null){
+      dsec.value = st.ds;
+      const lbl = dsec.parentElement.querySelector(".dot-secv");
+      if(lbl) lbl.textContent = st.ds + "s";
+    }
+    syncBuff();
+  }
+};

@@ -51,6 +51,7 @@
       <button class="chip" data-f="Ground">Ground</button>
       <button class="chip" data-f="Air">Air</button>
       <button class="chip" data-f="Hybrid">Hybrid</button>
+      <button class="chip" data-f="Hill">Hill</button>
       <button class="chip" data-f="6star">6★</button>
       <button class="chip" data-f="7star">7★</button>
     </div>
@@ -70,17 +71,16 @@
         <div class="plate-body">
           <div class="name" id="selName">เลือกยูนิตเพื่อเริ่ม</div>
           <div class="badges" id="selBadges"></div>
-          <div class="img-note" id="unitImgName"></div>
         </div>
       </div>
 
       <div class="stat-grid">
-        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" min="0" step="any" value="0"></div>
-        <div class="stat-box"><label>SPA <span class="unit-suffix">วินาทีต่อการโจมตี</span></label><input type="number" id="inSpa" min="0.1" step="any" value="1"></div>
-        <div class="stat-box"><label>ระยะ</label><input type="number" id="inRng" min="0" step="any" value="0"></div>
-        <div class="stat-box"><label>ราคารวม <span class="unit-suffix">in-game ¢</span></label><input type="number" id="inCost" min="0" step="any" value="0"></div>
+        <div class="stat-box count-box"><label>Amount <small style="color:var(--ink-3)">รวมดาเมจทุกตัว</small></label><div class="count-row"><input type="range" id="inCount" min="1" max="8" step="1" value="1"><b id="countVal">1 / 8</b></div></div>
+        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" readonly tabindex="-1" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>SPA <span class="unit-suffix">วินาทีต่อการโจมตี</span></label><input type="number" id="inSpa" readonly tabindex="-1" min="0.1" step="any" value="1"></div>
+        <div class="stat-box"><label>ระยะ</label><input type="number" id="inRng" readonly tabindex="-1" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>ราคารวม <span class="unit-suffix">in-game ¢</span></label><input type="number" id="inCost" readonly tabindex="-1" min="0" step="any" value="0"></div>
       </div>
-      <p class="hint">ทุกช่องแก้เองได้ ยูนิตที่ยังไม่มีสถิติบนวิกิ กรอกเองได้เลย ถ้าอยากแก้ถาวรให้แก้ที่ assets/js/units.js</p>
     </section>
 
     <section class="panel">
@@ -107,7 +107,6 @@
           <div class="lbl" style="margin-top:14px;">Orb <small>ใส่ได้ทีละลูก กดซ้ำเพื่อถอด</small></div>
           <div class="preset-row" id="orbChips"></div>
           <div class="hint" id="orbNote" style="margin-top:8px; display:none;"></div>
-          <p class="hint" style="margin-top:12px;">บัฟทุกอันซ้อนกันแบบคูณ เช่น Idol กับ Judgement = ×1.15 × ×1.08 = ×1.242</p>
         </div>
         <div class="buff-val"><input type="number" id="vDmg" min="0" max="9999" step="any" value="0">%</div>
       </div>
@@ -124,23 +123,9 @@
     <section class="panel" id="upgBox">
       <h2>ขั้นอัปเกรด</h2>
       <div class="hint" id="upgBuffNote" style="margin:0 0 10px; display:none;"></div>
-      <p class="hint" style="margin:0 0 12px;">กดขั้นไหนก็ได้ ค่าสถิติกับราคาสะสมจะเด้งขึ้นช่องด้านบนให้ทันที</p>
-      <p class="hint" style="margin-top:10px;">ตัวเลขในตารางขึ้นกับว่าตอนก๊อปจากวิกิเลือกแท็บไหน — ถ้าอยากให้ตรงกับช่องด้านบน (Level 175) ให้กดปุ่ม Level 175 บนวิกิก่อนค่อยก๊อป</p>
       <div id="upgTable" style="margin-top:14px;"></div>
       <div class="empty-msg" id="upgNone"></div>
 
-      <details style="margin-top:14px;">
-        <summary style="cursor:pointer; color:var(--ink-2); font-size:13.5px;">นำเข้าตารางอัปเกรด</summary>
-        <textarea id="upgPaste" rows="5" placeholder="วางข้อความจากหน้ายูนิตบนวิกิที่นี่ (ตั้งแต่ Deployment ถึง Upgrade สุดท้าย)"
-          style="width:100%; margin-top:10px; background:var(--deck-2); border:1px solid var(--edge); border-radius:var(--r-md); color:var(--ink); padding:10px; font-size:12.5px; outline:none; resize:vertical;"></textarea>
-        <div class="btn-row" style="margin-top:10px;">
-          <button class="btn primary" id="upgRead">อ่านข้อมูล</button>
-          <button class="btn" id="upgCode">คัดลอกเป็นโค้ด</button>
-          <button class="btn" id="upgWipe" style="display:none;">ลบตารางนี้</button>
-        </div>
-        <div class="img-note" id="upgMsg"></div>
-        <p class="hint">วิธีเติมข้อมูล: เปิดหน้ายูนิตบนวิกิ ลากคลุมบล็อก Stats Overview ทั้งก้อน ก๊อปมาวางในช่องนี้ แล้วกดอ่านข้อมูล เว็บจะแปลงเป็นตารางให้เอง ข้อมูลจะถูกจำไว้ในเบราว์เซอร์ ถ้าอยากเก็บถาวรให้ทุกคนเห็น กดคัดลอกเป็นโค้ด แล้วเอาไปวางใน assets/js/upgrades.js</p>
-      </details>
     </section>
 
     <section class="panel" id="abilBox" style="display:none;">
@@ -204,5 +189,6 @@
 <script src="assets/js/calculator.js"></script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
 </body>
 </html>

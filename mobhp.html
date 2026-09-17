@@ -55,6 +55,7 @@
 
   <section class="panel">
     <h2>ตั้งค่าตาราง</h2>
+      <div class="anchor-line"><span>รายการจุดยึด (anchor) ที่ใช้อ้างอิง</span> <b id="anchorList"></b></div>
     <div class="stat-grid">
       <div class="stat-box"><label>เวฟเริ่ม</label><input type="number" id="wFrom" min="1" step="1" value="1"></div>
       <div class="stat-box"><label>เวฟสุดท้าย</label><input type="number" id="wTo" min="1" step="1" value="100"></div>
@@ -72,12 +73,6 @@
       <button class="btn primary" id="btnGen">สร้างตาราง</button>
       <button class="btn" id="btnClear">ล้างตาราง</button>
     </div>
-    <p class="hint">
-      สูตร Anchor Table: Wave 1–30 ใช้ค่าจริงตรงจากเกม, ระหว่างจุดยึดคำนวณแบบ Exponential Interpolation,
-      เกินจุดยึดสุดท้ายลากต่อด้วยอัตราโตของช่วงท้าย<br>
-      จุดยึดตอนนี้: <b id="anchorList"></b> — เห็นค่าจริงเวฟไหนเพิ่ม เอาไปใส่ใน <b>ANCHORS</b> ที่
-      <b>assets/js/hpcore.js</b> ได้เลย (ใช้ร่วมกับหน้า Team)
-    </p>
   </section>
 
   <section class="panel">
@@ -100,7 +95,9 @@
 
 </div>
 
-<footer>Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
+<footer>
+  Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม
+</footer>
 
 <script src="assets/js/hpcore.js"></script>
 <script>
@@ -145,5 +142,24 @@ $("anchorList").textContent = "Wave " + Object.keys(ANCHORS).map(Number).sort((a
 </script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
+<script>
+window.PAGE_STATE = {
+  get(){
+    const p = document.querySelector("#pChips .preset-chip.on");
+    return {a: document.getElementById("wFrom").value,
+            b: document.getElementById("wTo").value,
+            p: p ? p.dataset.p : null};
+  },
+  set(st){
+    if(st.a != null) document.getElementById("wFrom").value = st.a;
+    if(st.b != null) document.getElementById("wTo").value = st.b;
+    if(st.p) document.querySelectorAll("#pChips .preset-chip").forEach(c =>{
+      if(c.dataset.p === st.p) c.click();
+    });
+    document.getElementById("btnGen").click();
+  }
+};
+</script>
 </body>
 </html>

@@ -72,26 +72,15 @@
     <section class="panel">
       <h2>ทีม (คนละไม่เกิน 6 ยูนิต)</h2>
       <div class="team-grid" id="teamGrid"></div>
-      <p class="hint">กดรูปหรือชื่อยูนิตเพื่อเลือกจากกริด — เลือกขั้นอัปเกรดและบัฟดาเมจได้ในแถวเดียวกัน ช่องขวาสุดคือจำนวนตัวที่วาง (ถ้าเป็นยูนิตที่ยังไม่มีสถิติ ช่องนั้นจะกลายเป็นช่องกรอก DPS เอง) ยูนิตตัวแรกของแต่ละทีมคือ Leader — สกิลของมันจะบัฟเพื่อนร่วมทีมที่อยู่ในหมวดเดียวกับที่สกิลระบุ</p>
     </section>
 
     <section class="panel">
       <h2>การ์ด (กดใส่ลำดับการ์ดทางขวา)</h2>
-      <p class="hint" style="margin:0 0 10px;">กดปุ่มเดิมซ้ำได้ ใส่การ์ดใบเดิมหลายใบก็ได้ — Team DPS แต่ละใบตั้งจำนวนวินาทีแยกกันได้ในลำดับทางขวา</p>
       <div class="cards" style="gap:10px;">
         <div class="t-card" data-card="dps">
           <div class="head">
             <div><div class="title">Team DPS</div><div class="desc">ทีมยิงด้วย DPS รวม ตามจำนวนวินาทีที่กำหนด</div></div>
             <button class="card-add"></button>
-          </div>
-          <div class="body">
-            <div class="desc">สถานะบัฟเสริมของ Team DPS:</div>
-            <div class="buff-chips" id="dpsBuffs">
-              <button class="preset-chip" data-b="15">Idol +15%</button>
-              <button class="preset-chip" data-b="8">Judgement +8%</button>
-              <button class="preset-chip" data-b="35">FV +35%</button>
-              <button class="preset-chip" data-b="12">Purify +12%</button>
-            </div>
           </div>
         </div>
 
@@ -138,7 +127,15 @@
               <button class="preset-chip" data-b="35">FV +35%</button>
               <button class="preset-chip" data-b="12">Purify +12%</button>
               <button class="preset-chip" data-b="50">Dot Buff +50%</button>
+              <button class="preset-chip" data-b="50" title="Vampirism">Vampirism x1.5</button>
             </div>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="kfg">
+          <div class="head">
+            <div><div class="title">Kung Fu Galaxy</div><div class="desc">ดาเมจ 200B ต่อครั้ง (SPA 10) พิษตี 7 ครั้งต่อ 30 วินาที — เลือกบัฟได้ในลำดับการ์ดทางขวา</div></div>
+            <button class="card-add"></button>
           </div>
         </div>
       </div>
@@ -156,7 +153,6 @@
     <section class="panel">
       <h2>ลำดับการใช้การ์ด (ลากเรียงได้)</h2>
       <div class="order-list" id="orderList"></div>
-      <p class="hint">ลากการ์ดเพื่อสลับลำดับ หรือกดปุ่ม ▲▼ — ใต้ชื่อการ์ดจะบอกว่าหลังใบนั้นเลือดมอนเหลือกี่ % ของเลือดเต็ม</p>
     </section>
 
     <section class="panel">
@@ -168,15 +164,19 @@
   </div>
 </div>
 
-<footer>Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
+<footer>
+  Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม
+</footer>
 
 <script>window.TEAM_LANG = "th";</script>
 <script src="assets/js/units.js"></script>
 <script src="assets/js/upgrades.js"></script>
+<script src="assets/js/abilities.js"></script>
 <script src="assets/js/categories.js"></script>
 <script src="assets/js/hpcore.js"></script>
 <script src="assets/js/team.js"></script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
 </body>
 </html>

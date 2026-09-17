@@ -39,4 +39,48 @@ const CATEGORIES = {
   tags: ["Corrupted", "Godly", "Love Rhythm", "Prodigy", "Revival", "HalfBorn"],
 },
 
+
+"airren-doomsday": {
+  boost: {cat:"Antiheros", atk:20},
+  leader: {
+    th: "ยูนิตในหมวด Antiheroes ได้ Attack Boost +20% และโบนัสอีก 20%",
+    en: "Units in the Antiheroes category gain Attack Boost +20% and a 20% bonus.",
+  },
+  tags: ["Antiheros", "Martial Artist", "Progressive", "Corrupted", "Giant", "Siblings"],
+},
+
+"ant-king-awakened": {
+  boost: {cat:"Unrivaled Intelligence", atk:20},
+  leader: {th:"ยูนิตในหมวด Unrivaled Intelligence ได้ดาเมจเพิ่ม 20% และโบนัสอีก 20%",
+           en:"Units in the Unrivaled Intelligence category gain a 20% attack boost and a 20% bonus."},
+  tags: ["Captains", "Unrivaled Intelligence", "Prodigy", "Final Bosses", "Progressive", "HalfBorn"],
+},
+
+"hamerucifer": {
+  boost: {cat:"Love Rhythm", atk:20},
+  leader: {th:"ยูนิตในหมวด Love Rhythm ได้ Attack Boost +20% และโบนัสอีก 20%",
+           en:"Units in the Love Rhythm category gain Attack Boost +20% and a 20% bonus."},
+  tags: ["Time Avocs", "Corrupted", "Godly", "Love Rhythm", "Puppeteer", "Girls"],
+},
+
+"heavenly-duo": {
+  boost: {cat:"Master Class", atk:20},
+  leader: {th:"ยูนิตในหมวด Master Class ได้ Attack Boost +20% และโบนัสอีก 17%",
+           en:"Units in the Master Class category gain Attack Boost +20% and a 17% bonus."},
+  tags: ["Final Bosses", "Pure Evil", "Prodigy", "Master Class", "Perception", "Corrupted"],
+},
+
+"kung-fu-galaxy": {
+  boost: {cat:"Antiheros", atk:22},
+  leader: {th:"ยูนิตในหมวด Antiheros ได้ Attack Boost +22%",
+           en:"Units in the Antiheros category gain Attack Boost +22%."},
+  tags: ["Antiheros", "Godlike Power", "Speedster", "Inner Being", "Final Bosses", "Revival"],
+},
+
+"mochi-awakening": {
+  boost: {cat:"Siblings", atk:20},
+  leader: {th:"ยูนิตในหมวด Siblings ได้ดาเมจเพิ่ม 20%",
+           en:"Units in the Siblings category gain a 20% attack boost."},
+  tags: ["Captains", "Siblings", "Legendary Lineage", "Perception", "Prodigy"],
+},
 };

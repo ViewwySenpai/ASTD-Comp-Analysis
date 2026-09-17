@@ -72,26 +72,15 @@
     <section class="panel">
       <h2>Teams (up to 6 units each)</h2>
       <div class="team-grid" id="teamGrid"></div>
-      <p class="hint">Tap a unit's portrait or name to pick it from the grid — upgrade stage and damage buff sit in the same row. The right-hand field is how many copies you place (for a unit with no stats yet it becomes a raw DPS field). The first unit in each team is the Leader — its skill buffs teammates that belong to the category the skill names.</p>
     </section>
 
     <section class="panel">
       <h2>Cards (add them to the card order on the right)</h2>
-      <p class="hint" style="margin:0 0 10px;">Press a button again to add another copy — each Team DPS card gets its own duration in the card order on the right</p>
       <div class="cards" style="gap:10px;">
         <div class="t-card" data-card="dps">
           <div class="head">
             <div><div class="title">Team DPS</div><div class="desc">Your teams fire at their combined DPS for a set number of seconds</div></div>
             <button class="card-add"></button>
-          </div>
-          <div class="body">
-            <div class="desc">Team DPS support buffs:</div>
-            <div class="buff-chips" id="dpsBuffs">
-              <button class="preset-chip" data-b="15">Idol +15%</button>
-              <button class="preset-chip" data-b="8">Judgement +8%</button>
-              <button class="preset-chip" data-b="35">FV +35%</button>
-              <button class="preset-chip" data-b="12">Purify +12%</button>
-            </div>
           </div>
         </div>
 
@@ -138,7 +127,15 @@
               <button class="preset-chip" data-b="35">FV +35%</button>
               <button class="preset-chip" data-b="12">Purify +12%</button>
               <button class="preset-chip" data-b="50">Dot Buff +50%</button>
+              <button class="preset-chip" data-b="50" title="Vampirism">Vampirism x1.5</button>
             </div>
+          </div>
+        </div>
+
+        <div class="t-card" data-card="kfg">
+          <div class="head">
+            <div><div class="title">Kung Fu Galaxy</div><div class="desc">200B per hit (SPA 10) plus poison at 7 hits per 30 seconds — pick buffs in the card order on the right</div></div>
+            <button class="card-add"></button>
           </div>
         </div>
       </div>
@@ -156,7 +153,6 @@
     <section class="panel">
       <h2>Card order (drag to rearrange)</h2>
       <div class="order-list" id="orderList"></div>
-      <p class="hint">Drag a card or use ▲▼ — under each card name you can see how much of the enemy's full HP is left after it.</p>
     </section>
 
     <section class="panel">
@@ -168,15 +164,19 @@
   </div>
 </div>
 
-<footer>Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers</footer>
+<footer>
+  Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers
+</footer>
 
 <script>window.TEAM_LANG = "en";</script>
 <script src="assets/js/units.js"></script>
 <script src="assets/js/upgrades.js"></script>
+<script src="assets/js/abilities.js"></script>
 <script src="assets/js/categories.js"></script>
 <script src="assets/js/hpcore.js"></script>
 <script src="assets/js/team.js"></script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
 </body>
 </html>

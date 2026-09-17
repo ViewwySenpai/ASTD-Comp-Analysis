@@ -145,22 +145,114 @@ const UPGRADES = {
   {lv:9, cost:8000000, dmg:379999999.89, rng:180, spa:9.5,
    note:{th:"+ The TBOI Special / ได้สกิล The TBOI Special", en:"+ The TBOI Special / Obtains \"The TBOI Special\" manual ability"}},
 ],
+
+/* Airren (Doomsday) — 7★ (คอลัมน์ Level 175 ของวิกิ) */
+"airren-doomsday": [
+  {lv:0, cost:550,     dmg:14957.41,  rng:60,  spa:3.5, note:"Ground / AoE (Cone)"},
+  {lv:1, cost:1450,    dmg:52305.07,  rng:60,  spa:3.5},
+  {lv:2, cost:2500,    dmg:203255.67,  rng:90,  spa:5,
+   note:{th:"+ Babamo Ka-Boom / เปลี่ยนเป็น AoE (Circle)", en:"+ Babamo Ka-Boom / Attack type changes to AoE (Circle)"}},
+  {lv:3, cost:6500,    dmg:428075.7, rng:90,  spa:5},
+  {lv:4, cost:12000,   dmg:958926.28,   rng:100, spa:6.4,
+   note:{th:"+ Attack Giant Finisher / เปลี่ยนเป็น AoE (Full)", en:"+ Attack Giant Finisher / Attack type changes to AoE (Full)"}},
+  {lv:5, cost:19000,   dmg:1642562.71,   rng:110, spa:6.4,
+   note:{th:"+ Hybrid / ตีเป้าหมายบนอากาศได้", en:"+ Hybrid / Attacks can now hit air enemies"}},
+  {lv:6, cost:2450000, dmg:16012692.36,  rng:110, spa:6.4,
+   note:{th:"+ The Final March / ได้สกิล The Final March", en:"+ The Final March / Obtains The Final March manual ability"}},
+],
+
+/* Ant King (Awakened) — 7★ (คอลัมน์ Level 175) */
+"ant-king-awakened": [
+  {lv:0, cost:2000,    dmg:10988.46,  rng:45,  spa:2,  note:"Hybrid / AoE (Circle)"},
+  {lv:1, cost:3000,    dmg:32986.8,   rng:45,  spa:2},
+  {lv:2, cost:11000,   dmg:719712,    rng:90,  spa:6,
+   note:{th:"+ Fiber Smash / เปลี่ยนเป็น AoE (Cone)", en:"+ Fiber Smash / Attack type changes to AoE (Cone)"}},
+  {lv:3, cost:25000,   dmg:2099160,   rng:90,  spa:6},
+  {lv:4, cost:280000,  dmg:12594960,  rng:100, spa:7,
+   note:{th:"+ Fiber Smash / เปลี่ยนเป็น AoE (Full)", en:"+ Fiber Smash / Attack type changes to AoE (Full)"}},
+  {lv:5, cost:6640000, dmg:41983200,  rng:100, spa:7},
+  {lv:6, cost:8000000, dmg:143514000, rng:100, spa:12,
+   note:{th:"+ Aura Synthesis / ได้สกิล Aura Synthesis", en:"+ Aura Synthesis / Obtains Aura Synthesis manual ability"}},
+  /* ใช้สกิล Aura Synthesis แล้ว: ดาเมจพื้นฐาน +518,400,000 แบบตายตัว
+     flatSkip:["lead"] = บัฟ Leader ไม่คูณส่วนนี้ ส่วนบัฟอื่นรวมถึง Orb คูณได้ปกติ */
+  {lv:7, cost:0, dmg:143514000, flat:518400000, flatSkip:["lead"], rng:100, spa:12,
+   name:"Aura Synthesis",
+   note:{th:"ดาเมจพื้นฐาน +518,400,000 — บัฟ Leader ไม่คูณส่วนนี้",
+         en:"Base damage +518,400,000 — the Leader buff does not multiply this part"}},
+],
+
+/* Hamerucifer — 7★ (คอลัมน์ Level 175) */
+"hamerucifer": [
+  {lv:0, cost:350,     dmg:17992.8,  rng:50,  spa:9, note:"Hybrid / AoE (Full)"},
+  {lv:1, cost:1650,    dmg:67473,    rng:50,  spa:9},
+  {lv:2, cost:3500,    dmg:179928,   rng:50,  spa:9,
+   note:{th:"ได้สกิล Time-Freezing Sands II", en:"Obtains Time-Freezing Sands II manual ability"}},
+  {lv:3, cost:6500,    dmg:449820,   rng:120, spa:9},
+  {lv:4, cost:12000,   dmg:839664,   rng:120, spa:7,
+   note:{th:"+ Impaling Pirouette / เปลี่ยนเป็น AoE (Circle)", en:"+ Impaling Pirouette / Attack type changes to AoE (Circle)"}},
+  {lv:5, cost:16000,   dmg:1645056,  rng:120, spa:7,
+   note:{th:"ได้สกิล Rewinding Sands แทน Time-Freezing Sands II", en:"Obtains Rewinding Sands, replacing Time-Freezing Sands II"}},
+  {lv:6, cost:160000,  dmg:5933340,  rng:120, spa:7},
+  {lv:7, cost:1800000, dmg:22705200, rng:175, spa:8,
+   note:{th:"+ Rain of Hope and Despair / เปลี่ยนเป็น AoE (Full)", en:"+ Rain of Hope and Despair / Attack type changes to AoE (Full)"}},
+  {lv:8, cost:4000000, dmg:39841200, rng:175, spa:8,
+   note:{th:"ได้สกิล I was waiting for this moment...", en:"Obtains the \"I was waiting for this moment...\" manual ability"}},
+],
+
+/* Heavenly Duo — 7★ (คอลัมน์ Level 175) */
+"heavenly-duo": [
+  {lv:0, cost:600,      dmg:29988,     rng:50,  spa:6,  note:"Hill / AoE (Circle)"},
+  {lv:1, cost:19400,    dmg:239904,    rng:50,  spa:6},
+  {lv:2, cost:40000,    dmg:719712,    rng:65,  spa:6,
+   note:{th:"+ Sword Of Rupture / เปลี่ยนเป็น AoE (Cone)", en:"+ Sword Of Rupture / Attack type changes to AoE (Cone)"}},
+  {lv:3, cost:65000,    dmg:2399040,   rng:65,  spa:6},
+  {lv:4, cost:90000,    dmg:5097960,   rng:80,  spa:6,
+   note:{th:"+ Gates and Ages of Babylon / เปลี่ยนเป็น AoE (Circle)", en:"+ Gates and Ages of Babylon / Attack type changes to AoE (Circle)"}},
+  {lv:5, cost:145000,   dmg:8396640,   rng:90,  spa:6},
+  {lv:6, cost:7640000,  dmg:35985600,  rng:100, spa:12,
+   note:{th:"+ Combined Enuma Elish / เปลี่ยนเป็น AoE (Cone)", en:"+ Combined Enuma Elish / Attack type changes to AoE (Cone)"}},
+  {lv:7, cost:12000000, dmg:153581400, rng:100, spa:12,
+   note:{th:"+ Enuma Reduction / ได้สกิล Enuma Reduction", en:"+ Enuma Reduction / Obtains Enuma Reduction manual ability"}},
+],
+
+/* Kung Fu Galaxy — 7★ (คอลัมน์ Level 175)
+   pois:true = ติดพิษให้ศัตรู ระบบจะคิดช่อง Poison DPS ให้เอง */
+"kung-fu-galaxy": [
+  {lv:0, cost:500,     dmg:17500.14, rng:60,  spa:7,   pois:true, note:"Ground / AoE (Full)"},
+  {lv:1, cost:500,     dmg:34914.6,  rng:60,  spa:7,   pois:true},
+  {lv:2, cost:3500,    dmg:145870.2, rng:90,  spa:7.3, pois:true,
+   note:{th:"+ Nuclear Fission Fit / เปลี่ยนเป็น AoE (Circle)", en:"+ Nuclear Fission Fit / Attack type changes to AoE (Circle)"}},
+  {lv:3, cost:6500,    dmg:364140,   rng:90,  spa:7.3, pois:true},
+  {lv:4, cost:9000,    dmg:1248786,  rng:120, spa:10,  pois:true,
+   note:{th:"+ Galactic Destruction / ได้สกิล Copy Fist", en:"+ Galactic Destruction / Obtains Copy Fist"}},
+  {lv:5, cost:20000,   dmg:2484720,  rng:120, spa:10,  pois:true},
+  {lv:6, cost:60000,   dmg:3984120,  rng:150, spa:10,  pois:true,
+   note:{th:"+ Gamma Ray Burst / เปลี่ยนเป็น AoE (Full)", en:"+ Gamma Ray Burst / Attack type changes to AoE (Full)"}},
+  {lv:7, cost:3400000, dmg:39841200, rng:150, spa:10,  pois:true},
+  {lv:8, cost:4000000, dmg:53335800, rng:150, spa:10,  pois:true,
+   note:{th:"+ Ultimate Fist / ได้สกิล Ultimate Fist", en:"+ Ultimate Fist / Obtains Ultimate Fist"}},
+],
+
+/* Mochi (Awakening) — 7★ (คอลัมน์ Level 175) */
+"mochi-awakening": [
+  {lv:0, cost:10000, dmg:29452.5,  rng:40, spa:7,
+   note:{th:"Ground / AoE (Cone) / โจมตีติดสถานะ WaxSlow", en:"Ground / AoE (Cone) / attacks apply WaxSlow"}},
+  {lv:1, cost:1500,  dmg:47659.5,  rng:40, spa:7},
+  {lv:2, cost:8000,  dmg:68008.5,  rng:40, spa:7},
+  {lv:3, cost:3500,  dmg:92641.5,  rng:50, spa:7,
+   note:{th:"+ Mochi Barrage / เปลี่ยนเป็น AoE (Circle)", en:"+ Mochi Barrage / Attack type changes to AoE (Circle)"}},
+  {lv:4, cost:4000,  dmg:121558.5, rng:50, spa:7},
+  {lv:5, cost:4500,  dmg:154759.5, rng:50, spa:7},
+  {lv:6, cost:10000, dmg:240439.5, rng:50, spa:7,
+   note:{th:"+ Mochi Whirlwind / เปลี่ยนเป็น AoE (Full) / ตีเป้าหมายบนอากาศได้",
+         en:"+ Mochi Whirlwind / Attack type changes to AoE (Full) / can now hit air enemies"}},
+],
 };
 
-/* ---------- storage: ตารางที่ผู้ใช้นำเข้าเอง / user-imported tables ---------- */
-const UPG_STORE_KEY = "astd_upgrade_tables";
-function loadUpgStore(){
-  try { return JSON.parse(localStorage.getItem(UPG_STORE_KEY) || "{}"); }
-  catch(e){ return {}; }
-}
-function saveUpgTable(name, rows){
-  const store = loadUpgStore();
-  if(rows && rows.length) store[unitSlug(name)] = rows; else delete store[unitSlug(name)];
-  try { localStorage.setItem(UPG_STORE_KEY, JSON.stringify(store)); } catch(e){}
-}
+/* ---------- อ่านตารางขั้นอัปเกรด ---------- */
 function getUpgrades(name){
   const slug = unitSlug(name);
-  return loadUpgStore()[slug] || UPGRADES[slug] || null;
+  return UPGRADES[slug] || null;   /* อ่านจากไฟล์อย่างเดียว แก้จากหน้าเว็บไม่ได้ */
 }
 
 /* ---------- parser: อ่านข้อความที่ก๊อปมาจากวิกิ / parse pasted wiki text ----------
@@ -199,6 +291,25 @@ function parseUpgradeText(text){
   return rows;
 }
 
+
+/* ============================================================
+   สกิลยิงต่อเนื่อง (เช่น The Final March ของ Airren)
+   burst = DPS ตอนสกิลทำงานอยู่   avg = เฉลี่ยรวมช่วงรอคูลดาวน์
+   ============================================================ */
+function dotAbility(name){
+  const list = (typeof ABILITIES !== "undefined") ? ABILITIES[unitSlug(name)] : null;
+  return list ? (list.find(a => a.dot) || null) : null;
+}
+function dotBurst(ab, dmg){
+  return (ab && ab.dot && dmg) ? dmg * ab.dot.pct * ab.dot.ticks : 0;
+}
+function dotTotal(ab, dmg, sec){
+  return dotBurst(ab, dmg) * Math.max(0, sec || 0);
+}
+function dotAvg(ab, dmg, sec){
+  return (ab && ab.dot && ab.dot.cd) ? dotTotal(ab, dmg, sec) / ab.dot.cd : 0;
+}
+
 /* ---------- helpers ---------- */
 function upgradeCumCost(rows, idx){
   return rows.slice(0, idx+1).reduce((s,r)=> s + (r.cost||0), 0);
@@ -230,8 +341,24 @@ function rowBase(r){ return r ? (r.dmg || 0) : 0; }
 function rowFlat(r){ return r ? (r.flat || 0) : 0; }
 function rowDmgTotal(r){ return rowBase(r) + rowFlat(r); }
 
-function unitTotalDps(name, dmg, spa){
+/* พิษของ Kung Fu Galaxy: ดาเมจ x7 กระจายใน 3 รอบยิง -> หารด้วย 3 x SPA
+   (ตรงกับตัวหาร 21 / 21.9 / 30 ของ SPA 7 / 7.3 / 10 พอดี) */
+function hasPoison(name){
+  const t = (typeof UPGRADES !== "undefined") ? UPGRADES[unitSlug(name)] : null;
+  return !!(t && t.some(r => r.pois));
+}
+function poisonDps(dmg, spa){
+  if(!dmg || !spa) return 0;
+  return dmg * 7 / (3 * spa);
+}
+
+/* dmg = ดาเมจของยูนิต "หนึ่งตัว" หลังบัฟ / copies = วางกี่ตัว
+   ดาเมจพิษไม่เพิ่มตามจำนวนตัว (สถานะพิษไม่ซ้อนกัน) ส่วนที่เหลือคูณตามปกติ */
+function unitTotalDps(name, dmg, spa, copies){
   if(!(spa > 0)) return 0;
-  const base = dmg / spa;
-  return hasJudgement(name) ? base + judgementDps(dmg, spa) : base;
+  const n = Math.max(1, copies || 1);
+  let out = (dmg / spa) * n;
+  if(hasJudgement(name)) out += judgementDps(dmg, spa) * n;
+  if(hasPoison(name))    out += poisonDps(dmg, spa);
+  return out;
 }

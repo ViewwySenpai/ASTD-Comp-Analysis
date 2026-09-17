@@ -57,9 +57,9 @@ const UNITS = [
    อีก 5 ตัวที่เหลืออยู่ด้านบนของไฟล์ เพราะมีสถิติอยู่แล้ว ไม่ต้องใส่ซ้ำ:
    Borul (SUPA III) / Metal Freezer / Vegu Blue Evolved /
    Second Trumpet: Salt King / TBOI (Rebirth)  — ทั้งหมดติดธง 7★ แล้ว ===== */
-["Airren (Doomsday)",null,null,null,null,"","","",0,7],
+["Airren (Doomsday)",16012692.36,6.4,110,2492000,"Hybrid","Full","Nature",0,7],
 ["Alien Boss (Final)",null,null,null,null,"","","",0,7],
-["Ant King (Awakened)",67000000,12,100,14961000,"Hybrid","Full","",0,7],
+["Ant King (Awakened)",143514000,12,100,14961000,"Hybrid","Full","Dark",0,7],
 ["Beast Spawner",null,null,null,null,"","","",0,7],
 ["Boo (Kid)",null,null,null,null,"","","",0,7],
 ["Buddha Chairman (Serious)",null,null,null,null,"","","",0,7],
@@ -68,8 +68,8 @@ const UNITS = [
 ["Evil Shade (Final)",null,null,null,null,"","","",0,7],
 ["Eyezen (Final)",null,null,null,null,"","","",0,7],
 ["Falcon (Ascendance)",null,null,null,null,"","","",0,7],
-["Hamerucifer",null,null,null,null,"","","",0,7],
-["Heavenly Duo",71700000,12,100,20000000,"Ground","Cone","Holy",0,7],
+["Hamerucifer",39841200,8,175,6000000,"Hybrid","Full","Dark",0,7],
+["Heavenly Duo",153581400,12,100,20000000,"Hill","Cone","Fire",0,7],
 ["Humble-Swordman (Awoken)",null,null,null,null,"","","",0,7],
 ["Ikki Potent (Awaken)",null,null,null,null,"","","",0,7],
 ["Joe Kid",null,null,null,null,"","","",0,7],
@@ -78,10 +78,10 @@ const UNITS = [
 ["Koro F III",null,null,null,null,"","","",0,7],
 ["Kosuke (SS)",null,null,null,null,"","","",0,7],
 ["Kovegu IV",null,null,null,null,"","","",0,7],
-["Kung Fu Galaxy",null,null,null,null,"","","",0,7],
+["Kung Fu Galaxy",53335800,10,150,7500000,"Ground","Full","Fire",0,7],
 ["Legendary Leader (Path)",111384000,9,110,18580000,"Hybrid","Cone","Dark",0,7],
 ["Lucci (Heaven)",null,null,null,null,"","","",0,7],
-["Mochi (Awakening)",null,null,null,null,"","","",0,7],
+["Mochi (Awakening)",240439.5,7,50,41500,"Hybrid","Full","Fire",0,7],
 ["Mysterious X (Final)",null,null,null,null,"","","",0,7],
 ["Old Will (B-Kui)",null,null,null,null,"","","",0,7],
 ["Ombra",null,null,null,null,"","","",0,7],
@@ -378,8 +378,24 @@ function unitInitials(name){
    ============================================================ */
 const UNITS_SHIPPED = UNITS.map(u => u.slice());
 
-/* ถ้าเคยนำเข้าตารางจากวิกิไว้ ให้ใช้ชุดนั้นแทนทุกหน้า */
-try {
-  const ov = JSON.parse(localStorage.getItem("astd_units_db") || "null");
-  if(Array.isArray(ov) && ov.length) UNITS.splice(0, UNITS.length, ...ov);
-} catch(e){}
+/* หมายเหตุ: หน้าเว็บอ่านข้อมูลจากไฟล์นี้อย่างเดียว
+   ไม่มีการทับด้วยข้อมูลที่เก็บในเบราว์เซอร์ ใครเปิดเว็บก็เห็นชุดเดียวกันหมด
+   แก้ข้อมูลได้ที่ไฟล์นี้เท่านั้น */
+
+/* ============================================================
+   วางได้สูงสุดกี่ตัวต่อยูนิต (ไม่ระบุ = 8 ตัว)
+   ตัวที่วางได้ตัวเดียวใส่ 1 ไว้ ช่องปรับจะถูกล็อกให้เอง
+   ============================================================ */
+const PLACE_DEFAULT = 8;
+const PLACE_MAX = {
+  "tboi-rebirth": 1,
+  "second-trumpet-salt-king": 1,
+  "legendary-leader-path": 1,
+  "heavenly-duo": 1,
+  "ant-king-awakened": 1,
+  "kung-fu-galaxy": 4,
+};
+function placeMax(name){
+  const v = PLACE_MAX[unitSlug(name)];
+  return (v == null) ? PLACE_DEFAULT : v;
+}

@@ -55,6 +55,7 @@
 
   <section class="panel">
     <h2>Table settings</h2>
+      <div class="anchor-line"><span>Anchor waves used as reference points</span> <b id="anchorList"></b></div>
     <div class="stat-grid">
       <div class="stat-box"><label>From wave</label><input type="number" id="wFrom" min="1" step="1" value="1"></div>
       <div class="stat-box"><label>To wave</label><input type="number" id="wTo" min="1" step="1" value="100"></div>
@@ -72,12 +73,6 @@
       <button class="btn primary" id="btnGen">Build table</button>
       <button class="btn" id="btnClear">Clear</button>
     </div>
-    <p class="hint">
-      Anchor Table method: waves 1–30 use exact in-game values, waves between anchors use exponential
-      interpolation, and waves past the last anchor extend using the final segment's growth rate.<br>
-      Current anchors: <b id="anchorList"></b> — spot a real value in game? Add it to <b>ANCHORS</b> in
-      <b>assets/js/hpcore.js</b> (shared with the Team page). More anchors, better accuracy.
-    </p>
   </section>
 
   <section class="panel">
@@ -100,7 +95,9 @@
 
 </div>
 
-<footer>Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers</footer>
+<footer>
+  Fan-made tool for All Star Tower Defense (Roblox) — not affiliated with the game's developers
+</footer>
 
 <script>window.SITE_LANG = "en";</script>
 <script src="assets/js/hpcore.js"></script>
@@ -146,5 +143,24 @@ $("anchorList").textContent = "Wave " + Object.keys(ANCHORS).map(Number).sort((a
 </script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
+<script>
+window.PAGE_STATE = {
+  get(){
+    const p = document.querySelector("#pChips .preset-chip.on");
+    return {a: document.getElementById("wFrom").value,
+            b: document.getElementById("wTo").value,
+            p: p ? p.dataset.p : null};
+  },
+  set(st){
+    if(st.a != null) document.getElementById("wFrom").value = st.a;
+    if(st.b != null) document.getElementById("wTo").value = st.b;
+    if(st.p) document.querySelectorAll("#pChips .preset-chip").forEach(c =>{
+      if(c.dataset.p === st.p) c.click();
+    });
+    document.getElementById("btnGen").click();
+  }
+};
+</script>
 </body>
 </html>

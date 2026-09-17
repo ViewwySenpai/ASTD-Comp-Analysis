@@ -51,6 +51,7 @@
       <button class="chip" data-f="Ground">Ground</button>
       <button class="chip" data-f="Air">Air</button>
       <button class="chip" data-f="Hybrid">Hybrid</button>
+      <button class="chip" data-f="Hill">Hill</button>
       <button class="chip" data-f="6star">6★</button>
       <button class="chip" data-f="7star">7★</button>
     </div>
@@ -70,17 +71,16 @@
         <div class="plate-body">
           <div class="name" id="selName">Pick a unit to start</div>
           <div class="badges" id="selBadges"></div>
-          <div class="img-note" id="unitImgName"></div>
         </div>
       </div>
 
       <div class="stat-grid">
-        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" min="0" step="any" value="0"></div>
-        <div class="stat-box"><label>SPA <span class="unit-suffix">seconds per attack</span></label><input type="number" id="inSpa" min="0.1" step="any" value="1"></div>
-        <div class="stat-box"><label>Range</label><input type="number" id="inRng" min="0" step="any" value="0"></div>
-        <div class="stat-box"><label>Total cost <span class="unit-suffix">in-game ¢</span></label><input type="number" id="inCost" min="0" step="any" value="0"></div>
+        <div class="stat-box count-box"><label>Amount <small style="color:var(--ink-3)">combined output</small></label><div class="count-row"><input type="range" id="inCount" min="1" max="8" step="1" value="1"><b id="countVal">1 / 8</b></div></div>
+        <div class="stat-box"><label>Damage</label><input type="number" id="inDmg" readonly tabindex="-1" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>SPA <span class="unit-suffix">seconds per attack</span></label><input type="number" id="inSpa" readonly tabindex="-1" min="0.1" step="any" value="1"></div>
+        <div class="stat-box"><label>Range</label><input type="number" id="inRng" readonly tabindex="-1" min="0" step="any" value="0"></div>
+        <div class="stat-box"><label>Total cost <span class="unit-suffix">in-game ¢</span></label><input type="number" id="inCost" readonly tabindex="-1" min="0" step="any" value="0"></div>
       </div>
-      <p class="hint">Every field is editable. Units with no stats on the wiki yet can be typed in by hand. To change them permanently, edit assets/js/units.js.</p>
     </section>
 
     <section class="panel">
@@ -107,7 +107,6 @@
           <div class="lbl" style="margin-top:14px;">Orb <small>one orb at a time — click again to remove</small></div>
           <div class="preset-row" id="orbChips"></div>
           <div class="hint" id="orbNote" style="margin-top:8px; display:none;"></div>
-          <p class="hint" style="margin-top:12px;">Every buff stacks by multiplying: Idol with Judgement = ×1.15 × ×1.08 = ×1.242</p>
         </div>
         <div class="buff-val"><input type="number" id="vDmg" min="0" max="9999" step="any" value="0">%</div>
       </div>
@@ -124,23 +123,9 @@
     <section class="panel" id="upgBox">
       <h2>Upgrade levels</h2>
       <div class="hint" id="upgBuffNote" style="margin:0 0 10px; display:none;"></div>
-      <p class="hint" style="margin:0 0 12px;">Click any level and its stats and running cost drop into the fields above.</p>
-      <p class="hint" style="margin-top:10px;">These numbers depend on which tab you copied from the wiki. For figures that match the fields above (Level 175), switch the wiki to Level 175 before copying.</p>
       <div id="upgTable" style="margin-top:14px;"></div>
       <div class="empty-msg" id="upgNone"></div>
 
-      <details style="margin-top:14px;">
-        <summary style="cursor:pointer; color:var(--ink-2); font-size:13.5px;">Import an upgrade table</summary>
-        <textarea id="upgPaste" rows="5" placeholder="Paste the text from the unit's wiki page (Deployment through the last upgrade)"
-          style="width:100%; margin-top:10px; background:var(--deck-2); border:1px solid var(--edge); border-radius:var(--r-md); color:var(--ink); padding:10px; font-size:12.5px; outline:none; resize:vertical;"></textarea>
-        <div class="btn-row" style="margin-top:10px;">
-          <button class="btn primary" id="upgRead">Read it</button>
-          <button class="btn" id="upgCode">Copy as code</button>
-          <button class="btn" id="upgWipe" style="display:none;">Delete this table</button>
-        </div>
-        <div class="img-note" id="upgMsg"></div>
-        <p class="hint">How to fill this in: open the unit's wiki page, select the whole Stats Overview block, copy it, paste it here and press Read it. The site parses it into a table and remembers it in your browser. To keep it permanently for everyone, press Copy as code and paste that into assets/js/upgrades.js.</p>
-      </details>
     </section>
 
     <section class="panel" id="abilBox" style="display:none;">
@@ -205,5 +190,6 @@
 <script src="assets/js/calculator.js"></script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
 </body>
 </html>

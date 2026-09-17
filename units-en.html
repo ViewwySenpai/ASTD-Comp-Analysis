@@ -52,13 +52,13 @@
         <button class="chip" data-f="Ground">Ground</button>
         <button class="chip" data-f="Air">Air</button>
         <button class="chip" data-f="Hybrid">Hybrid</button>
+        <button class="chip" data-f="Hill">Hill</button>
         <button class="chip" data-f="6star">6★</button>
         <button class="chip" data-f="7star">7★</button>
       </div>
     </div>
     <div class="gallery" id="gallery"></div>
     <div class="count" id="gCount" style="margin-top:16px;"></div>
-    <p class="hint">Click a card to open that unit in the calculator. To add artwork, drop a 200×200 PNG into assets/img/units/ using the filename shown on the card, or paste an image URL on the calculator page.</p>
   </section>
 </div>
 
@@ -128,5 +128,19 @@ renderGallery();
 </script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/visitors.js"></script>
+<script>
+window.PAGE_STATE = {
+  get(){ return {q: $g("gSearch").value, f: gFilter}; },
+  set(st){
+    if(st.q != null) $g("gSearch").value = st.q;
+    if(st.f){
+      gFilter = st.f;
+      document.querySelectorAll("#gFilters .chip").forEach(c => c.classList.toggle("on", c.dataset.f === st.f));
+    }
+    renderGallery();
+  }
+};
+</script>
 </body>
 </html>

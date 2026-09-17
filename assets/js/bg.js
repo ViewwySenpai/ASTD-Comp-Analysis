@@ -59,6 +59,26 @@ const PAGE_FADE_MS = 260;  /* จางหน้าออกตอนกดเ�
     setTimeout(()=>{ location.href = href; }, PAGE_FADE_MS);
   });
 
+  /* ---------- สลับภาษาแล้วไม่ให้ข้อมูลหาย ----------
+     แต่ละหน้าบอกสถานะของตัวเองผ่าน window.PAGE_STATE = {get(), set(s)}
+     ตอนกดเปลี่ยนภาษาจะแปะสถานะไว้ท้าย URL แล้วอีกหน้าหยิบไปใส่กลับ */
+  function stateToHash(href){
+    try{
+      if(!window.PAGE_STATE || !PAGE_STATE.get) return href;
+      const s = PAGE_STATE.get();
+      if(!s) return href;
+      return href.split("#")[0] + "#s=" + encodeURIComponent(JSON.stringify(s));
+    }catch(e){ return href; }
+  }
+  function restoreState(){
+    const m = /(?:^|#|&)s=([^&]+)/.exec(location.hash);
+    if(!m || !window.PAGE_STATE || !PAGE_STATE.set) return;
+    try{ PAGE_STATE.set(JSON.parse(decodeURIComponent(m[1]))); }catch(e){}
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  document.addEventListener("DOMContentLoaded", restoreState);
+  if(document.readyState !== "loading") setTimeout(restoreState, 0);
+
   /* ---------- ดรอปดาวน์เลือกภาษา ----------
      ปกติเอาเมาส์ชี้ก็ไหลลงมาเอง (CSS) ส่วนตรงนี้ไว้ให้จอสัมผัสที่ไม่มี hover */
   const pick = document.querySelector(".lang-pick");
@@ -75,6 +95,9 @@ const PAGE_FADE_MS = 260;  /* จางหน้าออกตอนกดเ�
     });
     document.addEventListener("keydown", e=>{
       if(e.key === "Escape"){ pick.classList.remove("open"); btn.setAttribute("aria-expanded","false"); }
+    });
+    pick.querySelectorAll(".lang-menu a").forEach(a =>{
+      a.addEventListener("click", ()=> a.setAttribute("href", stateToHash(a.getAttribute("href"))), true);
     });
   }
 
