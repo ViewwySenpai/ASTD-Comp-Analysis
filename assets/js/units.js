@@ -1,7 +1,8 @@
 /* ============================================================
    ASTD UNIT DATABASE
    สถิติ Level 175 (Max Upgrade) จาก allstartd.fandom.com/wiki/Statistics
-   Damage/DPS รวมดาเมจจาก Bleed / Burn / Poison แล้ว (ตามหมายเหตุของ Wiki)
+   Damage เป็นดาเมจโจมตีหลัก ส่วน DPS จาก Bleed / Judgement / Poison
+   คำนวณเพิ่มจากตารางอัปเกรดใน upgrades.js
 
    รูปแบบ:
    ["ชื่อ", Damage, SPA, Range, TotalCost, "Ground/Air/Hybrid", "AtkType", "Enchant", isNew, star]
@@ -64,7 +65,7 @@ const UNITS = [
 ["Boo (Kid)",null,null,null,null,"","","",0,7],
 ["Buddha Chairman (Serious)",null,null,null,null,"","","",0,7],
 ["Death",null,null,null,null,"","","",0,7],
-["Devil",null,null,null,null,"","","",0,7],
+["Devil",2788884,5,105,5201000,"Ground","Circle","Dark",0,7],
 ["Evil Shade (Final)",null,null,null,null,"","","",0,7],
 ["Eyezen (Final)",null,null,null,null,"","","",0,7],
 ["Falcon (Ascendance)",null,null,null,null,"","","",0,7],
@@ -77,7 +78,7 @@ const UNITS = [
 ["Koku (Instinctive)",null,null,null,null,"","","",0,7],
 ["Koro F III",null,null,null,null,"","","",0,7],
 ["Kosuke (SS)",null,null,null,null,"","","",0,7],
-["Kovegu IV",null,null,null,null,"","","",0,7],
+["Kovegu IV",399999999.55,10,300,20500000,"Hill","Circle","Fire",0,7],
 ["Kung Fu Galaxy",53335800,10,150,7500000,"Ground","Full","Fire",0,7],
 ["Legendary Leader (Path)",111384000,9,110,18580000,"Hybrid","Cone","Dark",0,7],
 ["Lucci (Heaven)",null,null,null,null,"","","",0,7],
@@ -86,7 +87,7 @@ const UNITS = [
 ["Old Will (B-Kui)",null,null,null,null,"","","",0,7],
 ["Ombra",null,null,null,null,"","","",0,7],
 ["Ombre",null,null,null,null,"","","",0,7],
-["Omega Dragon",null,null,null,null,"","","",0,7],
+["Omega Dragon",338436000,10,200,17500000,"Hybrid","Circle","Nature",0,7],
 ["Organs (Berserker)",null,null,null,null,"","","",0,7],
 ["Perfect Insect",null,null,null,null,"","","",0,7],
 ["Princess Appala",null,null,null,null,"","","",0,7],
@@ -95,12 +96,12 @@ const UNITS = [
 ["Star King",null,null,null,null,"","","",0,7],
 ["The Almighty",null,null,null,null,"","","",0,7],
 ["The Founder",null,null,null,null,"","","",0,7],
-["The Overlord",null,null,null,null,"","","",0,7],
+["The Overlord",766836000,15,180,30000000,"Ground","Circle","Dark",0,7],
 ["The Path (Final)",null,null,null,null,"","","",0,7],
 ["The Strongest In History",null,null,null,null,"","","",0,7],
 ["True Evil (Full Power)",null,null,null,null,"","","",0,7],
 ["Ultra Koku & Super 2 Vegu (Final)",null,null,null,null,"","","",0,7],
-["Unhuman (Nullifier)",null,null,null,null,"","","",0,7],
+["Unhuman (Nullifier)",7988660,8,100,5191100,"Hybrid","Full","Water",0,7],
 ["Universe Justice #1 (Serious)",null,null,null,null,"","","",0,7],
 ["Vegu (Ego Ascension)",null,null,null,null,"","","",0,7],
 ["Worl (Vigilante)",null,null,null,null,"","","",0,7],
@@ -353,6 +354,10 @@ const UNITS = [
 ["ZYZZ",null,null,null,null,"","","",0,6],
 ];
 
+/* เรียงรายชื่อแบบพจนานุกรม A–Z ให้ทุกหน้าที่ใช้ฐานข้อมูลนี้แสดงลำดับเดียวกัน */
+const UNIT_NAME_COLLATOR = new Intl.Collator("en", {sensitivity:"base", numeric:true});
+UNITS.sort((a,b) => UNIT_NAME_COLLATOR.compare(a[0], b[0]));
+
 /* ชื่อไฟล์รูปของยูนิต (ใช้ทั้งหน้า Units และหน้า Calculator) */
 function unitSlug(name){
   return name.toLowerCase()
@@ -388,12 +393,17 @@ const UNITS_SHIPPED = UNITS.map(u => u.slice());
    ============================================================ */
 const PLACE_DEFAULT = 8;
 const PLACE_MAX = {
+  "devil": 1,
+  "kovegu-iv": 1,
+  "omega-dragon": 1,
   "tboi-rebirth": 1,
   "second-trumpet-salt-king": 1,
   "legendary-leader-path": 1,
   "heavenly-duo": 1,
   "ant-king-awakened": 1,
   "kung-fu-galaxy": 4,
+  "the-overlord": 1,
+  "unhuman-nullifier": 1,
 };
 function placeMax(name){
   const v = PLACE_MAX[unitSlug(name)];

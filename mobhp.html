@@ -61,6 +61,14 @@
       <div class="stat-box"><label>เวฟสุดท้าย</label><input type="number" id="wTo" min="1" step="1" value="100"></div>
     </div>
     <div class="stat-box" style="margin-top:10px;">
+      <label>ประเภทตารางมอน</label>
+      <select id="cycleType">
+        <option value="regular">Regular</option><option value="air">Air — ยังไม่มีข้อมูล</option>
+        <option value="category">Category — ยังไม่มีข้อมูล</option><option value="elemental">Elemental — ยังไม่มีข้อมูล</option>
+        <option value="solo">Solo — ยังไม่มีข้อมูล</option>
+      </select>
+    </div>
+    <div class="stat-box" style="margin-top:10px;">
       <label>จำนวนผู้เล่น (ตัวคูณ HP)</label>
       <div class="preset-row" id="pChips" style="margin-top:6px;">
         <button class="preset-chip on" data-p="1">1 คน ×1.0</button>
@@ -93,6 +101,19 @@
     </div>
   </section>
 
+  <section class="panel">
+    <h2>Infinite Cycle Table</h2>
+    <div class="empty-msg" id="cycleEmpty">เลือกช่วงเวฟและประเภทด้านบน แล้วกด “สร้างตาราง”</div>
+    <div id="cycleContent" style="display:none;">
+      <div class="cycle-summary"><b id="cycleSummaryMain"></b><span id="cycleSummaryNote"></span></div>
+      <div class="cycle-legend">
+        <span class="cycle-key normal">N ปกติ ×1.00</span><span class="cycle-key medium">2 กลาง ×1.30</span><span class="cycle-key strong">3 แข็งแกร่ง ×1.75</span>
+        <span class="cycle-key explosive">Explosive</span><span class="cycle-key cloner">Cloner</span><span class="cycle-key powerful">Powerful</span><span class="cycle-key armoured">Armoured</span><span class="cycle-key decelerate">Decelerate</span>
+      </div>
+      <div class="cycle-list" id="cycleRows"></div>
+    </div>
+  </section>
+
 </div>
 
 <footer>
@@ -100,6 +121,7 @@
 </footer>
 
 <script src="assets/js/hpcore.js"></script>
+<script src="assets/js/mobcycle.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 let players = 1;
@@ -124,10 +146,12 @@ function genTable(){
   $("hpBody").innerHTML = rows.join("");
   $("hpTable").style.display = "table";
   $("hpEmpty").style.display = "none";
+  window.renderMobCycle({playerCount:players, fromWave:from, toWave:to, type:$("cycleType").value});
 }
 $("btnGen").onclick = genTable;
 $("btnClear").onclick = ()=>{
   $("hpBody").innerHTML = ""; $("hpTable").style.display = "none"; $("hpEmpty").style.display = "block";
+  window.clearMobCycle();
 };
 document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
   c.onclick = ()=>{
@@ -149,11 +173,13 @@ window.PAGE_STATE = {
     const p = document.querySelector("#pChips .preset-chip.on");
     return {a: document.getElementById("wFrom").value,
             b: document.getElementById("wTo").value,
+            c: document.getElementById("cycleType").value,
             p: p ? p.dataset.p : null};
   },
   set(st){
     if(st.a != null) document.getElementById("wFrom").value = st.a;
     if(st.b != null) document.getElementById("wTo").value = st.b;
+    if(st.c != null) document.getElementById("cycleType").value = st.c;
     if(st.p) document.querySelectorAll("#pChips .preset-chip").forEach(c =>{
       if(c.dataset.p === st.p) c.click();
     });

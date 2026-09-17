@@ -430,6 +430,14 @@ footer{
 .ui-ctl select, .ui-ctl input{background:var(--deck-2); border:1px solid var(--edge); border-radius:7px; color:var(--ink); padding:6px 7px; font-size:11.5px; outline:none; width:100%;}
 .ui-ctl select:disabled{color:var(--ink-3);}
 .ui-ctl select:focus, .ui-ctl input:focus{border-color:var(--brass-dim);}
+.ui-orb-row{margin-top:6px;}
+.ui-orb-row select{width:100%; background:var(--deck-2); border:1px solid var(--edge); border-radius:7px; color:var(--ink); padding:6px 7px; font-size:11.5px; outline:none;}
+.ui-orb-row select:focus{border-color:var(--brass-dim);}
+.ui-orb-row select:disabled{color:var(--ink-3);}
+.ui-support{margin-top:7px; padding-top:7px; border-top:1px dashed var(--edge);}
+.ui-support > span{display:block; color:var(--ink-3); font-size:10.5px; margin-bottom:5px;}
+.ui-support .preset-row{gap:5px;}
+.ui-support .preset-chip{font-size:10px; padding:4px 8px;}
 
 /* หน้าต่างเลือกยูนิต */
 .pick-ov{position:fixed; inset:0; background:rgba(4,5,9,.82); z-index:90; display:none; align-items:center; justify-content:center; padding:20px;}
@@ -493,6 +501,7 @@ footer{
 .order-item .o-sec{display:flex; align-items:center; gap:6px; margin-top:6px; font-size:11px; color:var(--ink-3);}
 .order-item .o-sec input{width:62px; background:var(--deck); border:1px solid var(--edge); border-radius:6px; color:var(--signal); padding:4px 6px; font-family:"Fredoka","Prompt",sans-serif; font-size:12.5px; text-align:center; outline:none; cursor:text;}
 .order-item .o-sec input:focus{border-color:var(--brass-dim);}
+.order-item .o-base input{width:120px;}
 .order-item .mv:hover{color:var(--brass); border-color:var(--brass);}
 
 .step-list{display:flex; flex-direction:column;}
@@ -812,3 +821,23 @@ footer{
 .count-box .count-row b{font-family:"Fredoka","Prompt",sans-serif; font-size:19px; color:var(--brass); min-width:52px; text-align:right;}
 .count-box.locked{opacity:.55;}
 .count-box.locked input[type=range]{cursor:not-allowed;}
+
+/* Regular Infinite cycle — HP bars by enemy type */
+.cycle-summary{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:-2px 0 14px; color:var(--ink-3); font-size:12px;}
+.cycle-summary b{color:var(--brass); font-family:"Fredoka","Prompt",sans-serif; font-size:14px;}
+.cycle-legend{display:flex; gap:7px 12px; flex-wrap:wrap; margin-bottom:16px;}
+.cycle-key{display:flex; align-items:center; gap:6px; color:var(--ink-2); font-size:11.5px;}
+.cycle-key::before{content:""; width:23px; height:8px; border-radius:99px; background:var(--mob-color); box-shadow:none;}
+.cycle-list{display:flex; flex-direction:column; gap:9px;}
+.cycle-wave{display:grid; grid-template-columns:82px minmax(0,1fr); gap:10px; align-items:end; padding:10px; border:1px solid var(--edge); border-radius:11px; background:var(--deck-2);}
+.cycle-wave-head{display:flex; flex-direction:column; gap:2px;}
+.cycle-wave-head b{font:600 13px "Fredoka","Prompt",sans-serif; color:var(--ink);}
+.cycle-wave-head span{font-size:10.5px; color:var(--ink-3);}
+.cycle-bars{display:flex; flex-wrap:nowrap; align-items:flex-end; gap:5px; min-height:36px; overflow-x:auto; padding:3px 2px 5px; scrollbar-width:thin;}
+.cycle-mob{--mob-color:#38c7a0; width:12px; min-width:12px; height:var(--mob-h); position:relative; display:inline-flex; align-items:flex-end; justify-content:center; overflow:hidden; border-radius:3px; color:white; background:var(--mob-color); border:none; box-shadow:none; transition:filter .14s;}
+.cycle-mob:hover{filter:brightness(1.25);}
+.cycle-mob::after{display:none;}
+.cycle-mob b{position:relative; z-index:1; font:700 9px "Fredoka","Prompt",sans-serif; text-shadow:0 1px 2px rgba(0,0,0,.7);}
+.cycle-mob.normal,.cycle-key.normal{--mob-color:#27c7a3}.cycle-mob.medium,.cycle-key.medium{--mob-color:#43b9e9}.cycle-mob.strong,.cycle-key.strong{--mob-color:#e65aa5}
+.cycle-mob.explosive,.cycle-key.explosive{--mob-color:#f18a32}.cycle-mob.cloner,.cycle-key.cloner{--mob-color:#8b57d9}.cycle-mob.powerful,.cycle-key.powerful{--mob-color:#8f2334}.cycle-mob.armoured,.cycle-key.armoured{--mob-color:#183f83}.cycle-mob.decelerate,.cycle-key.decelerate{--mob-color:#d6b62c}
+@media(max-width:560px){.cycle-wave{grid-template-columns:1fr}.cycle-wave-head{flex-direction:row;justify-content:space-between}.cycle-bars{gap:3px}.cycle-mob{width:10px;min-width:10px}}

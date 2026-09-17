@@ -75,6 +75,7 @@ function selectUnit(i){
   renderUpgrades(u[0]);
   renderAbilities(u[0]);
   renderCategories(u[0]);
+  syncCategorySupportChips(u[0]);
   renderList();
   calc();
 }
@@ -193,9 +194,25 @@ function paintOrbNote(){
   note.textContent = o.name + " — " + bits.join(" · ");
 }
 
+const CATEGORY_SUPPORT_BUFFS = {
+  kovegu15: ["Protectors of The Universe", "Pure Hearted", "Prodigy"],
+  omega15:  ["Unworldly Beings", "Pure Evil", "Final Bosses"],
+  overlord10: ["Godlike Power", "Undead", "Unrivaled Intelligence"],
+};
+function syncCategorySupportChips(name){
+  const data = (name && typeof CATEGORIES !== "undefined") ? CATEGORIES[unitSlug(name)] : null;
+  const tags = (data && data.tags) ? data.tags : [];
+  document.querySelectorAll("#supportChips .preset-chip[data-id]").forEach(ch => {
+    const required = CATEGORY_SUPPORT_BUFFS[ch.dataset.id];
+    if(!required) return;
+    const eligible = required.some(cat => tags.includes(cat));
+    ch.hidden = !eligible;
+    if(!eligible) ch.classList.remove("on");
+  });
+}
 function supportMult(){
   let m = 1;
-  document.querySelectorAll("#supportChips .preset-chip.on").forEach(c => m *= (1 + (+c.dataset.v)/100));
+  document.querySelectorAll("#supportChips .preset-chip.on:not([hidden])").forEach(c => m *= (1 + (+c.dataset.v)/100));
   return m;
 }
 /* บัฟแบ่งเป็นสองกลุ่ม เพราะดาเมจตายตัวจากสกิลบางอันไม่โดน Leader กับ Orb คูณ
@@ -325,6 +342,12 @@ function renderUpgrades(name){
       const pBase = poisonDps(r.dmg, r.spa), pFlat = poisonDps(fl, r.spa);
       stats.push([T.poisonDps, fmt(pBase + pFlat), "pdps", pBase, pFlat]);
       stats.push([T.totalDps, fmt(r.dmg/r.spa + fl/r.spa + pBase + pFlat), "ptot", r.dmg/r.spa, fl/r.spa]);
+    }
+    if(r.bleed && r.spa){
+      const bBase = bleedDps(r.dmg), bFlat = bleedDps(fl);
+      stats.push([T.bleedDps, fmt(bBase + bFlat), "bdps", bBase, bFlat]);
+      const tdBase = r.dmg/r.spa + bBase, tdFlat = fl/r.spa + bFlat;
+      stats.push([T.totalDps, fmt(tdBase + tdFlat), "btot", tdBase, tdFlat]);
     }
     if(r.jdg && r.spa){
       const window20 = Math.ceil(20 / r.spa) * r.spa;
@@ -566,7 +589,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
   renderList();
   const p = new URLSearchParams(location.search);
   const uIdx = parseInt(p.get("unit"));
-  selectUnit(Number.isInteger(uIdx) && UNITS[uIdx] ? uIdx : 7);
+  /* UNITS เรียง A–Z แล้ว: เริ่มที่ตัวแรกสุดที่มีสเตตัสพร้อมคำนวณ */
+  const defaultIdx = UNITS.findIndex(u => u[1] != null && u[2] != null && u[3] != null && u[4] != null);
+  selectUnit(Number.isInteger(uIdx) && UNITS[uIdx] ? uIdx : Math.max(0, defaultIdx));
 });
 
 
@@ -582,7 +607,7 @@ window.PAGE_STATE = {
       d:  $("inDmg").value, s: $("inSpa").value, r: $("inRng").value, c: $("inCost").value,
       fd: flatDmg,
       bd: buffDmg, bl: buffLead,
-      sup: [...document.querySelectorAll("#supportChips .preset-chip.on")].map(x => x.dataset.v),
+      sup: [...document.querySelectorAll("#supportChips .preset-chip.on")].map(x => x.dataset.id),
       orb: orbOn ? +orbOn.dataset.i : null,
       el:  $("tgElem").checked,
       ab:  [...document.querySelectorAll("#abilList .abil-sw input")].map(x => x.checked),
@@ -599,7 +624,7 @@ window.PAGE_STATE = {
     buffDmg  = st.bd || 0;
     buffLead = st.bl || 0;
     document.querySelectorAll("#supportChips .preset-chip").forEach(x =>
-      x.classList.toggle("on", (st.sup || []).includes(x.dataset.v)));
+      x.classList.toggle("on", !x.hidden && (st.sup || []).includes(x.dataset.id)));
     document.querySelectorAll("#orbChips .preset-chip").forEach(x =>
       x.classList.toggle("on", st.orb != null && +x.dataset.i === st.orb));
     $("tgElem").checked = !!st.el;

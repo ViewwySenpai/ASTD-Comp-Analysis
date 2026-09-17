@@ -83,4 +83,34 @@ const CATEGORIES = {
            en:"Units in the Siblings category gain a 20% attack boost."},
   tags: ["Captains", "Siblings", "Legendary Lineage", "Perception", "Prodigy"],
 },
+
+"devil": {
+  boost:{cat:"Time Avocs", atk:20},
+  leader:{th:"ยูนิตในหมวด Time Avocs ได้ดาเมจเพิ่ม 20%", en:"Units in the Time Avocs category gain a 20% attack boost."},
+  tags:["Time Avocs", "Godlike Power", "Unrivaled Intelligence", "Spirit Warriors", "Pure Evil", "Final Bosses"],
+},
+
+"kovegu-iv": {
+  boost:{cat:"Protectors of The Universe", atk:25},
+  leader:{th:"ยูนิตในหมวด Protectors of The Universe ได้ดาเมจเพิ่ม 25%", en:"Units in the Protectors of The Universe category gain a 25% attack boost."},
+  tags:["Pure Hearted", "Martial Artist", "Godlike Power", "Protectors of The Universe", "Prodigy", "Fusion"],
+},
+
+"omega-dragon": {
+  boost:{cat:"Pure Evil", atk:25},
+  leader:{th:"ยูนิตในหมวด Pure Evil ได้ดาเมจเพิ่ม 25%", en:"Units in the Pure Evil category gain a 25% attack boost."},
+  tags:["Brutes", "Raging Power", "Unworldly Beings", "Fusion", "Pure Evil", "Final Bosses"],
+},
+
+"the-overlord": {
+  boost:{cat:"Undead", atk:20},
+  leader:{th:"ยูนิตในหมวด Undead ได้ดาเมจเพิ่ม 20%", en:"Units in the Undead category gain a 20% attack boost."},
+  tags:["Isekai Life", "Time Avocs", "Godlike Power", "Unrivaled Intelligence", "Undead", "Prodigy"],
+},
+
+"unhuman-nullifier": {
+  boost:{cat:"Unrivaled Intelligence", atk:20},
+  leader:{th:"ยูนิตในหมวด Unrivaled Intelligence ได้ Attack Boost +20% และโบนัสอีก +15%", en:"Units in the Unrivaled Intelligence category gain Attack Boost +20% and a +15% bonus."},
+  tags:["Mortal", "Master Class", "Progressive", "Redemption", "Unrivaled Intelligence", "Perception"],
+},
 };

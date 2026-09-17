@@ -177,9 +177,19 @@ function paintSlot(k){
       if(s.abil.has(nm)) s.abil.delete(nm); else s.abil.add(nm);
     } else {
       const id = ch.dataset.b;
-      if(s.buffs.has(id)) s.buffs.delete(id); else s.buffs.add(id);
+      if(s.buffs.has(id)){
+        s.buffs.delete(id);
+      } else {
+        if(id === "b250" || id === "b300"){
+          const other = id === "b250" ? "b300" : "b250";
+          s.buffs.delete(other);
+          const otherChip = box.querySelector(`.cp-bf [data-b="${other}"]`);
+          if(otherChip) otherChip.classList.remove("on");
+        }
+        s.buffs.add(id);
+      }
     }
-    ch.classList.toggle("on");
+    ch.classList.toggle("on", ch.dataset.ab ? s.abil.has(ch.dataset.ab) : s.buffs.has(ch.dataset.b));
     compare();
   });
   box.querySelectorAll(".cp-ob .preset-chip").forEach(ch => ch.onclick = ()=>{

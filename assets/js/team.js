@@ -21,6 +21,8 @@ const TEAM_STRINGS = {
     buffNone:   "ไม่บัฟ (100%)",
     buff:       p => `บัฟ ${p}%`,
     copies:     "จำนวนตัว",
+    orbNone:    "ไม่ใส่ Orb",
+    unitBuffs:  "บัฟจากยูนิต",
     dpsField:   "DPS",
     orderAdd:   "+ ใส่ในลำดับการ์ด",
     orderDrop:  "✓ อยู่ในลำดับแล้ว",
@@ -49,14 +51,23 @@ const TEAM_STRINGS = {
     cTboi:      "TBOI",       cTboiSub: d => `ระเบิด ${formatHp(d)}`,
     cKfg:       "Kung Fu Galaxy",
     cKfgSub:    p => `ยิง ${p.sec} วิ — ปกติ ${formatHp(p.normal)} + พิษ ${formatHp(p.poison)} = ${formatHp(p.total)}`,
+    cBase:      "HP Base",
+    cBaseSub:   v => `ฐานมี HP ${formatHp(v)}`,
+    baseField:  "HP ของฐาน",
     stKfg:      p => `→ ยิง ${p.sec} วิ — ปกติ ${formatHp(p.normal)} + พิษ ${formatHp(p.poison)}`,
-    stHp:       (w,e,p,m) => `เลือดมอน Wave ${w} (${e}, ${p} คน ×${m})`,
+    stHp:       (w,n,p,m) => `มอนทั้งเวฟ ${w} (${n} ตัว, ${p} คน ×${m})`,
     stGil:      "→ เหลือ 25% ของเลือดเต็ม",
     stMad:      "→ เหลือ 33% ของเลือดเต็ม",
     stNoEff:    p => `— ไม่มีผล (เลือดต่ำกว่า ${p}% อยู่แล้ว)`,
     stLuf:      p => `→ ตัดที่เหลือลง ${p}%`,
     stTboi:     d => `→ ระเบิด ${formatHp(d)}`,
     stDps:      (s,d) => `→ ยิง ${s} วิ (${formatHp(d)})`,
+    stBase:     (v,n) => `→ ฐานรับมอนที่เหลือ ${n} ตัว รวม ${formatHp(v)} HP`,
+    baseLeft:   v => `ฐานเหลือ ${formatHp(v)} HP`,
+    enemiesLeft:n => `เหลือ ${n} ตัว`,
+    noTable:    t => `ยังไม่มีข้อมูลตารางมอนแบบ ${t}`,
+    baseDown:   " — HP Base ถูกทำลาย",
+    passBase:   v => `ฐานเหลือ ${formatHp(v)} HP`,
     passBig:    "✔ เคลียร์ได้",
     passSub:    s => `ใช้เวลายิงจริง ≈ ${s} วินาที`,
     failBig:    "✖ ยังเคลียร์ไม่ได้",
@@ -88,6 +99,8 @@ const TEAM_STRINGS = {
     buffNone:   "No buff (100%)",
     buff:       p => `Buff ${p}%`,
     copies:     "Copies",
+    orbNone:    "No Orb",
+    unitBuffs:  "Unit buffs",
     dpsField:   "DPS",
     orderAdd:   "+ Add to card order",
     orderDrop:  "✓ In card order",
@@ -116,14 +129,23 @@ const TEAM_STRINGS = {
     cTboi:      "TBOI",       cTboiSub: d => `detonates for ${formatHp(d)}`,
     cKfg:       "Kung Fu Galaxy",
     cKfgSub:    p => `fires ${p.sec}s — ${formatHp(p.normal)} normal + ${formatHp(p.poison)} poison = ${formatHp(p.total)}`,
+    cBase:      "HP Base",
+    cBaseSub:   v => `base has ${formatHp(v)} HP`,
+    baseField:  "Base HP",
     stKfg:      p => `→ ${p.sec}s of fire — ${formatHp(p.normal)} normal + ${formatHp(p.poison)} poison`,
-    stHp:       (w,e,p,m) => `Enemy HP, wave ${w} (${e}, ${p}p ×${m})`,
+    stHp:       (w,n,p,m) => `Full wave ${w} (${n} enemies, ${p}p ×${m})`,
     stGil:      "→ down to 25% of full HP",
     stMad:      "→ down to 33% of full HP",
     stNoEff:    p => `— no effect (already below ${p}%)`,
     stLuf:      p => `→ cuts remaining by ${p}%`,
     stTboi:     d => `→ detonates ${formatHp(d)}`,
     stDps:      (s,d) => `→ ${s}s of fire (${formatHp(d)})`,
+    stBase:     (v,n) => `→ base takes ${n} remaining enemies (${formatHp(v)} total HP)`,
+    baseLeft:   v => `${formatHp(v)} base HP left`,
+    enemiesLeft:n => `${n} enemies left`,
+    noTable:    t => `No ${t} enemy-table data yet`,
+    baseDown:   " — the HP Base was destroyed",
+    passBase:   v => `${formatHp(v)} base HP left`,
     passBig:    "✔ Clears",
     passSub:    s => `actual fire time ≈ ${s}s`,
     failBig:    "✖ Not enough",
@@ -147,7 +169,7 @@ let uidSeq = 0;
 let order = [newCard("dps")];
 /* การ์ดหนึ่งใบ = {k:ชนิด, uid:ไอดีไว้ลบ/ลากสลับ, sec:วินาที (เฉพาะ Team DPS)} */
 /* ใส่ได้สูงสุดกี่ใบต่อชนิดการ์ด (null = ไม่จำกัด) */
-const CARD_MAX = { dps:null, gil:1, mad:1, luf:3, tboi:1, kfg:1 };
+const CARD_MAX = { dps:null, base:1, gil:1, mad:1, luf:3, tboi:1, kfg:1 };
 
 /* การ์ด Kung Fu Galaxy — ดาเมจ 200B ต่อครั้ง ยังอยู่ขั้นอัปเกรด 8 (SPA 10)
    ตีปกติ  : วินาที / SPA  ครั้ง
@@ -198,11 +220,24 @@ function cardBuffMult(c){
 function newCard(k){
   if(k === "dps") return {k, uid:++uidSeq, sec:60, b:new Set()};
   if(k === "kfg") return {k, uid:++uidSeq, sec:KFG_SEC, b:new Set()};
+  if(k === "base") return {k, uid:++uidSeq, base:0};
   return {k, uid:++uidSeq};
 }
 function cardDps(c){ return teamDps() * Math.max(0, c.sec || 0) * cardBuffMult(c); }
 const TBOI_BASE = 250e9;
 const BUFF_CHOICES = [100, 250, 300];
+const UNIT_SUPPORT_BUFFS = [
+  {id:"kovegu15", label:"Kovegu IV +15%", v:15, cats:["Protectors of The Universe", "Pure Hearted", "Prodigy"]},
+  {id:"omega15",  label:"Omega Dragon +15%", v:15, cats:["Unworldly Beings", "Pure Evil", "Final Bosses"]},
+  {id:"overlord10", label:"Overlord's Influence +10%", v:10, cats:["Godlike Power", "Undead", "Unrivaled Intelligence"]},
+];
+function rowSupportMult(row){
+  const on = (row.dataset.support || "").split("|").filter(Boolean);
+  const idx = row.dataset.unit;
+  const tags = (idx !== "" && idx !== "custom" && UNITS[+idx]) ? (unitTags(UNITS[+idx][0]) || []) : [];
+  return UNIT_SUPPORT_BUFFS.reduce((m,b) =>
+    on.includes(b.id) && b.cats.some(cat => tags.includes(cat)) ? m*(1+b.v/100) : m, 1);
+}
 
 /* ---------- DPS ของยูนิตหนึ่งแถว ----------
    ขั้นอัปเกรด: upgrades.js เก็บตัวเลขคอลัมน์ Level 1 ส่วน units.js เป็น Level 175
@@ -256,11 +291,17 @@ function rowDps(row, boost){
   const stage = d.stage === "" ? null : +d.stage;
   const copies= Math.max(1, parseFloat(d.count) || 1);
   const lead = 1 + boostedBy(boost, row)/100;
+  const orb = (d.orb != null && d.orb !== "" && typeof ORBS !== "undefined") ? ORBS[+d.orb] : null;
+  const orbMult = 1 + (orb ? (orb.dmg || 0) : 0)/100;
   /* passive ที่เปิดสวิตช์ไว้ (เช่น Vampirism ของ TBOI) */
   let pMult = 1;
   const on = (d.abil || "").split("|").filter(Boolean);
   unitMults(u[0]).forEach(a => { if(on.includes(a.name)) pMult *= a.mult; });
-  const mult = stageRatio(unitSlug(u[0]), stage) * ((+d.buff || 100) / 100) * lead * pMult;
+  /* ค่า 250% / 300% คือบัฟที่ "เพิ่ม" จากฐาน จึงเป็น x3.5 / x4.0
+     ค่า 100 ใช้แทนตัวเลือกไม่บัฟและต้องคงเป็น x1.0 */
+  const buffPct = +d.buff || 100;
+  const damageBuff = buffPct === 100 ? 1 : 1 + buffPct / 100;
+  const mult = stageRatio(unitSlug(u[0]), stage) * damageBuff * lead * orbMult * rowSupportMult(row) * pMult;
 
   /* สกิลยิงต่อเนื่อง (เช่น The Final March) นับรวมเมื่อเปิดสวิตช์ */
   const ab = dotAbility(u[0]);
@@ -317,6 +358,58 @@ function teamDps(){
     document.querySelectorAll(`#rows${t} .u-item`).forEach(r => total += rowDps(r, boost));
   }
   return total;   /* บัฟเสริมย้ายไปอยู่กับการ์ด Team DPS แต่ละใบแล้ว */
+}
+
+/* TypeBane ของ Unhuman ใช้ x2 ตามชนิดมอนตอนประเมินการเคลียร์เวฟ
+   โดยไม่คูณซ้ำกับสวิตช์ TypeBane ที่ผู้ใช้เปิดเพื่อดู DPS ทั่วไป */
+function unhumanEnemyMult(code){
+  const kind = (typeof MOB_KIND !== "undefined") ? MOB_KIND[code] : null;
+  const cls = kind ? kind.cls : String(code || "").toLowerCase();
+  return ["air", "decelerate", "armoured", "powerful", "explosive", "cloner"].includes(cls) ? 2 : 1;
+}
+function teamHasUnhuman(){
+  for(let t = 1; t <= players; t++){
+    const found = [...document.querySelectorAll(`#rows${t} .u-item`)].some(row => {
+      const idx = row.dataset.unit;
+      return idx !== "" && idx !== "custom" && UNITS[+idx] && UNITS[+idx][0] === "Unhuman (Nullifier)";
+    });
+    if(found) return true;
+  }
+  return false;
+}
+function teamDpsForEnemy(code){
+  let total = 0;
+  for(let t = 1; t <= players; t++){
+    const boost = teamBoost(t);
+    document.querySelectorAll(`#rows${t} .u-item`).forEach(row => {
+      let value = rowDps(row, boost);
+      const idx = row.dataset.unit;
+      if(idx !== "" && idx !== "custom" && UNITS[+idx] && UNITS[+idx][0] === "Unhuman (Nullifier)"){
+        const on = (row.dataset.abil || "").split("|").filter(Boolean);
+        if(on.includes("TypeBane")) value /= 2;
+        value *= unhumanEnemyMult(code);
+      }
+      total += value;
+    });
+  }
+  return total;
+}
+function damageEnemiesByTeam(enemies, seconds, mult){
+  let left = Math.max(0, seconds || 0), dealt = 0, elapsed = 0;
+  for(const enemy of enemies){
+    if(left <= 0) break;
+    const dps = teamDpsForEnemy(enemy.code) * Math.max(0, mult || 0);
+    if(dps <= 0) break;
+    const need = enemy.hp / dps;
+    const used = Math.min(left, need);
+    const hit = Math.min(enemy.hp, dps * used);
+    enemy.hp -= hit;
+    dealt += hit;
+    left -= used;
+    elapsed += used;
+    if(enemy.hp > 1e-9) break;
+  }
+  return {dealt, elapsed};
 }
 
 /* ============================================================
@@ -404,7 +497,7 @@ function addUnitRow(t){
   if(rows.children.length >= 6) return;
   const row = document.createElement("div");
   row.className = "u-item";
-  Object.assign(row.dataset, {unit:"", stage:"", buff:"100", count:"1", val:"", dotOn:"0", dotSec:"", abil:""});
+  Object.assign(row.dataset, {unit:"", stage:"", buff:"100", count:"1", val:"", orb:"", support:"", dotOn:"0", dotSec:"", abil:""});
   rows.appendChild(row);
   paintRow(row);
   updateCnt(t); calcTeam();
@@ -448,9 +541,34 @@ function paintRow(row){
       `<option value="${p}" ${String(p)===d.buff?"selected":""}>${p===100?TT.buffNone:TT.buff(p)}</option>`
     ).join("") + `</select>`;
 
-  const numField = (isCustom || (u && !hasStats))
-    ? `<input class="u-num" type="number" min="0" step="any" value="${d.val}" placeholder="${TT.dpsField}" title="${TT.dpsField}">`
-    : `<input class="u-num" type="number" min="1" step="1" value="${d.count}" title="${TT.copies}">`;
+  const orbSel = u && typeof ORBS !== "undefined"
+    ? `<div class="ui-orb-row"><select class="u-orb" title="Orb"><option value="">${TT.orbNone}</option>` +
+      ORBS.map((o,i) => `<option value="${i}" ${String(i)===d.orb?"selected":""}>${o.name}${o.dmg?` · DMG +${o.dmg}%`:""}</option>`).join("") +
+      `</select></div>`
+    : `<div class="ui-orb-row"><select class="u-orb" disabled><option>${TT.orbNone}</option></select></div>`;
+
+  const tags = u ? (unitTags(u[0]) || []) : [];
+  const eligibleSupport = UNIT_SUPPORT_BUFFS.filter(b => b.cats.some(cat => tags.includes(cat)));
+  const validSupportIds = eligibleSupport.map(b => b.id);
+  const supportOn = (d.support || "").split("|").filter(id => validSupportIds.includes(id));
+  d.support = supportOn.join("|");
+  const supportBuffs = u && eligibleSupport.length ? `<div class="ui-support"><span>${TT.unitBuffs}</span><div class="preset-row">${eligibleSupport.map(b =>
+    `<button class="preset-chip${supportOn.includes(b.id)?" on":""}" data-support="${b.id}" title="${b.cats.join(" / ")}">${b.label}</button>`
+  ).join("")}</div></div>` : "";
+
+  let numField;
+  if(isCustom || (u && !hasStats)){
+    numField = `<input class="u-num" type="number" min="0" step="any" value="${d.val}" placeholder="${TT.dpsField}" title="${TT.dpsField}">`;
+  } else if(u){
+    const max = placeMax(u[0]);
+    const count = Math.min(max, Math.max(1, parseInt(d.count) || 1));
+    d.count = String(count);
+    numField = `<select class="u-num" title="${TT.copies}" aria-label="${TT.copies}">` +
+      Array.from({length:max}, (_,i) => `<option value="${i+1}" ${i+1===count?"selected":""}>${i+1}</option>`).join("") +
+      `</select>`;
+  } else {
+    numField = `<select class="u-num" title="${TT.copies}" aria-label="${TT.copies}" disabled><option>—</option></select>`;
+  }
 
   row.innerHTML = `
     <div class="ui-top">
@@ -460,6 +578,8 @@ function paintRow(row){
       <button class="ui-rm" title="✕">✕</button>
     </div>
     <div class="ui-ctl">${stageSel}${buffSel}${numField}</div>
+    ${orbSel}
+    ${supportBuffs}
     ${(()=>{ const ms = u ? unitMults(u[0]) : []; if(!ms.length) return "";
       const on = (d.abil || "").split("|").filter(Boolean);
       return `<div class="ui-abil"><div class="preset-row">${ms.map(a =>
@@ -487,6 +607,16 @@ function paintRow(row){
   const st = row.querySelector(".u-stage");
   if(!st.disabled) st.onchange = ()=>{ d.stage = st.value; calcTeam(); };
   row.querySelector(".u-buff").onchange = e =>{ d.buff = e.target.value; calcTeam(); };
+  const orbPick = row.querySelector(".u-orb");
+  if(!orbPick.disabled) orbPick.onchange = e =>{ d.orb = e.target.value; calcTeam(); };
+  row.querySelectorAll(".ui-support .preset-chip").forEach(ch => ch.onclick = ()=>{
+    const on = (d.support || "").split("|").filter(Boolean);
+    const id = ch.dataset.support, i = on.indexOf(id);
+    if(i >= 0) on.splice(i,1); else on.push(id);
+    d.support = on.join("|");
+    ch.classList.toggle("on", on.includes(id));
+    calcTeam();
+  });
   row.querySelectorAll(".ui-abil .preset-chip").forEach(ch => ch.onclick = ()=>{
     const on = (d.abil || "").split("|").filter(Boolean);
     const nm = ch.dataset.ab;
@@ -504,8 +634,12 @@ function paintRow(row){
     row.querySelector(".u-dotsecv").textContent = dSec.value + "s";
     calcTeam();
   });
-  row.querySelector(".u-num").addEventListener("input", e =>{
+  row.querySelector(".u-num").addEventListener("change", e =>{
     if(isCustom || (u && !hasStats)) d.val = e.target.value; else d.count = e.target.value;
+    calcTeam();
+  });
+  if(isCustom || (u && !hasStats)) row.querySelector(".u-num").addEventListener("input", e =>{
+    d.val = e.target.value;
     calcTeam();
   });
 }
@@ -537,6 +671,7 @@ function applyPlayers(){
    ============================================================ */
 const CARD_INFO = {
   dps:  {name: TT.cDps,  sub: c => TT.cDpsSub(c.sec, teamDps() * cardBuffMult(c))},
+  base: {name: TT.cBase, sub: c => TT.cBaseSub(Math.max(0, c.base || 0))},
   gil:  {name: TT.cGil,  sub: () => TT.cGilSub},
   mad:  {name: TT.cMad,  sub: () => TT.cMadSub},
   luf:  {name: TT.cLuf,  sub: () => TT.cLufSub((25*buffMult("lufBuffs")).toFixed(1))},
@@ -583,7 +718,9 @@ function renderOrder(){
            <span class="o-buffs-lbl">${TT.cardBuffs}</span>
            ${list.map(x => `<button class="preset-chip${o.b && o.b.has(x.id) ? " on" : ""}" data-b="${x.id}">${x.label}</button>`).join("")}
          </div>`; })()}`
-      : "";
+      : (o.k === "base"
+        ? `<label class="o-sec o-base">${TT.baseField}<input type="number" min="0" step="any" value="${o.base || ""}" placeholder="0"></label>`
+        : "");
     it.innerHTML = `<span class="grip">⋮⋮</span><span class="o-num">${idx+1}</span>
       <span class="o-name">${CARD_INFO[o.k].name}<small>${CARD_INFO[o.k].sub(o)}</small>
         <span class="o-pct"></span>${secBox}</span>
@@ -606,8 +743,18 @@ function renderOrder(){
       ch.addEventListener("mousedown", e => e.stopPropagation());
       ch.onclick = ()=>{
         const id = ch.dataset.b;
-        if(o.b.has(id)) o.b.delete(id); else o.b.add(id);
-        ch.classList.toggle("on");
+        if(o.b.has(id)){
+          o.b.delete(id);
+        } else {
+          if(id === "b250" || id === "b300"){
+            const other = id === "b250" ? "b300" : "b250";
+            o.b.delete(other);
+            const otherChip = it.querySelector(`.o-buffs [data-b="${other}"]`);
+            if(otherChip) otherChip.classList.remove("on");
+          }
+          o.b.add(id);
+        }
+        ch.classList.toggle("on", o.b.has(id));
         it.querySelector(".o-name small").textContent = CARD_INFO[o.k].sub(o);
         calcTeam();
       };
@@ -620,7 +767,8 @@ function renderOrder(){
       sec.addEventListener("focus", ()=> it.draggable = false);
       sec.addEventListener("blur",  ()=> it.draggable = true);
       sec.addEventListener("input", ()=>{
-        o.sec = Math.max(0, parseFloat(sec.value) || 0);
+        if(o.k === "base") o.base = Math.max(0, parseFloat(sec.value) || 0);
+        else o.sec = Math.max(0, parseFloat(sec.value) || 0);
         it.querySelector(".o-name small").textContent = CARD_INFO[o.k].sub(o);
         calcTeam();
       });
@@ -636,58 +784,110 @@ function renderOrder(){
   });
 }
 
+function waveEnemies(wave){
+  const base = calculateBaseHp(wave) * PLAYER_MULTS[players];
+  const pattern = MOB_CYCLE[(wave - 1) % MOB_CYCLE.length];
+  return pattern.map(code => {
+    const mult = MOB_KIND[code].mult;
+    const max = base * mult;
+    return {code, max, hp:max};
+  });
+}
+function enemiesHp(enemies){ return enemies.reduce((sum,e) => sum + Math.max(0,e.hp), 0); }
+function enemiesAlive(enemies){ return enemies.filter(e => e.hp > 1e-9).length; }
+/* ดาเมจแบบตัวเลขรวม ไล่หักตามลำดับมอนจนกว่าจะหมด */
+function damageEnemies(enemies, amount){
+  let left = Math.max(0, amount || 0);
+  for(const enemy of enemies){
+    if(left <= 0) break;
+    const hit = Math.min(enemy.hp, left);
+    enemy.hp -= hit;
+    left -= hit;
+  }
+}
+
 function calcTeam(){
-  const wave  = Math.max(1, parseInt($("wave").value)||1);
-  const emult = ENEMY_MULTS[$("etype").value];
-  const maxHp = calculateBaseHp(wave) * PLAYER_MULTS[players] * emult;
-  let hp = maxHp;
+  const wave = Math.max(1, parseInt($("wave").value)||1);
+  const tableType = $("tableType").value;
 
   refreshTeamNumbers();
   const dps = teamDps();
   $("teamDpsOut").textContent = formatHp(dps);
   $("dpsNote").textContent = dps > 0 ? TT.dpsTotal(players) : TT.dpsNone;
 
-  const steps = [{k: TT.stHp(wave, $("etype").selectedOptions[0].text, players, PLAYER_MULTS[players]),
-                  v: formatHp(hp)}];
-  const pct = [];          /* % เลือดที่เหลือหลังการ์ดใบนั้น */
-  let killedAt = null;
+  if(tableType !== "regular"){
+    const name = $("tableType").selectedOptions[0].text.split("—")[0].trim();
+    $("steps").innerHTML = `<div class="empty-msg">${TT.noTable(name)}</div>`;
+    $("verdict").style.display = "none";
+    $("orderList").querySelectorAll(".o-pct").forEach(x => x.textContent = "");
+    return;
+  }
 
+  const enemies = waveEnemies(wave);
+  const maxHp = enemiesHp(enemies);
+  const startCount = enemies.length;
+  const remaining = () => `${formatHp(enemiesHp(enemies))} · ${TT.enemiesLeft(enemiesAlive(enemies))}`;
+  const steps = [{k:TT.stHp(wave, startCount, players, PLAYER_MULTS[players]), v:remaining()}];
+  const pct = [];
+  let killedAt = null, baseFailed = false, baseLeft = null;
   let dpsSeen = 0;
   const dpsTotal = order.filter(c => c.k === "dps").length;
 
   order.forEach((card, idx)=>{
     const key = card.k, n = idx + 1;
+    let hp = enemiesHp(enemies);
     if(hp <= 0){ pct.push(0); return; }
+
     if(key === "gil" || key === "mad"){
       const p = key === "gil" ? 0.25 : 0.33;
       const nm = key === "gil" ? TT.cGil : TT.cMad;
-      const target = maxHp * p;
-      if(hp > target){ hp = target; steps.push({k:`${n}. ${nm} ${key==="gil"?TT.stGil:TT.stMad}`, v: formatHp(hp)}); }
-      else steps.push({k:`${n}. ${nm} <span class="noeff">${TT.stNoEff(p*100)}</span>`, v: formatHp(hp)});
+      let changed = false;
+      enemies.forEach(enemy => {
+        const target = enemy.max * p;
+        if(enemy.hp > target){ enemy.hp = target; changed = true; }
+      });
+      steps.push({
+        k: changed ? `${n}. ${nm} ${key==="gil"?TT.stGil:TT.stMad}` : `${n}. ${nm} <span class="noeff">${TT.stNoEff(p*100)}</span>`,
+        v:remaining()
+      });
     }
     else if(key === "luf"){
       const cut = Math.min(0.25 * buffMult("lufBuffs"), 1);
-      hp *= (1 - cut);
-      steps.push({k:`${n}. ${TT.cLuf} ${TT.stLuf((cut*100).toFixed(1))}`, v: formatHp(hp)});
+      enemies.forEach(enemy => enemy.hp *= (1-cut));
+      steps.push({k:`${n}. ${TT.cLuf} ${TT.stLuf((cut*100).toFixed(1))}`, v:remaining()});
     }
     else if(key === "tboi"){
       const boom = TBOI_BASE * buffMult("tboiBuffs");
-      hp = Math.max(0, hp - boom);
-      steps.push({k:`${n}. ${TT.cTboi} ${TT.stTboi(boom)}`, v: formatHp(hp)});
+      damageEnemies(enemies, boom);
+      steps.push({k:`${n}. ${TT.cTboi} ${TT.stTboi(boom)}`, v:remaining()});
     }
     else if(key === "kfg"){
       const p = kfgParts(card);
-      hp = Math.max(0, hp - p.total);
-      steps.push({k:`${n}. ${TT.cKfg} ${TT.stKfg(p)}`, v: formatHp(hp)});
+      damageEnemies(enemies, p.total);
+      steps.push({k:`${n}. ${TT.cKfg} ${TT.stKfg(p)}`, v:remaining()});
     }
     else if(key === "dps"){
-      const dealt = cardDps(card);
+      const typeAware = teamHasUnhuman();
+      const result = typeAware ? damageEnemiesByTeam(enemies, card.sec, cardBuffMult(card)) : null;
+      const dealt = result ? result.dealt : cardDps(card);
       const label = dpsTotal > 1 ? TT.dpsNo(++dpsSeen) : TT.cDps;
       const before = hp;
-      hp = Math.max(0, hp - dealt);
-      steps.push({k:`${n}. ${label} ${TT.stDps(card.sec, dealt)}`, v: formatHp(hp)});
-      if(hp <= 0 && dealt > 0) killedAt = before / (dealt / Math.max(card.sec, 1e-9));
+      if(!result) damageEnemies(enemies, dealt);
+      steps.push({k:`${n}. ${label} ${TT.stDps(card.sec, dealt)}`, v:remaining()});
+      if(enemiesHp(enemies) <= 0 && dealt > 0) killedAt = result
+        ? result.elapsed
+        : before / (dealt / Math.max(card.sec, 1e-9));
     }
+    else if(key === "base"){
+      const baseHp = Math.max(0, parseFloat(card.base) || 0);
+      const incoming = enemiesHp(enemies);
+      const incomingCount = enemiesAlive(enemies);
+      baseLeft = Math.max(0, baseHp - incoming);
+      baseFailed = baseFailed || baseHp <= incoming;
+      damageEnemies(enemies, baseHp);
+      steps.push({k:`${n}. ${TT.cBase} ${TT.stBase(incoming, incomingCount)}`, v:`${TT.baseLeft(baseLeft)} · ${TT.enemiesLeft(enemiesAlive(enemies))}`});
+    }
+    hp = enemiesHp(enemies);
     pct.push(maxHp > 0 ? (hp / maxHp) * 100 : 0);
   });
 
@@ -707,16 +907,18 @@ function calcTeam(){
 
   const verdict = $("verdict");
   verdict.style.display = "block";
-  if(hp <= 0){
+  const hp = enemiesHp(enemies);
+  if(hp <= 0 && !baseFailed){
     verdict.className = "verdict pass";
-    const extra = killedAt != null ? TT.passSub(killedAt < 1 ? killedAt.toFixed(2) : killedAt.toFixed(1)) : "";
+    const extra = baseLeft != null ? TT.passBase(baseLeft)
+      : (killedAt != null ? TT.passSub(killedAt < 1 ? killedAt.toFixed(2) : killedAt.toFixed(1)) : "");
     verdict.innerHTML = `<div class="big">${TT.passBig}</div><small>${extra}</small>`;
   } else {
     verdict.className = "verdict fail";
     const need = dps > 0 ? hp/dps : 0;
-    const extra = dps > 0
+    const extra = baseFailed ? TT.baseDown : (dps > 0
       ? TT.failNeed(need >= 1000 ? formatHp(need) : need.toFixed(1))
-      : TT.failNoDps;
+      : TT.failNoDps);
     const leftPct = maxHp > 0 ? (hp/maxHp)*100 : 0;
     verdict.innerHTML = `<div class="big">${TT.failBig}</div><small>${
       TT.failSub(formatHp(hp), leftPct < 10 ? leftPct.toFixed(2) : leftPct.toFixed(1), extra)}</small>`;
@@ -753,7 +955,7 @@ document.querySelectorAll("#pChips .preset-chip").forEach(c=>{
     applyPlayers(); calcTeam();
   };
 });
-["wave","etype"].forEach(id => $(id).addEventListener("input", ()=>{ renderOrder(); calcTeam(); }));
+["wave","tableType"].forEach(id => $(id).addEventListener("input", ()=>{ renderOrder(); calcTeam(); }));
 document.addEventListener("keydown", e => { if(e.key === "Escape") closePicker(); });
 
 buildPicker();
@@ -773,9 +975,9 @@ window.PAGE_STATE = {
       teams.push([...document.querySelectorAll(`#rows${i} .u-item`)].map(r => ({...r.dataset})));
     const buffsOf = id => [...document.querySelectorAll(`#${id} .preset-chip.on`)].map(c => c.dataset.b);
     return {
-      p: players, w: $("wave").value, e: $("etype").value,
+      p: players, w: $("wave").value, table: $("tableType").value,
       t: teams,
-      o: order.map(c => ({k:c.k, sec:c.sec, b:c.b ? [...c.b] : null})),
+      o: order.map(c => ({k:c.k, sec:c.sec, base:c.base, b:c.b ? [...c.b] : null})),
       lb: buffsOf("lufBuffs"), tb: buffsOf("tboiBuffs"),
     };
   },
@@ -784,7 +986,7 @@ window.PAGE_STATE = {
       document.querySelectorAll("#pChips .preset-chip").forEach(c =>{ if(+c.dataset.p === st.p) c.click(); });
     }
     if(st.w != null) $("wave").value  = st.w;
-    if(st.e != null) $("etype").value = st.e;
+    if(st.table != null) $("tableType").value = st.table;
 
     (st.t || []).forEach((rows, i) =>{
       const t = i + 1;
@@ -803,6 +1005,7 @@ window.PAGE_STATE = {
       order = st.o.map(c =>{
         const n = newCard(c.k);
         if(c.sec != null) n.sec = c.sec;
+        if(c.base != null) n.base = c.base;
         if(c.b) n.b = new Set(c.b);
         return n;
       });

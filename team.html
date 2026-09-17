@@ -50,11 +50,13 @@
       <div class="stat-grid">
         <div class="stat-box"><label>Wave</label><input type="number" id="wave" min="1" step="1" value="95"></div>
         <div class="stat-box">
-          <label>ประเภทมอน</label>
-          <select id="etype" style="width:100%; background:transparent; border:none; outline:none; color:var(--ink); font-family:'Fredoka','Prompt'; font-size:18px; font-weight:600;">
-            <option value="weak">Weak ×1.00</option>
-            <option value="medium">Medium ×1.30</option>
-            <option value="strong">Strong ×1.75</option>
+          <label>รูปแบบตารางมอน</label>
+          <select id="tableType" style="width:100%; background:transparent; border:none; outline:none; color:var(--ink); font-family:'Fredoka','Prompt'; font-size:18px; font-weight:600;">
+            <option value="regular">Regular</option>
+            <option value="air">Air — ยังไม่มีข้อมูล</option>
+            <option value="category">Category — ยังไม่มีข้อมูล</option>
+            <option value="elemental">Elemental — ยังไม่มีข้อมูล</option>
+            <option value="solo">Solo — ยังไม่มีข้อมูล</option>
           </select>
         </div>
       </div>
@@ -84,16 +86,23 @@
           </div>
         </div>
 
+        <div class="t-card" data-card="base">
+          <div class="head">
+            <div><div class="title">HP Base</div><div class="desc">รวม HP ของมอนที่ยังเหลือทั้งหมดแล้วนำไปหักจาก HP ของฐาน</div></div>
+            <button class="card-add"></button>
+          </div>
+        </div>
+
         <div class="t-card" data-card="gil">
           <div class="head">
-            <div><div class="title">Gilgamesh</div><div class="desc">ตัดเลือดมอนลงไปที่ 25% ของเลือดเต็ม (ถ้าเลือดต่ำกว่านั้นอยู่แล้ว = ไม่มีผล)</div></div>
+            <div><div class="title">Gilgamesh</div><div class="desc">ตัดเลือดมอนทุกตัวลงไปที่ 25% ของเลือดเต็ม (ตัวที่ต่ำกว่านั้นอยู่แล้ว = ไม่มีผล)</div></div>
             <button class="card-add"></button>
           </div>
         </div>
 
         <div class="t-card" data-card="mad">
           <div class="head">
-            <div><div class="title">Madara</div><div class="desc">ตัดเลือดมอนลงไปที่ 33% ของเลือดเต็ม (ถ้ากด Gilgamesh เหลือ 25% ไปแล้ว การ์ดนี้ไม่มีผล)</div></div>
+            <div><div class="title">Madara</div><div class="desc">ตัดเลือดมอนทุกตัวลงไปที่ 33% ของเลือดเต็ม (ตัวที่ถูก Gilgamesh ลดเหลือ 25% แล้ว = ไม่มีผล)</div></div>
             <button class="card-add"></button>
           </div>
         </div>
@@ -173,7 +182,9 @@
 <script src="assets/js/upgrades.js"></script>
 <script src="assets/js/abilities.js"></script>
 <script src="assets/js/categories.js"></script>
+<script src="assets/js/orbs.js"></script>
 <script src="assets/js/hpcore.js"></script>
+<script src="assets/js/mobcycle.js"></script>
 <script src="assets/js/team.js"></script>
 <script src="assets/js/bg.js"></script>
 <script src="assets/js/analytics.js"></script>

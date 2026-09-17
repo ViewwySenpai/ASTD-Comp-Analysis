@@ -108,7 +108,7 @@ function renderGallery(){
         ${u[7]?`<span class="tag ${u[7].toLowerCase()}">${u[7]}</span>`:""}
       </div>
       <div class="g-stats">${u[1] !== null
-        ? `DPS <b>${gfmt(u[1]/u[2])}</b> · DMG ${gfmt(u[1])} · SPA ${u[2]}`
+        ? `DPS <b>${gfmt(unitTotalDps(u[0],u[1],u[2]))}</b> · DMG ${gfmt(u[1])} · SPA ${u[2]}`
         : "No stats yet"}</div>
       <div class="g-file">${slug}.png${(getUpgrades(u[0])||[]).length ? " · " + getUpgrades(u[0]).length + " levels" : ""}</div>`;
     wrap.appendChild(card);

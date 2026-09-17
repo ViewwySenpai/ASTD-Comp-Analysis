@@ -71,6 +71,78 @@ const UPGRADES = {
 
 /* ===== 7★ ===== */
 
+/* Devil — 7★ (Level 175). Bleed DPS = current damage × 5 ÷ 10. */
+"devil": [
+  {lv:0, cost:1000,    dmg:4284,    rng:60,  spa:5, bleed:true, note:"Ground / AoE (Circle)"},
+  {lv:1, cost:150000,  dmg:111384,  rng:60,  spa:5, bleed:true},
+  {lv:2, cost:200000,  dmg:272034,  rng:60,  spa:5, bleed:true},
+  {lv:3, cost:300000,  dmg:486234,  rng:60,  spa:5, bleed:true},
+  {lv:4, cost:450000,  dmg:753984,  rng:60,  spa:5, bleed:true},
+  {lv:5, cost:600000,  dmg:1075284, rng:60,  spa:5, bleed:true},
+  {lv:6, cost:1000000, dmg:1503684, rng:60,  spa:5, bleed:true, note:"+ Teleport Fist Barrage"},
+  {lv:7, cost:2500000, dmg:2788884, rng:105, spa:5, bleed:true,
+   note:{th:"ได้สกิล Erased", en:"Obtains the Erased manual ability"}},
+],
+
+/* Kovegu IV — 7★ (Level 175) */
+"kovegu-iv": [
+  {lv:0,  cost:100,     dmg:10500.08,      rng:60,  spa:3,  note:"Hill / AoE (Circle)"},
+  {lv:1,  cost:150,     dmg:21000.17,      rng:60,  spa:3},
+  {lv:2,  cost:250,     dmg:44999.14,      rng:60,  spa:3},
+  {lv:3,  cost:9500,    dmg:209999.54,     rng:60,  spa:3},
+  {lv:4,  cost:20000,   dmg:800000.59,     rng:70,  spa:4,  note:{th:"+ Ultra Red Beam! / เปลี่ยนเป็น AoE (Cone)", en:"+ Ultra Red Beam! / Attack type changes to AoE (Cone)"}},
+  {lv:5,  cost:60000,   dmg:2999999.52,    rng:70,  spa:4},
+  {lv:6,  cost:110000,  dmg:6000941.52,    rng:70,  spa:4},
+  {lv:7,  cost:200000,  dmg:24999999.57,   rng:150, spa:10, note:{th:"+ Big Bang Blue Beam! / เปลี่ยนเป็น AoE (Circle)", en:"+ Big Bang Blue Beam! / Attack type changes to AoE (Circle)"}},
+  {lv:8,  cost:600000,  dmg:44439999.03,   rng:150, spa:10, note:{th:"+ Blue...Beam? / ได้สกิล Bluff Beam?!", en:"+ Blue...Beam? / Obtains the Bluff Beam?! manual ability"}},
+  {lv:9,  cost:5000000, dmg:144999999.65,  rng:225, spa:10},
+  {lv:10, cost:7000000, dmg:359999998.09,  rng:300, spa:10},
+  {lv:11, cost:7500000, dmg:399999999.55,  rng:300, spa:10, note:{th:"+ Positive Energy Stardust Breaker! / ได้สกิลกด", en:"+ Positive Energy Stardust Breaker! / Obtains the manual ability"}},
+],
+
+/* Omega Dragon — 7★ (Level 175) */
+"omega-dragon": [
+  {lv:0,  cost:1500,    dmg:59976,     rng:70,  spa:4,  note:"Ground / AoE (Circle)"},
+  {lv:1,  cost:3500,    dmg:199848.6,  rng:70,  spa:4},
+  {lv:2,  cost:5000,    dmg:398412,    rng:70,  spa:4},
+  {lv:3,  cost:8000,    dmg:998172,    rng:120, spa:5,  note:{th:"+ Hybrid / เปลี่ยนเป็น AoE (Cone) / ตีอากาศได้", en:"+ Hybrid / Attack type changes to AoE (Cone) / Can hit air enemies"}},
+  {lv:4,  cost:10000,   dmg:1747872,   rng:120, spa:5},
+  {lv:5,  cost:13000,   dmg:2741760,   rng:120, spa:5},
+  {lv:6,  cost:19000,   dmg:4990860,   rng:120, spa:5,  note:{th:"ได้สกิล Negative Energy Shroud", en:"Obtains the Negative Energy Shroud manual ability"}},
+  {lv:7,  cost:420000,  dmg:21848400,  rng:120, spa:5},
+  {lv:8,  cost:720000,  dmg:99817200,  rng:200, spa:10, note:{th:"+ Negative Karma Ball / เปลี่ยนเป็น AoE (Circle)", en:"+ Negative Karma Ball / Attack type changes to AoE (Circle)"}},
+  {lv:9,  cost:7000000, dmg:174787200, rng:200, spa:10},
+  {lv:10, cost:9300000, dmg:338436000, rng:200, spa:10, note:{th:"ได้สกิล Negative Energy Rebirth", en:"Obtains the Negative Energy Rebirth manual ability"}},
+],
+
+/* The Overlord — 7★ (Level 175) */
+"the-overlord": [
+  {lv:0,  cost:10000,    dmg:119999.12, rng:60,  spa:4,  note:{th:"Ground / AoE (Cone)", en:"Ground / AoE (Cone)"}},
+  {lv:1,  cost:25000,    dmg:599760,    rng:60,  spa:4},
+  {lv:2,  cost:50000,    dmg:1597932,   rng:60,  spa:4},
+  {lv:3,  cost:75000,    dmg:3191580,   rng:85,  spa:4,  note:{th:"+ Gravity Maelstrom / เปลี่ยนเป็น AoE (Circle)", en:"+ Gravity Maelstrom / Attack type changes to AoE (Circle)"}},
+  {lv:4,  cost:100000,   dmg:5997600,   rng:85,  spa:4},
+  {lv:5,  cost:130000,   dmg:9981720,   rng:85,  spa:4,  note:{th:"+ Falling Down / ได้สกิล Falling Down", en:"+ Falling Down / Obtains the Falling Down manual ability"}},
+  {lv:6,  cost:170000,   dmg:15979320,  rng:140, spa:4,  note:{th:"+ Reality Slash / เปลี่ยนเป็น AoE (Cone)", en:"+ Reality Slash / Attack type changes to AoE (Cone)"}},
+  {lv:7,  cost:240000,   dmg:30630600,  rng:140, spa:4,  note:{th:"+ The Goal of All Life is Death / ได้สกิลกด", en:"+ The Goal of All Life is Death / Obtains the manual ability"}},
+  {lv:8,  cost:5200000,  dmg:209916000, rng:180, spa:15, note:{th:"+ Call Greater Thunder! / เปลี่ยนเป็น AoE (Circle)", en:"+ Call Greater Thunder! / Attack type changes to AoE (Circle)"}},
+  {lv:9,  cost:10000000, dmg:344862000, rng:180, spa:15, note:{th:"+ Caster of Darkness / ได้สกิล Necromancer's Sorcery, Majesty's Treasury และ Overlord's Influence", en:"+ Caster of Darkness / Obtains Necromancer's Sorcery, Majesty's Treasury, and Overlord's Influence"}},
+  {lv:10, cost:7000000,  dmg:524790000, rng:180, spa:15},
+  {lv:11, cost:7000000,  dmg:766836000, rng:180, spa:15, note:{th:"+ Banshee's Cry / ได้สกิล Banshee's Cry", en:"+ Banshee's Cry / Obtains the Banshee's Cry manual ability"}},
+],
+
+/* Unhuman (Nullifier) — 7★ (Level 175) */
+"unhuman-nullifier": [
+  {lv:0, cost:1500,    dmg:13987.26, rng:50,  spa:5, note:{th:"Ground / AoE (Cone)", en:"Ground / AoE (Cone)"}},
+  {lv:1, cost:1600,    dmg:44982,    rng:50,  spa:5},
+  {lv:2, cost:2500,    dmg:107956.8, rng:75,  spa:6, note:{th:"+ Nullification Cleaning / เปลี่ยนเป็น AoE (Circle)", en:"+ Nullification Cleaning / Attack type changes to AoE (Circle)"}},
+  {lv:3, cost:4500,    dmg:179928,   rng:75,  spa:6},
+  {lv:4, cost:10000,   dmg:479808,   rng:100, spa:6, note:{th:"+ Nullification Touch / เปลี่ยนเป็น AoE (Cone)", en:"+ Nullification Touch / Attack type changes to AoE (Cone)"}},
+  {lv:5, cost:21000,   dmg:959616,   rng:100, spa:6, note:{th:"+ Hybrid / โจมตีศัตรูอากาศได้", en:"+ Hybrid / Can now hit air enemies"}},
+  {lv:6, cost:2150000, dmg:6790140,  rng:100, spa:8, note:{th:"+ Unhuman Neutralization / เปลี่ยนเป็น AoE (Full)", en:"+ Unhuman Neutralization / Attack type changes to AoE (Full)"}},
+  {lv:7, cost:3000000, dmg:7988660,  rng:100, spa:8, note:{th:"+ Fall Of Man / ได้สกิล Fall Of Man", en:"+ Fall Of Man / Obtains the Fall Of Man manual ability"}},
+],
+
 /* Ant King (Awakened) — 7★ (allstartd.fandom.com/wiki/Ant_King_(Awakened)) */
 "ant-king-awakened": [
   {lv:0, cost:2000,    dmg:5130,     rng:45,  spa:2,  note:"Hybrid, AoE (Circle)"},
@@ -352,6 +424,13 @@ function poisonDps(dmg, spa){
   return dmg * 7 / (3 * spa);
 }
 
+/* Bleed ของ Devil: ดาเมจปัจจุบันคูณ 5 แล้วหาร 10 (DPS เพิ่ม = 50% ของ Damage) */
+function hasBleed(name){
+  const t = (typeof UPGRADES !== "undefined") ? UPGRADES[unitSlug(name)] : null;
+  return !!(t && t.some(r => r.bleed));
+}
+function bleedDps(dmg){ return dmg > 0 ? dmg * 5 / 10 : 0; }
+
 /* dmg = ดาเมจของยูนิต "หนึ่งตัว" หลังบัฟ / copies = วางกี่ตัว
    ดาเมจพิษไม่เพิ่มตามจำนวนตัว (สถานะพิษไม่ซ้อนกัน) ส่วนที่เหลือคูณตามปกติ */
 function unitTotalDps(name, dmg, spa, copies){
@@ -360,5 +439,6 @@ function unitTotalDps(name, dmg, spa, copies){
   let out = (dmg / spa) * n;
   if(hasJudgement(name)) out += judgementDps(dmg, spa) * n;
   if(hasPoison(name))    out += poisonDps(dmg, spa);
+  if(hasBleed(name))     out += bleedDps(dmg) * n;
   return out;
 }
