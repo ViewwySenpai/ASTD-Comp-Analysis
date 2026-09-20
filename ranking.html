@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPS Ranking | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+<header>
+  <div class="head-top">
+    <a class="logo-slot empty-style" href="index.html" title="Home"><div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div><img src="assets/img/logo.png" alt="ASTD Comp" onload="this.style.display='block';document.getElementById('logoHint').style.display='none'" onerror="this.style.display='none'"></a>
+    <div><h1>ASTD <span>DPS Ranking</span></h1><div class="sub">จัดอันดับ DPS ของทุกยูนิตและทุก Upgrade ที่มีข้อมูล</div></div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator.html">Calculator</a><a href="units.html">Units</a><a href="compare.html">Compare</a><a href="ranking.html" class="active">Ranking</a><a href="mobhp.html">Mob HP</a><a href="team.html">Team</a>
+    <div class="lang-pick"><button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button><div class="lang-menu"><a href="ranking.html" class="on">ไทย</a><a href="ranking-en.html">English</a></div></div>
+  </nav>
+</header>
+
+<main class="wrap single ranking-page">
+  <section class="rank-hero">
+    <span class="rank-hero-face" id="rankTopArt" aria-hidden="true">—</span>
+    <div class="rank-hero-copy"><small>อันดับหนึ่งตามตัวกรอง</small><b id="rankTopName">—</b><span id="rankTopStage"></span></div>
+    <strong id="rankTopDps">—</strong><em>DPS</em>
+  </section>
+  <section class="panel">
+    <h2>อันดับ DPS</h2>
+    <div class="rank-note">คำนวณจาก Damage ÷ SPA และรวม Judgement, Poison, Bleed หรือ Ability DPS เฉลี่ย เมื่อ Upgrade นั้นมีข้อมูลไว้แล้ว · Total DPS คือ DPS ต่อตัว × Max Amount · ค่าเริ่มต้นไม่รวมบัฟ</div>
+    <div class="gallery-tools rank-tools">
+      <input class="search" id="rankSearch" type="search" placeholder="ค้นหาชื่อยูนิตหรือ Upgrade">
+      <div class="filters" id="rankMode"><button class="chip on" data-mode="best">Upgrade DPS สูงสุดของแต่ละยูนิต</button><button class="chip" data-mode="all">ทุก Upgrade</button></div>
+      <div class="filters" id="rankStars"><button class="chip on" data-star="all">ทุกดาว</button><button class="chip" data-star="6">6★</button><button class="chip" data-star="7">7★</button></div>
+      <div class="rank-buff-group"><span>บัฟดาเมจ</span><div class="filters" id="rankDamageBuff"><button class="chip" data-buff="250" aria-pressed="false">บัฟ 250%</button><button class="chip" data-buff="300" aria-pressed="false">บัฟ 300%</button></div></div>
+      <div class="rank-buff-group"><span>บัฟ Leader</span><div class="filters" id="rankLeaderBuff"><button class="chip" data-buff="15" aria-pressed="false">Leader 15%</button><button class="chip" data-buff="20" aria-pressed="false">Leader 20%</button></div></div>
+      <div class="rank-buff-group"><span>Passive / บัฟตัวเอง</span><div class="filters" id="rankSelfBuff"><button class="chip" aria-pressed="false">รวม Self Buff</button></div></div>
+    </div>
+    <div class="rank-count" id="rankCount"></div>
+    <div class="rank-head"><span>#</span><span>ยูนิต</span><span>Upgrade</span><span>Amount</span><span>Damage</span><span>SPA</span><span>DPS เพิ่มเติม</span><span>Total DPS</span></div>
+    <div class="rank-list" id="rankList"></div>
+  </section>
+</main>
+<footer>Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
+<script>window.SITE_LANG="th";</script><script src="assets/js/i18n.js"></script><script src="assets/js/units.js"></script><script src="assets/js/upgrades.js"></script><script src="assets/js/abilities.js"></script><script src="assets/js/ranking.js"></script><script src="assets/js/bg.js"></script><script src="assets/js/analytics.js"></script><script src="assets/js/visitors.js"></script>
+</body>
+</html>
