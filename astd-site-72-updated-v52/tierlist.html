@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tier List | ASTD Comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body.page-fade .wrap{opacity:1 !important;}</style></noscript>
+</head>
+<body class="page-fade">
+<header>
+  <div class="head-top">
+    <a class="logo-slot empty-style" href="index.html" title="Home"><div class="logo-hint" id="logoHint">ใส่โลโก้<br>256×256<br>logo.png</div><img src="assets/img/logo.png" alt="ASTD Comp" onload="this.style.display='block';document.getElementById('logoHint').style.display='none'" onerror="this.style.display='none'"></a>
+    <div><h1>ASTD <span>Tier List</span></h1><div class="sub">จัด Tier ตัวละคร แยกตามโหมด พร้อมเหตุผลและลิงก์แชร์ของคุณเอง</div></div>
+  </div>
+  <nav class="mainnav">
+    <a href="calculator.html">Calculator</a><a href="units.html">Units</a><a href="compare.html">Compare</a><a href="ranking.html">Ranking</a><a href="tierlist.html" class="active">Tier List</a><a href="mobhp.html">Mob HP</a><a href="team.html">Team</a>
+    <div class="lang-pick"><button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><span>ไทย</span><i>▾</i></button><div class="lang-menu"><a href="tierlist.html" class="on">ไทย</a><a href="tierlist-en.html">English</a></div></div>
+  </nav>
+</header>
+
+<main class="wrap single tier-page">
+  <section class="panel tier-control">
+    <div class="tier-title-row">
+      <div><h2>สร้าง Tier List</h2><p>ลากตัวละครลงแถว Tier หรือคลิกตัวละครแล้วคลิกแถวที่ต้องการ</p></div>
+      <label>ชื่อ Tier List<input id="tierTitle" maxlength="80" placeholder="เช่น Tournament Meta"></label>
+    </div>
+    <div class="tier-mode-tabs" id="tierModes"></div>
+    <div class="tier-actions">
+      <button class="cta primary" id="tierShare" type="button">บันทึกและคัดลอก URL</button>
+      <button class="cta" id="tierReset" type="button">ล้างหมวดนี้</button>
+      <span id="tierStatus" role="status"></span>
+    </div>
+  </section>
+
+  <section class="panel tier-board-panel">
+    <h2 id="tierBoardTitle">Tournament Tier List</h2>
+    <div class="tier-board" id="tierBoard"></div>
+  </section>
+
+  <section class="panel tier-pool-panel">
+    <div class="tier-pool-head"><div><h2>ตัวละคร</h2><p id="tierSelected">คลิกการ์ดเพื่อเลือก หรือใช้เมาส์ลากไปยัง Tier</p></div><span id="tierPoolCount"></span></div>
+    <input class="search" id="tierSearch" type="search" placeholder="ค้นหาตัวละคร">
+    <div class="tier-filters" aria-label="ตัวกรองตัวละคร">
+      <div class="tier-filter-group"><span>ระดับดาว</span><button type="button" class="chip on" data-star="all">ทั้งหมด</button><button type="button" class="chip" data-star="7">7★</button><button type="button" class="chip" data-star="6">6★</button></div>
+      <div class="tier-filter-group"><span>ประเภท</span><button type="button" class="chip on" data-place="all">ทั้งหมด</button><button type="button" class="chip" data-place="Hybrid">Hybrid</button><button type="button" class="chip" data-place="Air">Hill / Air</button><button type="button" class="chip" data-place="Ground">Ground</button></div>
+    </div>
+    <div class="tier-pool" id="tierPool"></div>
+  </section>
+</main>
+
+<dialog class="tier-dialog" id="tierReasonDialog">
+  <form method="dialog">
+    <div class="tier-dialog-head"><span class="rank-face" id="tierDialogFace"></span><div><small id="tierDialogTier"></small><h3 id="tierDialogName"></h3></div></div>
+    <label>เหตุผล<textarea id="tierReason" maxlength="1000" rows="5" placeholder="เขียนเหตุผลที่จัดตัวละครนี้ไว้ใน Tier นี้..."></textarea></label>
+    <div class="tier-dialog-actions"><button class="cta danger" id="tierRemove" type="button">นำออกจาก Tier</button><span></span><button class="cta" value="cancel">ยกเลิก</button><button class="cta primary" id="tierReasonSave" type="button">บันทึกเหตุผล</button></div>
+  </form>
+</dialog>
+
+<footer>Fan-made tool สำหรับ All Star Tower Defense (Roblox) — ไม่มีส่วนเกี่ยวข้องกับผู้พัฒนาเกม</footer>
+<script>window.SITE_LANG="th";</script><script src="assets/js/i18n.js"></script><script src="assets/js/units.js"></script><script src="assets/js/tierlist.js"></script><script src="assets/js/bg.js"></script><script src="assets/js/analytics.js"></script><script src="assets/js/visitors.js"></script>
+</body>
+</html>
