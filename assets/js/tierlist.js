@@ -38,6 +38,33 @@ function emptyTierState(){
 let tierState = emptyTierState();
 let selectedSlug = "";
 let draggedSlug = "";
+let dragPointerY = null;
+let dragScrollFrame = 0;
+
+/* เลื่อนหน้าอัตโนมัติเมื่อกำลังลากการ์ดเข้าใกล้ขอบจอ */
+function stopDragAutoScroll(){
+  dragPointerY = null;
+  if(dragScrollFrame) cancelAnimationFrame(dragScrollFrame);
+  dragScrollFrame = 0;
+}
+function runDragAutoScroll(){
+  if(!draggedSlug || dragPointerY === null){ stopDragAutoScroll(); return; }
+  const edge = Math.min(140,Math.max(80,innerHeight * .14));
+  let speed = 0;
+  if(dragPointerY < edge) speed = -Math.ceil((edge - dragPointerY) / edge * 24);
+  else if(dragPointerY > innerHeight - edge) speed = Math.ceil((dragPointerY - (innerHeight - edge)) / edge * 24);
+  if(speed) window.scrollBy(0,speed);
+  dragScrollFrame = requestAnimationFrame(runDragAutoScroll);
+}
+function updateDragAutoScroll(event){
+  if(!draggedSlug) return;
+  dragPointerY = event.clientY;
+  if(!dragScrollFrame) dragScrollFrame = requestAnimationFrame(runDragAutoScroll);
+}
+document.addEventListener("dragover",updateDragAutoScroll);
+document.addEventListener("drop",stopDragAutoScroll);
+document.addEventListener("dragend",stopDragAutoScroll);
+window.addEventListener("blur",stopDragAutoScroll);
 
 function cleanTierState(value){
   const clean = emptyTierState();
@@ -174,7 +201,11 @@ function bindUnitCards(){
       event.dataTransfer.setData("text/plain",draggedSlug);
       event.dataTransfer.effectAllowed = "move";
     };
-    card.ondragend = () => { draggedSlug = ""; document.querySelectorAll(".drag-over").forEach(x=>x.classList.remove("drag-over")); };
+    card.ondragend = () => {
+      draggedSlug = "";
+      stopDragAutoScroll();
+      document.querySelectorAll(".drag-over").forEach(x=>x.classList.remove("drag-over"));
+    };
     card.onclick = event => {
       event.stopPropagation();
       const slug = card.dataset.slug;
